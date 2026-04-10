@@ -1,0 +1,483 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitRehber - Misafir Ön İzleme</title>
+    <style>
+        :root {
+            --cream-50: #f7f2e8;
+            --cream-100: #efe6d8;
+            --sage-200: #c9d6c4;
+            --sage-400: #9fb596;
+            --sage-600: #6f8e6b;
+            --forest-700: #3e5f4b;
+            --forest-900: #25372d;
+            --accent: #e58d4f;
+            --accent-dark: #cf7437;
+            --ink: #2a3a32;
+            --muted: #6a7a6f;
+            --border: #e2d8c8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top left, #fef8ee 0%, #eef3ea 40%, #dbe5d5 100%);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        .page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-items {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .float-item {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            opacity: 0.25;
+            filter: drop-shadow(0 8px 18px rgba(38, 58, 47, 0.2));
+            animation: floatY 10s ease-in-out infinite;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        .float-1 { top: 8%; left: 6%; animation-duration: 11s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M22 26c2-9 9-12 18-10 6 1 10 7 8 14-2 8-9 16-16 18-9 2-13-8-10-22z' fill='%23e58d4f'/%3E%3Cpath d='M34 16c2-4 6-6 10-6' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+        .float-2 { top: 18%; right: 8%; animation-duration: 9.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='16' y='10' width='32' height='42' rx='12' fill='%239fb596'/%3E%3Crect x='20' y='14' width='24' height='34' rx='10' fill='%23f7f2e8' opacity='0.65'/%3E%3Crect x='26' y='6' width='12' height='8' rx='4' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .float-3 { top: 36%; left: 2%; animation-duration: 10.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='12' y='26' width='40' height='12' rx='6' fill='%233e5f4b'/%3E%3Crect x='6' y='22' width='10' height='20' rx='5' fill='%239fb596'/%3E%3Crect x='48' y='22' width='10' height='20' rx='5' fill='%239fb596'/%3E%3C/svg%3E"); }
+        .float-4 { top: 46%; right: 4%; animation-duration: 9s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M18 42c0-10 6-20 18-20 8 0 12 5 12 12 0 12-8 20-18 20-6 0-12-4-12-12z' fill='%23e58d4f' opacity='0.9'/%3E%3Cpath d='M30 20c-2-4-1-8 4-12' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+        .float-5 { bottom: 22%; left: 10%; animation-duration: 11.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='18' y='8' width='28' height='48' rx='10' fill='%23c9d6c4'/%3E%3Crect x='22' y='14' width='20' height='24' rx='8' fill='%23f7f2e8'/%3E%3Crect x='26' y='42' width='12' height='8' rx='4' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .float-6 { bottom: 12%; right: 12%; animation-duration: 10s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M16 30c6-12 20-14 30-8 6 4 6 14 0 20-8 8-22 8-28-2-4-6-5-8-2-10z' fill='%23e58d4f'/%3E%3Ccircle cx='42' cy='24' r='4' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .float-7 { top: 62%; right: 22%; animation-duration: 12s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='20' y='12' width='24' height='40' rx='10' fill='%239fb596'/%3E%3Crect x='24' y='18' width='16' height='20' rx='8' fill='%23f7f2e8'/%3E%3Crect x='28' y='40' width='8' height='6' rx='3' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .float-8 { top: 28%; left: 18%; animation-duration: 13s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cellipse cx='32' cy='38' rx='14' ry='18' fill='%239fb596'/%3E%3Cpath d='M32 20c0-8 8-14 14-10' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3Cellipse cx='32' cy='38' rx='6' ry='10' fill='%23f7f2e8' opacity='0.5'/%3E%3C/svg%3E"); }
+        .float-9 { top: 74%; left: 28%; animation-duration: 8.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 8c0 0-18 20-18 32a18 18 0 0 0 36 0C50 28 32 8 32 8z' fill='%236f8e6b' opacity='0.8'/%3E%3Cellipse cx='38' cy='36' rx='4' ry='8' fill='%23f7f2e8' opacity='0.5' transform='rotate(-20 38 36)'/%3E%3C/svg%3E"); }
+        .float-10 { top: 12%; left: 44%; animation-duration: 9.8s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='10' y='28' width='44' height='8' rx='4' fill='%233e5f4b'/%3E%3Ccircle cx='18' cy='32' r='10' fill='%23c9d6c4' stroke='%236f8e6b' stroke-width='2'/%3E%3Ccircle cx='46' cy='32' r='10' fill='%23c9d6c4' stroke='%236f8e6b' stroke-width='2'/%3E%3Crect x='30' y='14' width='4' height='16' rx='2' fill='%233e5f4b'/%3E%3C/svg%3E"); }
+        .float-11 { top: 52%; right: 18%; animation-duration: 10.8s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M26 14c-8 2-14 12-12 24 2 10 10 18 18 18 8 0 14-8 14-18 0-12-10-26-20-24z' fill='%23e58d4f'/%3E%3Cpath d='M32 10c2-4 8-8 14-6' stroke='%236f8e6b' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3Cellipse cx='30' cy='34' rx='6' ry='10' fill='%23c9d6c4' opacity='0.5'/%3E%3C/svg%3E"); }
+        .float-12 { bottom: 38%; right: 28%; animation-duration: 11.2s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 52C18 42 8 32 8 22a12 12 0 0 1 24-4 12 12 0 0 1 24 4c0 10-10 20-24 30z' fill='%23e58d4f' opacity='0.85'/%3E%3C/svg%3E"); }
+        .float-13 { bottom: 6%; left: 38%; animation-duration: 13.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M28 48c-4-8-6-20-2-30 2-6 8-10 12-8 6 2 8 10 6 20-2 8-8 18-16 18z' fill='%23e58d4f'/%3E%3Cpath d='M34 18c4-6 12-10 16-8' stroke='%236f8e6b' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3Cpath d='M30 14c-2-6-2-12 2-14' stroke='%236f8e6b' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3C/svg%3E"); }
+        .float-14 { top: 86%; right: 38%; animation-duration: 10.3s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 12c-12 0-18 8-18 20 0 10 6 18 18 18 10 0 16-8 16-18 0-12-6-20-16-20z' fill='%239fb596'/%3E%3Cpath d='M26 30l4 4 8-8' stroke='%233e5f4b' stroke-width='4' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E"); }
+
+        @keyframes floatY {
+            0% { transform: translate(0, 0) rotate(-2deg); }
+            50% { transform: translate(12px, -22px) rotate(2deg); }
+            100% { transform: translate(-10px, 4px) rotate(-1deg); }
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 36px;
+            background: rgba(255,255,255,0.9);
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(239,230,216,0.7));
+            border: 1px solid rgba(226, 216, 200, 0.9);
+            box-shadow: 0 10px 24px rgba(43, 63, 51, 0.16);
+        }
+
+        .brand-mark img { width: 28px; height: 28px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18)); }
+
+        .brand-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            font-style: italic;
+            letter-spacing: 0.6px;
+            transform: skewX(-6deg);
+            color: var(--forest-700);
+            text-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        }
+
+        .nav {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .tab-link {
+            text-decoration: none;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 8px 14px;
+            border: 0;
+            background: transparent;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .tab-link:hover { color: var(--forest-700); background: rgba(111, 142, 107, 0.12); transform: translateY(-1px); }
+        .tab-link.active { color: var(--forest-700); background: rgba(229, 141, 79, 0.18); box-shadow: 0 8px 18px rgba(229, 141, 79, 0.2); transform: translateY(-1px); }
+        .tab-link:active { transform: translateY(0) scale(0.98); }
+
+        .login-btn {
+            margin-left: 18px;
+            padding: 10px 18px;
+            border-radius: 10px;
+            border: 0;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 10px 22px rgba(229, 141, 79, 0.35);
+        }
+
+        .hero {
+            padding: 64px 36px 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 36px;
+            align-items: center;
+        }
+
+        .content-narrow {
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .section h1 {
+            font-size: 2.4rem;
+            color: var(--forest-700);
+            margin-bottom: 28px;
+        }
+
+        .hero p {
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 18px;
+            font-size: 1rem;
+        }
+
+        .pill-row { display: flex; flex-wrap: wrap; gap: 10px; }
+        .pill {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(111, 142, 107, 0.12);
+            color: var(--forest-700);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .preview-card {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(226,216,200,0.8);
+            background: #f2eee5;
+            box-shadow: 0 12px 26px rgba(43, 63, 51, 0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .preview-card img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            display: block;
+        }
+        .preview-card:hover { transform: translateY(-3px); box-shadow: 0 18px 36px rgba(43, 63, 51, 0.18); }
+
+        .sections { padding: 32px 36px 60px; display: grid; gap: 28px; }
+
+        .section {
+            background: rgba(255,255,255,0.9);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 16px 40px rgba(43, 63, 51, 0.12);
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            margin-bottom: 14px;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section h2 {
+            color: var(--forest-700);
+            margin-bottom: 12px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .feature {
+            padding: 16px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #fff 0%, #f7f2e8 100%);
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 18px rgba(43, 63, 51, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feature-title { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; color: var(--forest-700); font-weight: 700; }
+        .feature-icon { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; background: rgba(111, 142, 107, 0.16); color: var(--forest-700); font-size: 0.9rem; }
+        .feature strong { display: block; color: var(--forest-700); }
+        .feature span { color: var(--muted); font-size: 0.9rem; }
+        .feature:hover { transform: translateY(-3px); box-shadow: 0 16px 30px rgba(43, 63, 51, 0.14); }
+
+        .contact-grid {
+            display: grid;
+            gap: 14px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .contact-item {
+            padding: 16px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.95);
+            font-size: 0.95rem;
+            color: var(--muted);
+            box-shadow: 0 8px 18px rgba(43, 63, 51, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .contact-item:hover { transform: translateY(-2px); box-shadow: 0 14px 26px rgba(43, 63, 51, 0.14); }
+
+        .faq { display: grid; gap: 12px; max-width: 760px; margin: 0 auto; }
+        .faq details {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.95);
+            padding: 12px 16px;
+            box-shadow: 0 8px 18px rgba(43, 63, 51, 0.08);
+        }
+        .faq summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--forest-700);
+            list-style: none;
+        }
+        .faq summary::-webkit-details-marker { display: none; }
+        .faq p { margin-top: 10px; color: var(--muted); line-height: 1.6; }
+
+        .footer {
+            text-align: center;
+            padding: 24px 16px 36px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 860px) {
+            .topbar { flex-wrap: wrap; gap: 12px; }
+            .nav { width: 100%; justify-content: center; flex-wrap: wrap; }
+            .login-btn { margin-left: 0; }
+        }
+
+        @media (max-width: 860px) {
+            .preview-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="floating-items" aria-hidden="true">
+            <span class="float-item float-1"></span>
+            <span class="float-item float-2"></span>
+            <span class="float-item float-3"></span>
+            <span class="float-item float-4"></span>
+            <span class="float-item float-5"></span>
+            <span class="float-item float-6"></span>
+            <span class="float-item float-7"></span>
+            <span class="float-item float-8"></span>
+            <span class="float-item float-9"></span>
+            <span class="float-item float-10"></span>
+            <span class="float-item float-11"></span>
+            <span class="float-item float-12"></span>
+            <span class="float-item float-13"></span>
+            <span class="float-item float-14"></span>
+        </div>
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">
+                    <img src="assets/fitrehber-logo.png" alt="FitRehber logosu">
+                </div>
+                <div class="brand-name">FitRehber</div>
+            </div>
+            <nav class="nav">
+                <button class="tab-link active" type="button" data-tab="home">Anasayfa</button>
+                <button class="tab-link" type="button" data-tab="about">Hakkımızda</button>
+                <button class="tab-link" type="button" data-tab="contact">İletişim</button>
+            </nav>
+            <a class="login-btn" href="/login.html">Giriş Yap</a>
+        </header>
+
+        <main class="sections" style="position:relative; z-index:1;">
+            <section class="tab-content active" id="tab-home">
+                <section class="section content-narrow">
+                    <h1>FitRehber ile kliniğinizi tek ekrandan yönetin</h1>
+                    <p>Randevu yönetimi, ölçüm takibi ve kişiselleştirilmiş beslenme planlarını tek bir platformda toplayan FitRehber; diyetisyenler, yöneticiler ve danışanlar için sade ama güçlü bir deneyim sunar.</p>
+                    <p>Bu sistem; danışan takibini kolaylaştırmak, ölçümleri düzenli tutmak ve doğru planları hızlıca paylaşmak isteyen tüm profesyoneller için uygundur.</p>
+                    <p></p>
+                    <div class="pill-row">
+                        <div class="pill">Diyetisyenler</div>
+                        <div class="pill">Klinik Yöneticileri</div>
+                        <div class="pill">Danışanlar</div>
+                    </div>
+                </section>
+
+                <section class="section content-narrow" style="margin-top: 14px;">
+                    <div class="section-title">
+                        <h2>Öne Çıkanlar</h2>
+                    </div>
+                    <div class="feature-grid">
+                        <div class="feature">
+                            <div class="feature-title"><span class="feature-icon">📅</span><strong>Randevu Akışı</strong></div>
+                            <span>Günlük plan, yaklaşan randevular ve geçmiş kayıtlar tek panelde.</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-title"><span class="feature-icon">📈</span><strong>Ölçüm Takibi</strong></div>
+                            <span>Kilo, boy ve BMI ölçümlerini düzenli bir tabloda görüntüleyin.</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-title"><span class="feature-icon">🥗</span><strong>Beslenme Planları</strong></div>
+                            <span>Planları hızla oluşturun, danışanlarınızla paylaşın.</span>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-title"><span class="feature-icon">🔔</span><strong>Bildirimler</strong></div>
+                            <span>Temiz, merkezi bildirimlerle kritik güncellemeleri kaçırmayın.</span>
+                        </div>
+                    </div>
+                </section>
+
+            </section>
+
+            <section class="tab-content" id="tab-about">
+                <section class="section content-narrow">
+                    <h2>Hakkımızda</h2>
+                    <p>FitRehber; diyetisyenlerin randevu, ölçüm ve beslenme planlarını tek bir panelde yönetebilmesi için tasarlanmış bütünleşik bir klinik otomasyonudur. Sistem; danışan bilgilerini düzenli tutar, günlük akışı görünür kılar ve beslenme planlarının hızlıca oluşturulmasını sağlar. Böylece klinik ekipleri operasyonel yükten kurtulurken, danışanlar da ilerlemelerini net biçimde takip edebilir.</p>
+                    <p>Uygulama kullanımı oldukça basittir: Yönetici veya diyetisyen hesabıyla giriş yaparak danışan profilleri oluşturur, ölçüm kayıtlarını işler ve beslenme planlarını yayınlarsınız. Danışanlar ise kendi panelinden planlarını, randevularını ve hedeflerini görüntüler. FitRehber; doğru bilgi, düzenli takip ve sağlıklı iletişim temelli bir danışan deneyimi hedefler.</p>
+                    <p>Şu an sistemde danışanlar için ayrı bir kayıt ekranı bulunmaz. Bunun nedeni; danışanın klinik veya diyetisyen tarafından sisteme eklenmesi ve giriş bilgilerinin güvenli şekilde kendisine iletilmesidir. Bu yöntem, kayıtların doğruluğunu artırır ve klinik süreçlerini kontrollü şekilde yönetmenizi sağlar.</p>
+                </section>
+
+                <section class="section content-narrow" style="margin-top:18px;">
+                    <h2>Sık Sorulan Sorular</h2>
+                    <div class="faq">
+                        <details>
+                            <summary>Danışan hesabı nasıl açılır?</summary>
+                            <p>Danışan hesapları, yönetici veya diyetisyen tarafından oluşturulur. Sistem otomatik olarak giriş bilgilerini üretir ve danışana iletilir.</p>
+                        </details>
+                        <details>
+                            <summary>Beslenme planı paylaşımı nasıl yapılır?</summary>
+                            <p>Diyetisyen panelinden plan oluşturulduktan sonra ilgili danışan seçilir ve plan yayınlanır. Danışan kendi panelinde planı görüntüler.</p>
+                        </details>
+                        <details>
+                            <summary>Ölçüm geçmişi nasıl takip edilir?</summary>
+                            <p>Ölçüm sekmesinde danışanın kilo, boy ve BMI geçmişi düzenli şekilde listelenir. Yeni ölçüm eklemek için form alanlarını kullanabilirsiniz.</p>
+                        </details>
+                        <details>
+                            <summary>Randevular hangi ekrandan yönetilir?</summary>
+                            <p>Randevu işlemleri diyetisyen panelindeki Randevular sekmesinden yönetilir. Buradan oluşturabilir, güncelleyebilir veya iptal edebilirsiniz.</p>
+                        </details>
+                        <details>
+                            <summary>Bildirimler nerede görünür?</summary>
+                            <p>Önemli güncellemeler üst orta bildirim alanında şeffaf kutucuklarla gösterilir ve kısa süre sonra kaybolur.</p>
+                        </details>
+                        <details>
+                            <summary>Danışanlar neleri görüntüleyebilir?</summary>
+                            <p>Danışanlar kendi panelinde randevu bilgilerini, beslenme planlarını, ölçüm geçmişini ve hedeflerini görüntüleyebilir.</p>
+                        </details>
+                        <details>
+                            <summary>Veriler güvenli mi saklanır?</summary>
+                            <p>FitRehber, rol bazlı erişim modeli ile verileri güvenli şekilde saklar ve yalnızca yetkili kullanıcıların erişimine izin verir.</p>
+                        </details>
+                    </div>
+                </section>
+            </section>
+
+            <section class="tab-content" id="tab-contact">
+                <section class="section content-narrow">
+                    <h2>İletişim</h2>
+                    <div class="contact-grid">
+                        <div class="contact-item"><strong>Adres:</strong> Yeşilova Mah. 128. Sokak No:24, İstanbul</div>
+                        <div class="contact-item"><strong>Telefon:</strong> +90 212 000 00 00</div>
+                        <div class="contact-item"><strong>E-posta:</strong> merhaba@fitrehber.com</div>
+                        <div class="contact-item"><strong>Çalışma Saatleri:</strong> Hafta içi 09:00 - 18:00</div>
+                    </div>
+                </section>
+            </section>
+        </main>
+
+        <div class="footer">© 2026 FitRehber - Misafir Ön İzleme</div>
+    </div>
+    <script>
+        const tabLinks = Array.from(document.querySelectorAll('.tab-link'));
+        const tabContents = Array.from(document.querySelectorAll('.tab-content'));
+
+        function switchTab(tabId) {
+            tabLinks.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+            tabContents.forEach(section => section.classList.toggle('active', section.id === `tab-${tabId}`));
+        }
+
+        tabLinks.forEach(btn => {
+            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+        });
+
+        const faqItems = Array.from(document.querySelectorAll('.faq details'));
+        faqItems.forEach(item => {
+            item.addEventListener('toggle', () => {
+                if (!item.open) return;
+                faqItems.forEach(other => {
+                    if (other !== item) other.open = false;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,3301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitRehber - Kullanıcı Paneli</title>
+    <style>
+        :root {
+            --primary: #6f8e6b;
+            --primary-dark: #3e5f4b;
+            --primary-light: #e6efe2;
+            --accent: #e58d4f;
+            --accent-dark: #cf7437;
+            --surface: #f7f2e8;
+            --surface-2: #efe6d8;
+            --border: #e2d8c8;
+            --success: #5c9b6a;
+            --warning: #d6a85d;
+            --danger: #c56b5c;
+            --gray-50: #f9f6ef;
+            --gray-100: #f3ede3;
+            --gray-200: #e2d8c8;
+            --gray-300: #d0c6b6;
+            --gray-400: #9aa49b;
+            --gray-500: #6a7a6f;
+            --gray-600: #4d6154;
+            --gray-700: #3a4a41;
+            --gray-800: #2a3a32;
+            --gray-900: #1f2f26;
+        }
+
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: linear-gradient(135deg, #f7f2e8 0%, #dbe5d5 100%); color: var(--gray-800); min-height: 100vh; }
+        * { box-sizing: border-box; }
+        .app { min-height: 100vh; }
+        .sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 260px; background: linear-gradient(180deg, #2f473a 0%, #1e2f26 100%); color: #fff; padding: 28px 20px; display: flex; flex-direction: column; gap: 24px; box-shadow: 2px 0 8px rgba(31, 47, 38, 0.2); overflow-y: auto; z-index: 520; }
+        .sidebar h1 { margin: 0 0 6px; font-size: 1.35rem; font-weight: 700; background: linear-gradient(135deg, #e8b07a, #9fb596); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .sidebar p { margin: 0; color: rgba(255,255,255,0.65); font-size: 0.9rem; }
+        .sidebar-brand { display: flex; align-items: center; gap: 12px; }
+        .sidebar-brand .brand-mark { width: 56px; height: 56px; border-radius: 16px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.22); display: grid; place-items: center; }
+        .sidebar-brand .brand-mark img { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25)); }
+        .sidebar-brand .brand-text { display: flex; flex-direction: column; gap: 0; }
+        .brand-title {
+            display: inline-block;
+            font-style: italic;
+            letter-spacing: 0.6px;
+            transform: skewX(-6deg);
+            color: #f1d2a8;
+            text-shadow: 0 6px 16px rgba(0,0,0,0.28);
+            -webkit-text-fill-color: #f1d2a8;
+            background: none;
+            font-family: "Georgia", "Times New Roman", serif;
+            font-size: 1.55rem;
+            line-height: 1;
+        }
+        .nav { display: flex; flex-direction: column; gap: 6px; }
+        .nav button, .btn, .btn-secondary, .btn-action, .btn-danger, .btn-ghost { border: 0; border-radius: 8px; font: inherit; cursor: pointer; transition: all 0.2s ease; }
+        .nav button { padding: 12px 14px; text-align: left; background: rgba(255,255,255,0.08); color: #fff; font-weight: 500; }
+        .nav button:hover { background: rgba(255,255,255,0.15); transform: translateX(4px); }
+        .nav button.active { background: var(--accent); box-shadow: 0 4px 12px rgba(229, 141, 79, 0.35); }
+        .logout { margin-top: auto; background: rgba(239,68,68,0.15) !important; color: #fca5a5; }
+        .logout:hover { background: rgba(239,68,68,0.25) !important; }
+        .content { padding: 32px; margin-left: 260px; height: 100vh; overflow-y: auto; }
+        .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 28px; }
+        .topbar h2 { margin: 0 0 8px; font-size: 2rem; font-weight: 700; color: var(--gray-900); }
+        .topbar p { margin: 0; color: var(--gray-500); font-size: 0.95rem; }
+        .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn, .btn-secondary, .btn-action, .btn-danger, .btn-ghost { padding: 11px 18px; font-weight: 600; font-size: 0.9rem; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .btn { background: var(--accent); color: #fff; }
+        .btn:hover { background: var(--accent-dark); box-shadow: 0 4px 12px rgba(229, 141, 79, 0.3); }
+        .btn-secondary { background: var(--surface-2); color: var(--primary-dark); }
+        .btn-secondary:hover { background: #e7dccb; box-shadow: 0 4px 12px rgba(111, 142, 107, 0.2); }
+        .btn-action { padding: 8px 12px; font-size: 0.8rem; border-radius: 6px; background: var(--primary-light); color: var(--primary-dark); font-weight: 500; }
+        .btn-action:hover { background: var(--primary); color: white; }
+        .btn-danger { padding: 8px 12px; font-size: 0.8rem; border-radius: 6px; background: #f2d8d0; color: #7f3d32; font-weight: 500; }
+        .btn-danger:hover { background: var(--danger); color: white; }
+        .btn-ghost { background: var(--gray-100); color: var(--gray-700); }
+        .btn-ghost:hover { background: var(--gray-200); }
+        .section { display: none; }
+        .section.active { display: block; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .card, .panel { background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid var(--gray-100); }
+        .card { padding: 24px; background: linear-gradient(135deg, #fff 0%, #f7f2e8 100%); }
+        .card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.12); }
+        .label { color: var(--gray-500); font-size: 0.85rem; margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .value { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .panel { padding: 24px; margin-bottom: 20px; }
+        .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+        .panel-head h3 { margin: 0; font-size: 1.2rem; font-weight: 700; color: var(--gray-900); }
+        .panel-head p { margin: 4px 0 0; color: var(--gray-500); font-size: 0.9rem; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 12px; border-bottom: 1px solid var(--gray-200); text-align: left; vertical-align: middle; }
+        th { color: var(--gray-600); font-size: 0.8rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; background: var(--gray-50); }
+        tr:hover { background: var(--gray-50); }
+        .muted { color: var(--gray-500); }
+        .pill { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+        .success { background: #d1fae5; color: #065f46; }
+        .warning { background: #fed7aa; color: #92400e; }
+        .danger { background: #fecaca; color: #7f1d1d; }
+        .info { background: #bfdbfe; color: #1e3a8a; }
+        .message { display: none; margin-bottom: 20px; padding: 14px 16px; border-radius: 10px; font-weight: 600; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .message.show { display: block; }
+        .message.error { background: #fee2e2; color: var(--danger); border-left: 4px solid var(--danger); }
+        .message.info { background: #e6f0e4; color: var(--primary-dark); border-left: 4px solid var(--primary); }
+        .message.success { background: #d1fae5; color: var(--success); border-left: 4px solid var(--success); }
+
+        .toast-host {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .app-toast {
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            max-width: min(320px, calc(100vw - 32px));
+            text-align: center;
+        }
+
+        .app-toast.show { opacity: 1; transform: translateY(0); }
+        .app-toast.hide { opacity: 0; transform: translateY(-8px); }
+        .app-toast.success { background: rgba(34, 197, 94, 0.18); color: #1f5a38; border: 1px solid rgba(34, 197, 94, 0.35); }
+        .app-toast.warning { background: rgba(245, 158, 11, 0.2); color: #8a4b13; border: 1px solid rgba(245, 158, 11, 0.35); }
+        .app-toast.error { background: rgba(239, 68, 68, 0.2); color: #7f1d1d; border: 1px solid rgba(239, 68, 68, 0.35); }
+        .app-toast.info { background: rgba(34, 197, 94, 0.18); color: #1f5a38; border: 1px solid rgba(34, 197, 94, 0.35); }
+        .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); padding: 24px; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-backdrop.open { display: flex; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { width: min(720px, 100%); max-height: calc(100vh - 48px); overflow: auto; background: #fff; border-radius: 14px; padding: 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+        .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-head h3 { margin: 0; font-size: 1.3rem; font-weight: 700; }
+        .close { width: 36px; height: 36px; border-radius: 50%; border: 0; background: var(--gray-100); cursor: pointer; font-size: 1.2rem; color: var(--gray-600); transition: all 0.2s; }
+        .close:hover { background: var(--danger); color: white; }
+        .chart-canvas { width: 100%; height: 320px; border: 1px solid var(--gray-200); border-radius: 10px; background: #fff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field.full { grid-column: 1 / -1; }
+        .field label { font-weight: 600; color: var(--gray-700); font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 11px 14px; border: 2px solid var(--gray-200); border-radius: 8px; font: inherit; transition: all 0.2s; }
+        input:focus, select:focus, textarea:focus { outline: 0; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        textarea { min-height: 100px; resize: vertical; }
+
+        /* User specific styles */
+        .profile-card { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; }
+        .profile-card .label { color: rgba(255,255,255,0.8); }
+        .profile-card .value { color: white; -webkit-text-fill-color: white; }
+        .bmi-indicator { display: flex; align-items: center; gap: 12px; }
+        .bmi-status { padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+        .bmi-normal { background: var(--success); color: white; }
+        .bmi-overweight { background: var(--warning); color: white; }
+        .bmi-obese { background: var(--danger); color: white; }
+        .dietitian-info { background: linear-gradient(135deg, #f7f2e8 0%, #efe6d8 100%); border-left: 4px solid var(--primary); }
+        .appointment-status { display: flex; align-items: center; gap: 8px; }
+        .appointment-status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+        .upcoming { color: var(--warning); }
+        .completed { color: var(--success); }
+        .cancelled { color: var(--danger); }
+        .meal-hero { background: linear-gradient(135deg, #f9e9d7 0%, #f4d7b4 100%); border: 1px solid #e2c09a; }
+        .progress-shell { width: 100%; height: 16px; background: rgba(255,255,255,0.65); border-radius: 999px; overflow: hidden; margin: 14px 0 10px; }
+        .progress-bar { height: 100%; width: 0; background: linear-gradient(90deg, #6f8e6b 0%, #5c9b6a 50%, #3e5f4b 100%); border-radius: 999px; transition: width 0.35s ease; }
+        .progress-copy { font-size: 0.95rem; color: var(--gray-700); font-weight: 600; }
+        .meal-checklist { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+        .meal-check { display: flex; align-items: flex-start; gap: 12px; padding: 12px 14px; border-radius: 12px; background: #fff; border: 1px solid var(--gray-200); transition: all 0.2s ease; }
+        .meal-check:hover { border-color: #a5b4fc; box-shadow: 0 6px 18px rgba(99,102,241,0.12); }
+        .meal-check input { width: 18px; height: 18px; margin-top: 2px; }
+        .meal-check.done { background: #ecfdf5; border-color: #86efac; }
+        .meal-check-title { font-weight: 700; color: var(--gray-900); display: block; margin-bottom: 4px; }
+        .meal-check-note { color: var(--gray-500); font-size: 0.9rem; }
+        .streak-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.7); color: #92400e; font-weight: 700; }
+        .history-card { padding: 18px; border-radius: 12px; background: linear-gradient(135deg, #fff 0%, #f8fafc 100%); border: 1px solid var(--gray-200); }
+        .history-card strong { display: block; font-size: 1rem; color: var(--gray-900); margin-bottom: 6px; }
+        .history-card span { display: block; color: var(--gray-500); font-size: 0.9rem; }
+        .request-box { background: linear-gradient(135deg, #ecfeff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; }
+        .request-help { color: var(--gray-500); font-size: 0.9rem; margin-top: 8px; }
+        .settings-grid { display: grid; gap: 14px; }
+        .setting-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 16px; border: 1px solid var(--gray-200); border-radius: 12px; background: #fff; }
+        .setting-row strong { display: block; color: var(--gray-900); margin-bottom: 4px; }
+        .setting-row span { color: var(--gray-500); font-size: 0.9rem; }
+        .toggle { width: 52px; height: 30px; border-radius: 999px; background: var(--gray-300); position: relative; border: 0; cursor: pointer; transition: background 0.2s ease; }
+        .toggle::after { content: ''; width: 22px; height: 22px; background: #fff; border-radius: 50%; position: absolute; top: 4px; left: 4px; transition: transform 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .toggle.active { background: #22c55e; }
+        .toggle.active::after { transform: translateX(22px); }
+        .tracking-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+        .tracking-card { padding: 18px; border-radius: 12px; background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); border: 1px solid #dbeafe; }
+        .tracking-card strong { display: block; font-size: 1.5rem; color: var(--gray-900); margin-top: 8px; }
+        .tracking-card span { color: var(--gray-500); font-size: 0.88rem; }
+        .trend-up { color: var(--danger); font-weight: 700; }
+        .trend-down { color: var(--success); font-weight: 700; }
+        .trend-flat { color: var(--warning); font-weight: 700; }
+
+        /* ===== Profil Paneli - Düzenleme Formu ===== */
+        .pp-edit-form { display: none; }
+        .pp-fld { margin-bottom: 10px; }
+        .pp-fld label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--gray-500); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+        .pp-fld input { width: 100%; padding: 8px 11px; border: 1.5px solid var(--gray-200); border-radius: 7px; font: inherit; font-size: 0.875rem; color: var(--gray-800); box-sizing: border-box; transition: border-color 0.2s; }
+        .pp-fld input:focus { outline: 0; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(99,102,241,0.12); }
+        .pp-edit-actions { display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+        .pp-msg { display: none; padding: 8px 10px; border-radius: 7px; font-size: 0.82rem; font-weight: 600; margin-bottom: 10px; }
+        .pp-msg.ok { display: block; background: #d1fae5; color: #065f46; }
+        .pp-msg.err { display: block; background: #fee2e2; color: #991b1b; }
+
+        /* ===== Profil Paneli ===== */
+        .profile-btn { position: fixed; top: 18px; right: 22px; z-index: 600; width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: 3px solid rgba(255,255,255,0.9); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; color: white; box-shadow: 0 4px 16px rgba(99,102,241,0.45); transition: all 0.2s; overflow: hidden; padding: 0; }
+        .profile-btn svg { width: 22px; height: 22px; display: block; }
+        .sidebar-toggle { display: none; position: fixed; top: 18px; left: 18px; z-index: 700; width: 44px; height: 44px; border-radius: 12px; border: 0; background: #fff; color: var(--gray-800); box-shadow: 0 8px 20px rgba(0,0,0,0.15); cursor: pointer; align-items: center; justify-content: center; }
+        .sidebar-toggle span { display: block; width: 20px; height: 2px; background: currentColor; position: relative; }
+        .sidebar-toggle span::before, .sidebar-toggle span::after { content: ''; position: absolute; left: 0; width: 20px; height: 2px; background: currentColor; }
+        .sidebar-toggle span::before { top: -6px; }
+        .sidebar-toggle span::after { top: 6px; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 510; }
+        .profile-btn:hover { transform: scale(1.1); box-shadow: 0 6px 22px rgba(99,102,241,0.55); }
+        .pp-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); z-index: 800; align-items: center; justify-content: center; }
+        .pp-backdrop.open { display: flex; animation: fadeIn 0.2s ease; }
+        .pp-panel { width: min(460px, calc(100vw - 48px)); background: #fff; border-radius: 18px; box-shadow: 0 24px 64px rgba(0,0,0,0.22); overflow: hidden; animation: slideUp 0.25s ease; }
+        .pp-header { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 22px 24px; position: relative; }
+        .pp-avatar { width: 58px; height: 58px; border-radius: 50%; background: rgba(255,255,255,0.22); display: flex; align-items: center; justify-content: center; font-size: 1.65rem; margin-bottom: 10px; border: 3px solid rgba(255,255,255,0.45); overflow:hidden; }
+        .pp-avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+        .pp-photo-edit { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+        .pp-photo-preview { width:52px; height:52px; border-radius:50%; object-fit:cover; border:2px solid var(--border); display:none; }
+        .pp-photo-placeholder { width:52px; height:52px; border-radius:50%; background:var(--primary-light); color:var(--primary-dark); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.2rem; border:2px solid var(--border); flex-shrink:0; }
+        .pp-photo-actions { display:flex; flex-direction:column; gap:4px; }
+        .pp-photo-upload-label { cursor:pointer; font-size:.78rem; color:var(--primary-dark); padding:4px 10px; border:1.5px solid var(--primary); border-radius:6px; background:var(--primary-light); font-weight:600; transition:.15s; }
+        .pp-photo-upload-label:hover { background:var(--primary); color:#fff; }
+        .pp-photo-del { font-size:.78rem; color:#7f3d32; padding:4px 10px; border-radius:6px; background:#f2d8d0; font-weight:600; cursor:pointer; transition:.15s; border:none; }
+        .pp-photo-del:hover { background:var(--danger); color:#fff; }
+        .profile-btn img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+        .pp-header h3 { margin: 0 0 3px; font-size: 1.1rem; font-weight: 700; }
+        .pp-header p { margin: 0; font-size: 0.875rem; opacity: 0.82; }
+        .pp-close { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; border: 0; background: rgba(255,255,255,0.2); color: white; cursor: pointer; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .pp-close:hover { background: rgba(255,255,255,0.38); }
+        .pp-tabs { display: flex; border-bottom: 1px solid var(--gray-200); padding: 0 20px; background: #fff; }
+        .pp-tab { padding: 13px 14px; font-size: 0.875rem; font-weight: 600; color: var(--gray-400); border: 0; background: 0; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; }
+        .pp-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .pp-tab:hover:not(.active) { color: var(--gray-700); }
+        .pp-body { padding: 16px 22px; max-height: 300px; overflow-y: auto; }
+        .pp-content { display: none; }
+        .pp-content.active { display: block; }
+        .pp-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--gray-100); font-size: 0.875rem; }
+        .pp-row:last-child { border-bottom: 0; }
+        .pp-row-label { color: var(--gray-500); font-weight: 500; }
+        .pp-row-val { color: var(--gray-800); font-weight: 600; text-align: right; max-width: 58%; word-break: break-all; }
+        .pp-notif { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--gray-100); }
+        .pp-notif:last-child { border-bottom: 0; }
+        .pp-notif-icon { font-size: 1.2rem; flex-shrink: 0; }
+        .pp-notif-body strong { display: block; font-size: 0.85rem; color: var(--gray-800); margin-bottom: 2px; }
+        .pp-notif-body span { font-size: 0.8rem; color: var(--gray-500); }
+        .pp-setting { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid var(--gray-100); }
+        .pp-setting:last-child { border-bottom: 0; }
+        .pp-setting-text strong { display: block; font-size: 0.85rem; color: var(--gray-800); margin-bottom: 2px; }
+        .pp-setting-text span { font-size: 0.78rem; color: var(--gray-500); }
+        .pp-footer { padding: 14px 22px; border-top: 1px solid var(--gray-100); background: var(--gray-50); display: flex; justify-content: flex-end; }
+        .request-fab { position: fixed; right: 24px; bottom: 24px; z-index: 650; padding: 12px 18px; border-radius: 999px; background: var(--primary); color: #fff; border: 0; font-weight: 700; box-shadow: 0 8px 20px rgba(99,102,241,0.35); cursor: pointer; }
+        .request-fab:hover { background: var(--primary-dark); }
+        .overview-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+        .overview-card { background: linear-gradient(135deg, #fff 0%, #f8fafc 100%); border: 1px solid var(--gray-200); border-radius: 12px; padding: 18px; }
+        .overview-card h4 { margin: 0 0 12px; font-size: 1rem; font-weight: 700; color: var(--gray-900); }
+        .mini-stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .mini-stat { padding: 10px 12px; border-radius: 10px; background: #fff; border: 1px solid var(--gray-200); }
+        .mini-stat span { display: block; font-size: 0.75rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 6px; }
+        .mini-stat strong { font-size: 1.1rem; color: var(--gray-900); }
+        .next-appointment-box { margin-top: 12px; padding: 12px; border-radius: 10px; background: var(--gray-50); border: 1px solid var(--gray-200); }
+        .next-appointment-box .label { margin-bottom: 6px; }
+        @media (max-width: 900px) {
+            .content { padding: 20px; margin-left: 0; height: auto; min-height: 100vh; padding-top: 84px; }
+            .topbar { flex-direction: column; gap: 16px; }
+            .actions { width: 100%; justify-content: flex-start; }
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .sidebar { transform: translateX(-100%); transition: transform 0.25s ease; }
+            .app.sidebar-open .sidebar { transform: translateX(0); }
+            .sidebar-toggle { display: flex; }
+            .app.sidebar-open + .sidebar-overlay { display: block; }
+        }
+
+        /* ===== Bildirim Rozeti ===== */
+        .notif-tab-dot { display: none; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; margin-left: 5px; vertical-align: middle; }
+        .notif-tab-dot.show { display: inline-block; }
+        .pp-notif.unread { background: #fff7ed; border-radius: 8px; padding-left: 8px; padding-right: 8px; }
+        .pp-notif.urgent { border-left: 3px solid #ef4444; padding-left: 9px; background: #fff1f2; border-radius: 8px; }
+        .notif-detail-line { font-size: 0.78rem; color: var(--gray-500); margin-top: 2px; }
+
+        /* ===== Diyetisyen Müsaitlik Bilgisi (Modal) ===== */
+        .avail-info-box { margin: 10px 0; padding: 10px 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; }
+        .avail-info-title { font-size: 0.82rem; font-weight: 700; color: #166534; margin-bottom: 6px; }
+        .avail-info-slots { display: flex; flex-wrap: wrap; gap: 5px; }
+        .avail-info-pill { padding: 3px 9px; border-radius: 999px; background: #dcfce7; color: #166534; font-size: 0.75rem; font-weight: 600; }
+        .avail-info-empty { color: #6b7280; font-size: 0.82rem; font-style: italic; }
+        /* ===== Randevu Sihirbazı ===== */
+        .appt-wizard-wrap { position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:1200;padding:20px; }
+        .appt-wizard-wrap.open { display:flex;animation:fadeIn .2s ease; }
+        .appt-wizard-box { background:#fff;border-radius:16px;padding:28px;width:min(540px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.22); }
+        .appt-wiz-head { display:flex;align-items:center;justify-content:space-between;margin-bottom:18px; }
+        .appt-wiz-head h3 { margin:0;font-size:1.1rem;color:var(--gray-900); }
+        .appt-wiz-step { font-size:.75rem;color:var(--gray-500);margin-bottom:3px; }
+        .appt-date-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:8px; }
+        .appt-date-btn { padding:8px 4px;border-radius:8px;border:1.5px solid var(--gray-200);background:#fff;font:inherit;font-size:.75rem;cursor:pointer;text-align:center;transition:.15s; }
+        .appt-date-btn .day-name { font-size:.65rem;color:var(--gray-400);display:block; }
+        .appt-date-btn.avail { background:#f0fdf4;border-color:#86efac;color:#166534;cursor:pointer; }
+        .appt-date-btn.avail:hover { background:#d1fae5; }
+        .appt-date-btn.selected { background:#065f46;border-color:#065f46;color:#fff;font-weight:700; }
+        .appt-date-btn.selected .day-name { color:rgba(255,255,255,.7); }
+        .appt-date-btn.disabled { opacity:.38;cursor:not-allowed;pointer-events:none; }
+        .appt-date-week-label { font-size:.75rem;color:var(--gray-500);margin-bottom:6px;text-align:center; }
+        .appt-date-nav { display:flex;align-items:center;justify-content:space-between;margin-bottom:8px; }
+        .appt-date-nav button { padding:5px 12px;border-radius:6px;border:1.5px solid var(--gray-200);background:#fff;font:inherit;font-size:.82rem;cursor:pointer; }
+        .appt-hour-grid { display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px; }
+        .appt-hour-btn { padding:9px 14px;border-radius:8px;border:1.5px solid var(--gray-200);background:#fff;font:inherit;font-size:.85rem;cursor:pointer;transition:.15s; }
+        .appt-hour-btn.avail { background:#f0fdf4;border-color:#86efac;color:#166534; }
+        .appt-hour-btn.avail:hover { background:#d1fae5; }
+        .appt-hour-btn.selected { background:#065f46;border-color:#065f46;color:#fff;font-weight:700; }
+        .appt-hour-btn.booked,.appt-hour-btn.disabled { opacity:.35;cursor:not-allowed;pointer-events:none;background:#fff8f8;border-color:#fca5a5;color:#991b1b; }
+        .appt-confirm-summary { background:var(--primary-light);border-radius:10px;padding:14px 16px;margin-bottom:14px;font-size:.9rem;line-height:1.8; }
+        /* ===== Öğün Kartları (Danışan) ===== */
+        .meal-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+        .meal-card { border: 1.5px solid var(--gray-200); border-radius: 12px; padding: 14px 16px; background: #fff; }
+        .meal-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .meal-card-title { font-weight: 700; font-size: 0.92rem; color: var(--gray-900); display: flex; align-items: center; gap: 6px; }
+        .meal-card-check { display: flex; align-items: center; gap: 6px; }
+        .meal-card-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+        .meal-card-content { font-size: 0.87rem; color: var(--gray-700); line-height: 1.6; white-space: pre-line; min-height: 40px; }
+        .meal-card.done { background: var(--primary-light); border-color: var(--primary); }
+        .meal-card.done .meal-card-content { color: var(--gray-500); text-decoration: line-through; }
+        .meal-card-empty { color: var(--gray-400); font-style: italic; font-size: 0.82rem; }
+        @media (max-width: 640px) { .meal-cards-grid { grid-template-columns: 1fr; } }
+        .chat-btn { position:fixed; top:18px; right:76px; z-index:600; width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); border:3px solid rgba(255,255,255,0.9); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:white; box-shadow:0 4px 16px rgba(111,142,107,.45); transition:all 0.2s; overflow:visible; }
+        .chat-btn:hover { transform:scale(1.1); }
+        .chat-badge { position:absolute; top:-4px; right:-4px; background:#ef4444; color:#fff; border-radius:999px; font-size:.65rem; font-weight:700; min-width:16px; height:16px; display:none; align-items:center; justify-content:center; padding:0 3px; }
+        .chat-badge.show { display:flex; }
+        .chat-panel { position:fixed; top:72px; right:76px; z-index:700; width:360px; max-height:520px; background:#fff; border-radius:16px; box-shadow:0 24px 64px rgba(0,0,0,.22); display:none; flex-direction:column; overflow:hidden; animation:slideUp .2s ease; }
+        .chat-panel.open { display:flex; }
+        .chat-head { background:linear-gradient(135deg,var(--primary),var(--primary-dark)); color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; font-weight:600; }
+        .chat-messages { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; min-height:200px; }
+        .chat-msg { max-width:80%; padding:8px 12px; border-radius:12px; font-size:.85rem; line-height:1.4; word-break:break-word; }
+        .chat-msg.mine { background:var(--primary-light); color:var(--primary-dark); align-self:flex-end; border-bottom-right-radius:3px; }
+        .chat-msg.theirs { background:#f3f4f6; color:#111; align-self:flex-start; border-bottom-left-radius:3px; }
+        .chat-msg .chat-time { font-size:.68rem; color:#999; margin-top:3px; text-align:right; }
+        .chat-attach { max-width:200px; border-radius:8px; margin-top:4px; }
+        .chat-attach-link { display:inline-flex; align-items:center; gap:6px; background:#e5e7eb; padding:5px 10px; border-radius:8px; font-size:.78rem; text-decoration:none; color:#374151; }
+        .chat-input-area { border-top:1px solid var(--border); padding:10px; display:flex; flex-direction:column; gap:6px; background:var(--gray-50); }
+        .chat-input-row { display:flex; gap:6px; }
+        .chat-input-row input[type=text] { flex:1; border:1.5px solid var(--border); border-radius:8px; padding:7px 10px; font-size:.85rem; outline:none; background:#fff; color:var(--gray-800); }
+        .chat-input-row input[type=text]:focus { border-color:var(--primary); }
+        .chat-input-row button { background:var(--primary); color:#fff; border:none; border-radius:8px; padding:7px 14px; cursor:pointer; font-size:.85rem; transition:background .2s; }
+        .chat-input-row button:hover { background:var(--primary-dark); }
+        .chat-upload-row { display:flex; align-items:center; gap:8px; }
+        .chat-upload-label { cursor:pointer; font-size:.78rem; color:var(--gray-500); display:flex; align-items:center; gap:4px; padding:4px 8px; border:1px dashed var(--border); border-radius:6px; }
+        .chat-upload-label:hover { border-color:var(--primary); color:var(--primary); }
+        .chat-preview { font-size:.72rem; color:var(--primary-dark); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+        /* ===== DARK MODE TOGGLE BUTTON ===== */
+        .dm-toggle { width:66px; height:34px; border-radius:999px; border:0; cursor:pointer; position:relative; background:#94a3b8; transition:background 0.35s ease; padding:0; flex-shrink:0; }
+        .dm-knob { position:absolute; top:4px; left:4px; width:26px; height:26px; border-radius:50%; background:#fff; transition:transform 0.35s cubic-bezier(.4,0,.2,1), background 0.3s ease, box-shadow 0.3s ease; display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,0.22); pointer-events:none; line-height:1; }
+        .dm-toggle.active { background:#2d4f38; }
+        .dm-toggle.active .dm-knob { transform:translateX(32px); background:#ffd060; box-shadow:0 0 12px rgba(255,208,60,0.65), 0 2px 8px rgba(0,0,0,0.2); }
+
+        /* ===== DARK MODE ===== */
+        body.dark {
+            --primary: #5a8f54; --primary-dark: #357040; --primary-light: #1a3020;
+            --surface: #0d1710; --surface-2: #111e16; --border: #2e5038;
+            --gray-50: #0f1b13; --gray-100: #152019; --gray-200: #2a4235;
+            --gray-300: #365445; --gray-400: #5a8068; --gray-500: #7da88a;
+            --gray-600: #9ec8aa; --gray-700: #bcdec6; --gray-800: #d8f0e0; --gray-900: #edfaf2;
+            background: linear-gradient(135deg, #0a130e 0%, #0d1912 100%); color: #d8f0e0;
+        }
+        body.dark .card, body.dark .panel { background: #152019; border-color: #2a4235; box-shadow: 0 4px 20px rgba(255,218,80,0.07); }
+        body.dark .card { background: linear-gradient(135deg, #162218 0%, #111d15 100%); }
+        body.dark .card:hover { box-shadow: 0 8px 28px rgba(255,218,80,0.13); }
+        body.dark .modal { background: #152019; border: 1px solid #2a4235; box-shadow: 0 20px 60px rgba(0,0,0,0.55); }
+        body.dark .modal-backdrop { background: rgba(0,0,0,0.72); }
+        body.dark .pp-panel { background: #152019; box-shadow: 0 24px 64px rgba(0,0,0,0.55), 0 0 40px rgba(255,218,80,0.05); }
+        body.dark .pp-tabs { background: #152019; border-color: #2a4235; }
+        body.dark .pp-row, body.dark .pp-notif, body.dark .pp-setting { border-color: #2a4235; }
+        body.dark .pp-setting-text strong { color: #d8f0e0; }
+        body.dark .pp-setting-text span { color: #9ec8aa; }
+        body.dark th { background: #111d15; color: #9ec8aa; }
+        body.dark tr:hover { background: #111d15; }
+        body.dark th, body.dark td { border-color: #2a4235; }
+        body.dark input, body.dark textarea, body.dark select { background: #111d15; color: #d8f0e0; border-color: #2e5038; }
+        body.dark input::placeholder, body.dark textarea::placeholder { color: #5a8068; }
+        body.dark .label { color: #9ec8aa; }
+        body.dark .muted { color: #7da88a; }
+        body.dark .panel-head h3 { color: #edfaf2; }
+        body.dark .topbar h2 { color: #edfaf2; }
+        body.dark .topbar p { color: #9ec8aa; }
+        body.dark .sidebar { box-shadow: 2px 0 16px rgba(255,218,80,0.1); }
+        body.dark .brand-title { text-shadow: 0 0 28px rgba(255,218,80,0.5), 0 4px 14px rgba(0,0,0,0.65) !important; }
+        body.dark .sidebar-brand .brand-mark { box-shadow: 0 0 20px rgba(255,218,80,0.22), inset 0 0 8px rgba(255,218,80,0.06); border-color: rgba(255,218,80,0.28); }
+        body.dark .sidebar-toggle { background: #152019; color: #d8f0e0; box-shadow: 0 8px 20px rgba(0,0,0,0.45); }
+        body.dark .chat-panel { background: #152019; }
+        body.dark .chat-input-area { background: #111d15; border-color: #2a4235; }
+        body.dark .chat-input-row input[type=text] { background: #152019; color: #d8f0e0; border-color: #2a4235; }
+        body.dark .chat-head { background: linear-gradient(135deg, #1e3a24, #132019); }
+        body.dark .overview-card { background: #152019; border-color: #2a4235; }
+        body.dark .tracking-card { background: linear-gradient(135deg, #162218 0%, #111d15 100%); border-color: #2a4235; }
+        body.dark .btn-ghost { background: #1a2e22; color: #bcdec6; }
+        body.dark .btn-ghost:hover { background: #2a4235; }
+        body.dark .btn-secondary { background: #1a2e22; color: #bcdec6; }
+        body.dark .close { background: #2a4235; color: #d8f0e0; }
+        body.dark .app-toast.success { background: rgba(34,197,94,0.18); color: #86efac; border-color: rgba(34,197,94,0.35); }
+        body.dark .app-toast.error { background: rgba(239,68,68,0.18); color: #fca5a5; border-color: rgba(239,68,68,0.35); }
+        body.dark .app-toast.info { background: rgba(59,130,246,0.18); color: #93c5fd; border-color: rgba(59,130,246,0.35); }
+        body.dark .pill.success { background: #14532d; color: #86efac; }
+        body.dark .pill.warning { background: #451a03; color: #fed7aa; }
+        body.dark .pill.danger { background: #450a0a; color: #fca5a5; }
+        body.dark .pill.info { background: #1e3a8a; color: #bfdbfe; }
+        /* Plan özeti kartları (mini-stat) */
+        body.dark .mini-stat { background: #1a2e22; border-color: #2a4235; }
+        body.dark .mini-stat span { color: #9ec8aa; }
+        body.dark .mini-stat strong { color: #edfaf2; }
+        body.dark .progress-copy { color: #9ec8aa; }
+        body.dark .streak-chip { background: #1a2e22; color: #86efac; border-color: #2e5038; }
+        body.dark .overview-card { background: #152019; border-color: #2a4235; }
+        body.dark .overview-card h4 { color: #edfaf2; }
+        body.dark .mini-stat-grid .mini-stat strong { color: #edfaf2; }
+        /* Hedefler / görevler - meal cards */
+        body.dark .meal-card { background: #1a2e22; border-color: #2a4235; }
+        body.dark .meal-card-title { color: #edfaf2; }
+        body.dark .meal-card-content { color: #bcdec6; }
+        body.dark .meal-card.done { background: #152a1c; border-color: #357040; }
+        body.dark .meal-card.done .meal-card-content { color: #5a8068; }
+        body.dark .meal-card-empty { color: #5a8068; }
+        body.dark .meal-task-checkbox { accent-color: #5a8f54; }
+        /* Legacy checklist */
+        body.dark .meal-check { background: #1a2e22; border-color: #2a4235; }
+        body.dark .meal-check.done { background: #152a1c; border-color: #357040; }
+        body.dark .meal-check-title { color: #edfaf2; }
+        body.dark .meal-check-note { color: #9ec8aa; }
+        /* Randevu talep et paneli */
+        body.dark .request-box { background: linear-gradient(135deg, #0f1f18 0%, #111d15 100%); border-color: #2a4235; }
+        body.dark .request-help { color: #9ec8aa; }
+        body.dark .pp-msg.ok { background: #14532d; color: #86efac; }
+        body.dark .pp-msg.err { background: #450a0a; color: #fca5a5; }
+        /* Randevu sihirbazı modal */
+        body.dark .appt-wizard-box { background: #152019; box-shadow: 0 24px 64px rgba(0,0,0,.55); }
+        body.dark .appt-wiz-head h3 { color: #edfaf2; }
+        body.dark .appt-wiz-step { color: #9ec8aa; }
+        body.dark #appt-wiz-body { color: #d8f0e0; }
+        body.dark #appt-wiz-body label { color: #9ec8aa; }
+        body.dark #appt-wiz-body input, body.dark #appt-wiz-body select, body.dark #appt-wiz-body textarea { background: #111d15; color: #d8f0e0; border-color: #2e5038; }
+        body.dark #appt-wiz-body button { background: #1a2e22; border-color: #2e5038; color: #bcdec6; }
+        body.dark #appt-wiz-body button.sel,
+        body.dark #appt-wiz-body button.active,
+        body.dark #appt-wiz-body button[data-selected="true"] { background: #1a3020; border-color: #5a8f54; color: #86efac; }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" aria-label="Kategorileri aç/kapat">
+        <span></span>
+    </button>
+    <div id="toast-host" class="toast-host" aria-live="polite" aria-atomic="true"></div>
+    <div class="app" id="app-shell">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-mark">
+                    <img src="assets/fitrehber-logo.png" alt="FitRehber logosu">
+                </div>
+                <div class="brand-text">
+                    <h1><span class="brand-title">FitRehber</span></h1>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <button class="nav-button active" onclick="showSection(event, 'overview')">Genel Bakış</button>
+                <button class="nav-button" onclick="showSection(event, 'measurements')">Ölçümler</button>
+                <button class="nav-button" onclick="showSection(event, 'appointments')">Randevular</button>
+                <button class="nav-button" onclick="showSection(event, 'mealplan')">Beslenme Planı</button>
+            </nav>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Overview Section -->
+            <section id="overview" class="section active">
+                <div class="topbar">
+                    <div>
+                        <h2>Merhaba, <span id="userName">Kullanıcı</span>!</h2>
+                        <!-- <p>Kliniğinizdeki durumunuzu buradan takip edebilirsiniz.</p> -->
+                    </div>
+                    <div class="actions">
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Genel Özet</h3>
+                            <p>Son ölçümler ve randevu bilgileriniz.</p>
+                        </div>
+                    </div>
+                    <div class="overview-cards">
+                        <div class="overview-card">
+                            <h4>Son Ölçümler</h4>
+                            <div class="mini-stat-grid">
+                                <div class="mini-stat"><span>Son BMI</span><strong id="currentBMI">-</strong></div>
+                                <div class="mini-stat"><span>Son Ağırlık</span><strong id="currentWeight">-</strong></div>
+                                <div class="mini-stat"><span>Son Bel</span><strong id="overviewWaist">-</strong></div>
+                                <div class="mini-stat"><span>Son Kalça</span><strong id="overviewHip">-</strong></div>
+                                <div class="mini-stat"><span>Yağ Oranı</span><strong id="overviewBodyFat">-</strong></div>
+                            </div>
+                        </div>
+                        <div class="overview-card">
+                            <h4>Randevu Bilgileri</h4>
+                            <div class="mini-stat-grid">
+                                <div class="mini-stat"><span>Aktif Randevu</span><strong id="activeAppointments">-</strong></div>
+                                <div class="mini-stat"><span>Tamamlanan</span><strong id="completedAppointments">-</strong></div>
+                            </div>
+                            <div class="next-appointment-box">
+                                <div class="label">En Yakın Randevu</div>
+                                <div id="nextAppointmentDate">-</div>
+                                <div id="nextAppointmentType" class="muted" style="margin-top:4px;"></div>
+                                <div style="margin-top:10px; display:flex; gap:8px;">
+                                    <button class="btn-danger" type="button" id="overview-cancel-btn">İptal Et</button>
+                                    <button class="btn-action" type="button" id="overview-reschedule-btn">Ertele</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- İlerleme Grafiği Kartı -->
+                <div class="panel" style="margin-bottom:20px;">
+                    <div class="panel-head">
+                        <div><h3>İlerleme Grafiğim</h3></div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap;" id="user-progress-tabs"></div>
+                    </div>
+                    <div id="user-progress-empty" style="display:none;text-align:center;padding:20px;color:var(--gray-400);font-size:.9rem;">Henüz ölçüm verisi bulunmuyor. Diyetisyeniniz ölçüm girdiğinde grafik burada görünecektir.</div>
+                    <div id="user-progress-chart-wrap" style="position:relative;height:220px;display:none;">
+                        <canvas id="user-progress-canvas"></canvas>
+                    </div>
+                    <div id="user-progress-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px;"></div>
+                </div>
+
+                <!-- Günlük Takip Kartı -->
+                <div class="panel" style="margin-bottom:20px;">
+                    <div class="panel-head">
+                        <div><h3>Günlük Takip</h3><p style="font-size:.82rem;color:var(--gray-500);margin:0;">Bugünkü su tüketimi ve adım sayınızı girin</p></div>
+                    </div>
+                    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px;">
+                        <div style="flex:1;min-width:130px;">
+                            <label style="font-size:.82rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:4px;">Su Tüketimi (Litre)</label>
+                            <input type="number" id="tracking-water" min="0" max="10" step="0.1" placeholder="ör. 2.5" style="width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.95rem;box-sizing:border-box;">
+                        </div>
+                        <div style="flex:1;min-width:130px;">
+                            <label style="font-size:.82rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:4px;">Adım Sayısı</label>
+                            <input type="number" id="tracking-steps" min="0" max="100000" step="100" placeholder="ör. 8000" style="width:100%;padding:9px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:.95rem;box-sizing:border-box;">
+                        </div>
+                        <button class="btn" type="button" onclick="saveTracking()" style="padding:9px 22px;white-space:nowrap;">Kaydet</button>
+                    </div>
+                    <div id="tracking-msg" style="display:none;margin-bottom:12px;font-size:.85rem;padding:8px 14px;border-radius:8px;"></div>
+                    <div id="tracking-history" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;"></div>
+                    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px;">
+                        <button class="btn-action" type="button" onclick="openMyTrackingChart('steps')">📊 Adım Grafiği</button>
+                        <button class="btn-action" type="button" onclick="openMyTrackingChart('water')">💧 Su Grafiği</button>
+                    </div>
+                </div>
+
+                <!-- Quick Info -->
+                <div class="split">
+                    <div class="panel dietitian-info">
+                        <div class="panel-head">
+                            <div>
+                                <h3>Diyetisyeniniz</h3>
+                                <p id="dietitianName">-</p>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <div class="label">Uzmanlık</div>
+                                <div id="dietitianSpecialization">-</div>
+                            </div>
+                            <div>
+                                <div class="label">Lisans No</div>
+                                <div id="dietitianLicense">-</div>
+                            </div>
+                            <div>
+                                <div class="label">Telefon</div>
+                                <div id="dietitianPhone">-</div>
+                            </div>
+                            <div>
+                                <div class="label">Email</div>
+                                <div id="dietitianEmail">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                </div>
+            </section>
+
+            <!-- Measurements Section -->
+            <section id="measurements" class="section">
+                <div class="topbar">
+                    <div>
+                        <h2>Ölçüm Geçmişim</h2>
+                        <p>Vücut ölçümleri ve BMI takibi.</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn" onclick="viewMeasurementHistory()">Grafik</button>
+                        <button class="btn-secondary" onclick="exportMeasurements()">Dışa Aktar</button>
+                    </div>
+                </div>
+
+                <div class="tracking-strip">
+                    <div class="tracking-card">
+                        <span>Bugünku Kilo</span>
+                        <strong id="track-today-weight">-</strong>
+                        <div class="trend-up" id="track-weight-change">-</div>
+                    </div>
+                    <div class="tracking-card">
+                        <span>Haftalik Ortalama</span>
+                        <strong id="track-weekly-average">-</strong>
+                        <div class="trend-down" id="track-weekly-trend">-</div>
+                    </div>
+                    <div class="tracking-card">
+                        <span>Son BMI</span>
+                        <strong id="track-bmi">-</strong>
+                        <div class="trend-flat" id="track-bmi-status">-</div>
+                    </div>
+                    <div class="tracking-card">
+                        <span>Takip Sıklığı</span>
+                        <strong id="track-frequency">-</strong>
+                        <div class="muted" id="track-frequency-detail">-</div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Son Ölçümler</h3>
+                        <p id="lastMeasurementDate">10 Mart 2024</p>
+                    </div>
+                    <div class="grid">
+                        <div class="field">
+                            <label>Ağırlık (kg)</label>
+                            <div class="value">75.2</div>
+                        </div>
+                        <div class="field">
+                            <label>Boy (cm)</label>
+                            <div>175</div>
+                        </div>
+                        <div class="field">
+                            <label>BMI</label>
+                            <div class="value">24.5</div>
+                        </div>
+                        <div class="field">
+                            <label>BMI Durumu</label>
+                            <span class="bmi-status bmi-normal">Normal</span>
+                        </div>
+                        <div class="field">
+                            <label>Bel Çevresi (cm)</label>
+                            <div>85</div>
+                        </div>
+                        <div class="field">
+                            <label>Kalça Çevresi (cm)</label>
+                            <div>95</div>
+                        </div>
+                        <div class="field">
+                            <label>Bel/Kalça Oranı</label>
+                            <div>0.89</div>
+                        </div>
+                        <div class="field">
+                            <label>Vücut Yağ Oranı (%)</label>
+                            <div>18.5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Ölçüm Geçmişi</h3>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Ağırlık</th>
+                                    <th>BMI</th>
+                                    <th>Bel</th>
+                                    <th>Kalça</th>
+                                    <th>Yağ %</th>
+                                    <th>Değişim</th>
+                                </tr>
+                            </thead>
+                            <tbody id="measurementHistory">
+                                <tr>
+                                    <td>10.03.2024</td>
+                                    <td>75.2 kg</td>
+                                    <td>24.5</td>
+                                    <td>85 cm</td>
+                                    <td>95 cm</td>
+                                    <td>18.5%</td>
+                                    <td class="success">+0.3 kg</td>
+                                </tr>
+                                <tr>
+                                    <td>03.03.2024</td>
+                                    <td>74.9 kg</td>
+                                    <td>24.4</td>
+                                    <td>86 cm</td>
+                                    <td>96 cm</td>
+                                    <td>19.1%</td>
+                                    <td class="success">-0.5 kg</td>
+                                </tr>
+                                <tr>
+                                    <td>24.02.2024</td>
+                                    <td>75.4 kg</td>
+                                    <td>24.6</td>
+                                    <td>87 cm</td>
+                                    <td>97 cm</td>
+                                    <td>19.8%</td>
+                                    <td class="danger">+1.2 kg</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointments Section -->
+            <section id="appointments" class="section">
+                <div class="topbar">
+                    <div>
+                        <h2>Randevularım</h2>
+                        <!-- <p>Geçmiş ve gelecek randevularınızı görüntüleyin.</p> -->
+                    </div>
+                    <div class="actions">
+                        <button class="btn" style="display:none;" onclick="requestAppointment()">Randevu Talep Et</button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h3>Randevu Takvimi</h3>
+                        <!-- <p>Yaklaşan ve geçmiş randevularınızı tek ekranda görüntüleyin.</p> -->
+                    </div>
+                    <div class="table-wrap" style="margin-bottom:16px;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th colspan="5">Yaklaşan Randevular</th>
+                                </tr>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Saat</th>
+                                    <th>Tür</th>
+                                    <th>Durum</th>
+                                    <th>İşlemler</th>
+                                </tr>
+                            </thead>
+                            <tbody id="upcomingAppointments">
+                                <tr><td colspan="5" class="muted">Randevular yükleniyor...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th colspan="5">Geçmiş Randevular</th>
+                                </tr>
+                                <tr>
+                                    <th>Tarih</th>
+                                    <th>Tür</th>
+                                    <th>Durum</th>
+                                    <th>Puan</th>
+                                    <th>Notlar</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pastAppointments">
+                                <tr><td colspan="5" class="muted">Randevular yükleniyor...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Meal Plan Section -->
+            <section id="mealplan" class="section">
+                <div class="topbar">
+                    <div>
+                        <h2>Beslenme Planım</h2>
+                        <!-- <p>Günlük beslenme programınızı görüntüleyin.</p> -->
+                    </div>
+                    <div class="actions">
+                        <button class="btn-secondary" onclick="downloadMealPlan()">İndir</button>
+                    </div>
+                </div>
+
+                <div class="panel meal-hero" id="meal-daily-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Günlük Plan ve İlerleme</h3>
+                            <p>Görevleri tamamla, ilerleme ve seri güncellensin.</p>
+                        </div>
+                        <div class="streak-chip" id="meal-streak-chip">0 günlük seri</div>
+                    </div>
+                    <div id="meal-task-lists" class="split"></div>
+                    <div class="progress-shell">
+                        <div id="meal-progress-bar" class="progress-bar"></div>
+                    </div>
+                    <div class="split" style="align-items:center;">
+                        <div>
+                            <div class="label">Tamamlama Oranı</div>
+                            <div class="value" id="meal-progress-value">0%</div>
+                        </div>
+                        <div class="progress-copy" id="meal-progress-message">Bugün başla, ilk adım motivasyonu getirir.</div>
+                    </div>
+                </div>
+
+                <div class="panel" id="meal-plan-summary-panel">
+                    <div class="panel-head">
+                        <div>
+                            <h3>Plan Özeti</h3>
+                            <p id="mealPlanDate">Plan yükleniyor...</p>
+                        </div>
+                        <span id="meal-plan-status-badge" class="pill success">Aktif</span>
+                    </div>
+                    <div class="mini-stat-grid">
+                        <div class="mini-stat"><span>Günlük Kalori</span><strong id="mealPlanCalories">-</strong></div>
+                        <div class="mini-stat"><span>Protein</span><strong id="mealPlanProtein">-</strong></div>
+                        <div class="mini-stat"><span>Karbonhidrat</span><strong id="mealPlanCarbs">-</strong></div>
+                        <div class="mini-stat"><span>Yağ</span><strong id="mealPlanFat">-</strong></div>
+                        <div class="mini-stat"><span>Kısıtlamalar</span><strong id="mealPlanRestriction">-</strong></div>
+                        <div class="mini-stat"><span>Durum</span><strong id="mealPlanStatus">-</strong></div>
+                    </div>
+                    <div class="mini-stat-grid" style="margin-top:12px;">
+                        <div class="mini-stat"><span>Plan Adı</span><strong id="mealPlanTitle">-</strong></div>
+                        <div class="mini-stat"><span>Süre</span><strong id="mealPlanDuration">-</strong></div>
+                    </div>
+                    <div class="mini-stat" style="margin-top:12px;">
+                        <span>Notlar</span>
+                        <strong id="mealPlanNotes">-</strong>
+                    </div>
+
+                    <div class="panel-head" style="margin-top:18px;">
+                        <div>
+                            <h3>Geçmiş Beslenme Planları</h3>
+                            <!-- <p>Daha önce kullanılan planlar ve kısa özetleri.</p> -->
+                        </div>
+                    </div>
+                    <div id="meal-plan-history" class="split"></div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- İptal Onay Modali -->
+    <div id="cancel-confirm-modal" class="modal-backdrop">
+        <div class="modal" style="width:min(420px,100%);text-align:center;">
+            <div style="font-size:2.5rem;margin-bottom:12px;">Uyarı</div>
+            <h3 style="margin:0 0 8px;">Randevu İptal</h3>
+            <p style="color:var(--gray-500);margin:0 0 24px;">Bu randevuyu iptal etmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve diyetisyeniniz bilgilendirilecektir.</p>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button class="btn-ghost" type="button" onclick="closeCancelModal()">Hayır, Vazgeç</button>
+                <button class="btn-danger" type="button" id="confirm-cancel-btn" onclick="confirmCancel()">Evet, İptal Et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ertele Modali -->
+    <div id="reschedule-modal" class="modal-backdrop">
+        <div class="modal" style="width:min(460px,100%);">
+            <div class="modal-head">
+                <h3>Randevuyu Ertele</h3>
+                <button class="close" type="button" onclick="closeRescheduleModal()">x</button>
+            </div>
+            <p style="color:var(--gray-500);margin:0 0 20px;">Yeni randevu tarihi ve saatini seçin. Seçiminiz diyetisyeninize iletilecektir.</p>
+            <div class="grid">
+                <div class="field full">
+                    <label for="reschedule-datetime">Yeni Tarih ve Saat</label>
+                    <input id="reschedule-datetime" type="datetime-local" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:1rem;">
+                </div>
+                <div class="field full">
+                    <label for="reschedule-note">Not (isteğe bağlı)</label>
+                    <textarea id="reschedule-note" placeholder="Erteleme sebebinizi belirtebilirsiniz..." style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:0.95rem;resize:vertical;min-height:72px;"></textarea>
+                </div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+                <button class="btn-ghost" type="button" onclick="closeRescheduleModal()">Vazgeç</button>
+                <button class="btn" type="button" id="confirm-reschedule-btn" onclick="confirmReschedule()">Ertele</button>
+            </div>
+            <div id="reschedule-msg" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:0.9rem;"></div>
+        </div>
+    </div>
+    <div class="sidebar-overlay" onclick="closeSidebar()" aria-hidden="true"></div>
+
+    <!-- Randevu Talep Modali -->
+    <!-- Adım Adım Randevu Sihirbazı -->
+    <div id="appt-wizard" class="appt-wizard-wrap" onclick="if(event.target===this)closeApptWizard()">
+        <div class="appt-wizard-box">
+            <div class="appt-wiz-head">
+                <div><div class="appt-wiz-step" id="appt-wiz-step-lbl">Adım 1 / 3</div><h3 id="appt-wiz-title">Tarih Seçin</h3></div>
+                <button class="close" onclick="closeApptWizard()">x</button>
+            </div>
+            <div id="appt-wiz-body"></div>
+            <div id="appt-wiz-msg" style="display:none;padding:8px 12px;border-radius:8px;font-size:.85rem;margin-top:10px;"></div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+                <button class="btn-ghost" id="appt-wiz-back" onclick="apptWizBack()" style="display:none;">Geri</button>
+                <button class="btn" id="appt-wiz-next" onclick="apptWizNext()">Devam</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="appointment-request-modal" class="modal-backdrop">
+        <div class="modal" style="width:min(520px,100%);">
+            <div class="modal-head">
+                <h3>Yeni Randevu Talebi</h3>
+                <button class="close" type="button" onclick="closeAppointmentRequestModal()">x</button>
+            </div>
+            <!-- <p style="color:var(--gray-500);margin:0 0 14px;">Diyetisyeniniz müsaitse randevunuz onaylanacaktır.</p> -->
+            <div class="grid">
+                <div class="field">
+                    <label for="appointment-request-datetime">Tarih ve Saat</label>
+                    <input id="appointment-request-datetime" type="datetime-local">
+                </div>
+                <div class="field">
+                    <label for="appointment-request-duration">Süre (dk)</label>
+                    <input id="appointment-request-duration" type="number" min="15" step="5" value="30">
+                </div>
+                <div class="field full">
+                    <label for="appointment-request-reason">Açıklama</label>
+                    <textarea id="appointment-request-reason" placeholder="Randevu nedeni"></textarea>
+                </div>
+            </div>
+            <!-- Diyetisyen Müsaitlik Bilgisi -->
+            <div id="appointment-avail-info" class="avail-info-box" style="display:none;">
+                <div class="avail-info-title">📅 Diyetisyeninizin Müsait Olduğu Saatler</div>
+                <div id="appointment-avail-slots" class="avail-info-slots"></div>
+            </div>
+            <div class="request-help" id="appointment-request-help">Diyetisyeninizin uygunluk durumuna göre onay bekleyeceksiniz.</div>
+            <div class="pp-msg" id="appointment-request-msg"></div>
+            <div style="margin-top:14px; text-align:right;">
+                <button class="btn" id="appointment-request-btn" onclick="submitAppointmentRequest()">Randevu Talep Et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beslenme Planı Talep Modali -->
+    <div id="mealplan-request-modal" class="modal-backdrop">
+        <div class="modal" style="width:min(520px,100%);">
+            <div class="modal-head">
+                <h3>Beslenme Planı Talebi</h3>
+                <button class="close" type="button" onclick="closeMealPlanRequestModal()">x</button>
+            </div>
+            <!-- <p style="color:var(--gray-500);margin:0 0 14px;">Diyetisyenine yeni plan ya da plan güncelleme isteği gönderebilirsin.</p> -->
+            <div class="grid">
+                <div class="field">
+                    <label>Talep Türü</label>
+                    <select id="meal-plan-request-type">
+                        <option selected>Yeni plan talebi</option>
+                        <option>Mevcut planı güncelle</option>
+                        <option>Öğün değişikliği iste</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Öncelik</label>
+                    <select id="meal-plan-request-priority">
+                        <option>Normal</option>
+                        <option selected>Yüksek</option>
+                        <option>Takip gerektiriyor</option>
+                    </select>
+                </div>
+                <div class="field full">
+                    <label>Açıklama</label>
+                    <textarea id="meal-plan-request-note" placeholder="Talebinizi yazın..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions" style="justify-content:flex-end;margin-top:12px;">
+                <button class="btn" type="button" onclick="requestNewMealPlan()">Talep Gönder</button>
+            </div>
+            <!-- <div class="request-help" id="meal-plan-request-help">Talebin aktif planına bağlanarak diyetisyenine iletilir.</div> -->
+        </div>
+    </div>
+
+    <!-- Ölçüm Grafik Modali -->
+    <div id="measurement-chart-modal" class="modal-backdrop">
+        <div class="modal" style="width:min(760px,100%);">
+            <div class="modal-head">
+                <h3>Ölçüm Grafiği</h3>
+                <button class="close" type="button" onclick="closeMeasurementChart()">x</button>
+            </div>
+            <!-- <p style="color:var(--gray-500);margin:0 0 14px;">Ağırlık ve BMI değişimini grafik olarak görüntüleyin.</p> -->
+            <canvas id="measurement-chart-canvas" class="chart-canvas"></canvas>
+            <div class="muted" id="measurement-chart-note" style="margin-top:10px;">Grafik yükleniyor...</div>
+        </div>
+    </div>
+
+    <!-- Takip Grafiği Modal -->
+    <div id="my-tracking-chart-modal" class="modal-backdrop" onclick="if(event.target===this)closeMyTrackingChart()">
+        <div class="modal" style="width:min(640px,100%);">
+            <div class="modal-head">
+                <h3 id="my-tracking-chart-title">Grafik</h3>
+                <button class="close" type="button" onclick="closeMyTrackingChart()">x</button>
+            </div>
+            <canvas id="my-tracking-chart-canvas" style="max-height:320px;"></canvas>
+        </div>
+    </div>
+
+    <!-- Chat Butonu -->
+    <button class="chat-btn" id="user-chat-btn" onclick="toggleUserChat()" title="Diyetisyenimle Mesajlaş" style="display:none;">
+        💬<span class="chat-badge" id="user-chat-badge"></span>
+    </button>
+
+    <!-- Chat Paneli -->
+    <div class="chat-panel" id="user-chat-panel">
+        <div class="chat-head">
+            <span>💬</span>
+            <span id="user-chat-title" style="flex:1;">Diyetisyenim</span>
+            <button onclick="toggleUserChat()" style="background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;padding:0;">✕</button>
+        </div>
+        <div class="chat-messages" id="user-chat-messages"><div style="text-align:center;padding:20px;color:#999;">Yükleniyor...</div></div>
+        <div class="chat-input-area">
+            <div class="chat-upload-row">
+                <label class="chat-upload-label" for="user-chat-file">📎 Dosya/Görsel</label>
+                <input type="file" id="user-chat-file" style="display:none;" accept="image/*,.pdf,.doc,.docx,.xlsx" onchange="handleUserChatFile(this)">
+                <span class="chat-preview" id="user-chat-preview"></span>
+            </div>
+            <div class="chat-input-row">
+                <input type="text" id="user-chat-input" placeholder="Mesaj yazın..." autocomplete="new-password" name="chat-msg" onkeydown="if(event.key==='Enter')sendUserChatMessage()">
+                <button onclick="sendUserChatMessage()">Gönder</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profil Butonu (Sabit Sağ Üst) -->
+    <button id="appointment-request-fab" class="request-fab" style="display:none;" onclick="openAppointmentRequestModal()">Randevu Talep Et</button>
+    <button id="mealplan-request-fab" class="request-fab" style="display:none;" onclick="openMealPlanRequestModal()">Plan Talep Et</button>
+    <button class="profile-btn" onclick="openProfilePanel()" title="Profilim" aria-label="Profil">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="4" fill="white"></circle>
+            <path d="M4 20c0-4 3.5-7 8-7s8 3 8 7" fill="white"></path>
+        </svg>
+    </button>
+    <!-- Bildirim noktası: profil butonunun üstünde sabit konumlu -->
+    <span id="profile-notif-dot" style="display:none;position:fixed;top:12px;right:16px;width:13px;height:13px;background:#ef4444;border-radius:50%;border:2.5px solid #fff;z-index:601;pointer-events:none;box-shadow:0 1px 4px rgba(239,68,68,0.5);"></span>
+
+    <!-- Profil Paneli -->
+    <div id="pp-backdrop" class="pp-backdrop" onclick="if(event.target===this)closeProfilePanel()">
+        <div class="pp-panel">
+            <div class="pp-header">
+                <div class="pp-avatar" id="pp-avatar">K</div>
+                <h3 id="pp-name">Kullanıcı</h3>
+                <p id="pp-role-label">Danışan</p>
+                <button class="pp-close" onclick="closeProfilePanel()">X</button>
+            </div>
+            <div class="pp-tabs">
+                <button class="pp-tab active" onclick="switchPPTab('info')">Bilgilerim</button>
+                <button class="pp-tab" onclick="switchPPTab('notif')">Bildirimler<span id="notif-tab-dot" class="notif-tab-dot"></span></button>
+                <button class="pp-tab" onclick="switchPPTab('settings')">Ayarlar</button>
+            </div>
+            <div class="pp-body">
+                <div id="pp-content-info" class="pp-content active">
+                    <!-- Görüntüleme modu -->
+                    <div id="pp-view-mode">
+                        <div class="pp-row"><span class="pp-row-label">Ad Soyad</span><span class="pp-row-val" id="pp-info-name">-</span></div>
+                        <div class="pp-row"><span class="pp-row-label">Rol</span><span class="pp-row-val" id="pp-info-role">Danışan</span></div>
+                        <div class="pp-row"><span class="pp-row-label">E-posta</span><span class="pp-row-val" id="pp-info-email">-</span></div>
+                        <div class="pp-row"><span class="pp-row-label">Telefon</span><span class="pp-row-val" id="pp-info-phone">-</span></div>
+                        <div style="text-align:right;margin-top:12px;">
+                            <button class="btn-action" onclick="openPPEdit()">Düzenle</button>
+                        </div>
+                    </div>
+                    <!-- Düzenleme modu -->
+                    <div id="pp-edit-form" class="pp-edit-form">
+                        <div class="pp-msg" id="pp-edit-msg"></div>
+                        <div class="pp-photo-edit">
+                            <div class="pp-photo-placeholder" id="pp-edit-photo-placeholder">K</div>
+                            <img class="pp-photo-preview" id="pp-edit-photo-preview" src="" alt="Profil">
+                            <div class="pp-photo-actions">
+                                <label class="pp-photo-upload-label">Fotoğraf Seç
+                                    <input type="file" id="pp-edit-photo-input" accept="image/*" style="display:none;" onchange="onPPPhotoSelect(this)">
+                                </label>
+                                <button class="pp-photo-del" type="button" onclick="deletePPPhoto()">Fotoğrafı Sil</button>
+                            </div>
+                        </div>
+                        <div class="pp-fld"><label>Ad</label><input id="pp-edit-firstname" type="text" placeholder="Adınız"></div>
+                        <div class="pp-fld"><label>Soyad</label><input id="pp-edit-lastname" type="text" placeholder="Soyadınız"></div>
+                        <div class="pp-fld"><label>E-posta</label><input id="pp-edit-email" type="email" placeholder="E-posta adresiniz"></div>
+                        <div class="pp-fld"><label>Telefon</label><input id="pp-edit-phone" type="tel" placeholder="Telefon numaranız"></div>
+                        <div class="pp-fld"><label>Şifre</label><input id="pp-edit-password" type="password" placeholder="Yeni şifre (boş bırakılırsa değişmez)"></div>
+                        <div class="pp-fld"><label>Adres</label><input id="pp-edit-address" type="text" placeholder="Adresiniz"></div>
+                        <div class="pp-fld"><label>Şehir</label><input id="pp-edit-city" type="text" placeholder="Şehriniz"></div>
+                        <div class="pp-edit-actions">
+                            <button class="btn-ghost" style="padding:8px 14px;font-size:0.85rem;" onclick="cancelPPEdit()">Vazgeç</button>
+                            <button id="pp-save-btn" class="btn" style="padding:8px 14px;font-size:0.85rem;" onclick="savePPEdit()">Kaydet</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="pp-content-notif" class="pp-content">
+                    <div id="pp-notif-list">
+                        <div class="pp-notif"><span class="pp-notif-icon">OK</span><div class="pp-notif-body"><strong>Bildirim yok</strong><span>Yaklaşan randevunuz bulunmuyor.</span></div></div>
+                    </div>
+                </div>
+                <div id="pp-content-settings" class="pp-content">
+                    <div class="pp-setting">
+                        <div class="pp-setting-text"><strong>Bildirimler</strong><span>Uygulama bildirimleri</span></div>
+                        <button id="notif-app-toggle" class="toggle active" onclick="toggleAppNotif(this)"></button>
+                    </div>
+                    <div class="pp-setting">
+                        <div class="pp-setting-text"><strong>E-posta Bildirimleri</strong><span>Randevu hatırlatmaları</span></div>
+                        <button id="email-notif-toggle" class="toggle active" onclick="toggleEmailNotif(this)"></button>
+                    </div>
+                    <div class="pp-setting">
+                        <div class="pp-setting-text"><strong>Koyu Mod</strong><span>Arayüz teması</span></div>
+                        <button class="dm-toggle" id="dark-mode-btn" onclick="toggleDarkMode()"><span class="dm-knob" id="dm-knob">🌙</span></button>
+                    </div>
+                </div>
+            </div>
+            <div class="pp-footer">
+                <button class="btn-danger" style="padding:9px 18px;font-size:0.875rem;" onclick="logout()">Çıkış Yap</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentPatient = null;
+        let currentMealPlans = [];
+        let activeMealPlan = null;
+        const token = localStorage.getItem('authToken');
+
+        function toggleSidebar() {
+            const shell = document.getElementById('app-shell');
+            if (shell) shell.classList.toggle('sidebar-open');
+        }
+
+        function closeSidebar() {
+            const shell = document.getElementById('app-shell');
+            if (shell) shell.classList.remove('sidebar-open');
+        }
+
+        // Navigation
+        function showSection(eventOrSectionId, maybeSectionId) {
+            const sectionId = typeof eventOrSectionId === 'string' ? eventOrSectionId : maybeSectionId;
+            const event = typeof eventOrSectionId === 'object' ? eventOrSectionId : null;
+            if (!sectionId) return;
+
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(sectionId).classList.add('active');
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                const matchedButton = document.querySelector(`.nav-button[onclick*="'${sectionId}'"]`);
+                if (matchedButton) matchedButton.classList.add('active');
+            }
+
+            const appointmentFab = document.getElementById('appointment-request-fab');
+            const mealplanFab = document.getElementById('mealplan-request-fab');
+            if (appointmentFab) appointmentFab.style.display = sectionId === 'appointments' ? '' : 'none';
+            if (mealplanFab) mealplanFab.style.display = sectionId === 'mealplan' ? '' : 'none';
+
+            if (window.innerWidth <= 900) {
+                closeSidebar();
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('authToken');
+            sessionStorage.removeItem('redirectAfterRoleCheck');
+            window.location.replace('/login.html');
+        }
+
+        // Data loading functions
+        async function apiRequest(url, method = 'GET', body = null) {
+            const authToken = localStorage.getItem('authToken');
+            const headers = { 'Content-Type': 'application/json' };
+            if (authToken) {
+                headers.Authorization = `Bearer ${authToken}`;
+            }
+
+            const response = await fetch(url, {
+                method,
+                headers,
+                body: body ? JSON.stringify(body) : null
+            });
+
+            if (response.status === 401) {
+                showToast('Oturum süresi doldu. Lütfen tekrar giriş yapın.', 'error');
+                logout();
+                throw new Error('Unauthorized');
+            }
+
+            const text = await response.text();
+            const data = text ? JSON.parse(text) : null;
+            if (!response.ok) {
+                throw new Error(data?.message || 'Bilinmeyen hata');
+            }
+            return data;
+        }
+
+        async function loadUserData() {
+            try {
+                const [user, patient, appointments, mealPlans] = await Promise.all([
+                    apiRequest('/api/users/profile').catch(() => null),
+                    apiRequest('/api/patients/profile').catch(() => null),
+                    apiRequest('/api/appointments/my-appointments').catch(() => []),
+                    apiRequest('/api/mealplans').catch(() => [])
+                ]);
+
+                currentUser = user;
+                if (user && user.email) applyDarkModeForUser(user.email);
+                currentPatient = patient;
+                // Bildirim ayarlarını localStorage'dan yükle (currentUser set edildikten sonra)
+                loadNotifSettings();
+                // E-posta bildirim tercihini sunucudan gelen değerle senkronize et
+                if (patient && typeof patient.emailNotificationsEnabled !== 'undefined') {
+                    syncEmailNotifToggle(patient.emailNotificationsEnabled);
+                }
+                window._userAppointments = Array.isArray(appointments) ? appointments : [];
+                initAppointmentRequestForm();
+                const requestHelp = document.getElementById('appointment-request-help');
+                if (requestHelp) {
+                    requestHelp.textContent = currentPatient?.userId || currentPatient?.dietitianId
+                        ? 'Diyetisyeniniz uygun görürse randevunuz onaylanacaktır.'
+                        : 'Önce bir diyetisyen atanması gerekir.';
+                }
+                currentMealPlans = Array.isArray(mealPlans) ? mealPlans : [];
+                activeMealPlan = currentMealPlans.find(x => Number(x.status) === 1) || currentMealPlans[0] || null;
+
+                if (patient) {
+                    updateUI(patient);
+                    fillMeasurementData(patient);
+                    fillDietitianData(patient);
+                    fillNextAppointment(appointments);
+                    if (typeof fillAppointments === 'function') {
+                        fillAppointments(patient, appointments);
+                    }
+                    renderAppointmentStats(patient, appointments);
+                }
+
+                renderMealPlanSection();
+                loadAvailabilityPanel();
+                initUserChat();
+                loadTracking();
+            } catch (error) {
+                console.error('User data loading failed:', error);
+            }
+        }
+
+        function setEl(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        function escapeHtmlUser(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function updateUI(patient) {
+            const userName = patient?.firstName || currentUser?.firstName || 'Kullanıcı';
+            setEl('userName', userName);
+            setEl('dietitianName', patient?.dietitianName || 'Atanmadı');
+            setEl('dietitianSpecialization', patient?.dietitianSpecialization || 'Belirtilmemiş');
+            setEl('dietitianLicense', patient?.dietitianLicense || 'Belirtilmemiş');
+            setEl('dietitianPhone', patient?.dietitianPhone || 'Belirtilmemiş');
+            setEl('dietitianEmail', patient?.dietitianEmail || 'Belirtilmemiş');
+        }
+
+        function fillMeasurementData(patient) {
+            if (!patient) return;
+
+                const measurement = patient.latestMeasurement || null;
+                const measurements = Array.isArray(patient.measurements) ? patient.measurements : [];
+                window._patientMeasurements = measurements;
+            renderUserProgressChart(measurements, currentPatient);
+            const measurementSection = document.getElementById('measurements');
+            const overviewSection = document.getElementById('overview');
+
+            // Önce tüm demo alanları temizleyelim (ölçüm yoksa boş kalacak).
+            const clearText = (el) => {
+                if (!el) return;
+                el.textContent = '';
+            };
+
+            const clearClassTextOnly = (el) => {
+                if (!el) return;
+                el.textContent = '';
+                // Sadece temel class kalsın.
+                el.className = 'bmi-status';
+            };
+
+            const clearTrackingAndHistory = () => {
+                if (!measurementSection) return;
+
+                clearText(document.getElementById('track-today-weight'));
+                clearText(document.getElementById('track-weekly-average'));
+                clearText(document.getElementById('track-bmi'));
+                clearText(document.getElementById('track-frequency'));
+                clearText(document.getElementById('track-weight-change'));
+                clearText(document.getElementById('track-weekly-trend'));
+                clearText(document.getElementById('track-bmi-status'));
+                clearText(document.getElementById('track-frequency-detail'));
+
+                // Son ölçümler paneli (kilo/boy/BMI dışında kalan alanlar API'de yok; onları da boş bırakıyoruz).
+                const grid = measurementSection.querySelector('.panel .grid');
+                if (grid) {
+                    const fields = Array.from(grid.querySelectorAll('.field'));
+                    fields.forEach(f => {
+                        const valEl = f.querySelector('.value');
+                        if (valEl) valEl.textContent = '';
+                        const directDiv = f.querySelector('div:not(.value)');
+                        if (directDiv) directDiv.textContent = '';
+                        const bmiStatusEl = f.querySelector('.bmi-status');
+                        if (bmiStatusEl) clearClassTextOnly(bmiStatusEl);
+                    });
+                }
+
+                // Ölçüm geçmişi tablosu.
+                const historyBody = document.getElementById('measurementHistory');
+                if (historyBody) {
+                    historyBody.innerHTML = '<tr><td colspan="7" class="muted">Kayıt yok.</td></tr>';
+                }
+            };
+
+            // Overview kartları.
+            clearText(document.getElementById('currentBMI'));
+            if (document.getElementById('currentWeight')) document.getElementById('currentWeight').textContent = '';
+            clearText(document.getElementById('overviewWaist'));
+            clearText(document.getElementById('overviewHip'));
+            clearText(document.getElementById('overviewBodyFat'));
+            const overviewBmiStatusEl = overviewSection ? overviewSection.querySelector('.bmi-indicator .bmi-status') : null;
+            if (overviewBmiStatusEl) clearClassTextOnly(overviewBmiStatusEl);
+
+            // Profil özeti kartları.
+            clearText(document.getElementById('profileWeight'));
+            clearText(document.getElementById('profileHeight'));
+            clearText(document.getElementById('profileBmi'));
+            const profileBmiStatus = document.getElementById('profileBmiStatus');
+            if (profileBmiStatus) clearClassTextOnly(profileBmiStatus);
+
+            // Ölçümler section'ı (son tarih + panel + tablo).
+            if (document.getElementById('lastMeasurementDate')) {
+                document.getElementById('lastMeasurementDate').textContent = '';
+            }
+            clearTrackingAndHistory();
+
+            if (!measurement) return;
+
+            // Tarih
+            if (document.getElementById('lastMeasurementDate')) {
+                document.getElementById('lastMeasurementDate').textContent =
+                    new Date(measurement.measurementDate).toLocaleDateString('tr-TR');
+            }
+
+            // Overview
+            const currentWeightEl = document.getElementById('currentWeight');
+            if (currentWeightEl) {
+                currentWeightEl.textContent = measurement.weight != null ? `${measurement.weight.toFixed(1)} kg` : '';
+            }
+            if (document.getElementById('currentBMI')) {
+                document.getElementById('currentBMI').textContent = measurement.bmi?.toFixed(1) || '';
+            }
+            const overviewWaist = document.getElementById('overviewWaist');
+            if (overviewWaist) overviewWaist.textContent = measurement.waistCircumference != null ? `${measurement.waistCircumference} cm` : '';
+            const overviewHip = document.getElementById('overviewHip');
+            if (overviewHip) overviewHip.textContent = measurement.hipCircumference != null ? `${measurement.hipCircumference} cm` : '';
+            const overviewBodyFat = document.getElementById('overviewBodyFat');
+            if (overviewBodyFat) overviewBodyFat.textContent = measurement.bodyFatPercentage != null ? `${measurement.bodyFatPercentage}%` : '';
+
+            const bmiStatus = measurement.bmi != null ? getBMIStatus(measurement.bmi) : '';
+            const statusClass =
+                bmiStatus === 'Normal' ? 'bmi-normal' :
+                bmiStatus === 'Fazla Kilolu' ? 'bmi-overweight' :
+                bmiStatus === 'Obez' ? 'bmi-obese' : '';
+
+            if (overviewBmiStatusEl) {
+                overviewBmiStatusEl.textContent = bmiStatus;
+                overviewBmiStatusEl.className = `bmi-status ${statusClass}`.trim();
+            }
+
+            // Profil özeti
+            const profileWeight = document.getElementById('profileWeight');
+            const profileHeight = document.getElementById('profileHeight');
+            const profileBmi = document.getElementById('profileBmi');
+
+            if (profileWeight) profileWeight.textContent = measurement.weight?.toFixed(1) || '';
+            if (profileHeight) profileHeight.textContent = measurement.height ? `${measurement.height} cm` : '';
+            if (profileBmi) profileBmi.textContent = measurement.bmi?.toFixed(1) || '';
+            if (profileBmiStatus) {
+                profileBmiStatus.textContent = bmiStatus;
+                profileBmiStatus.className = `bmi-status ${statusClass}`.trim();
+            }
+
+            // Ölçümler section paneli (kilo/boy/BMI + BMI yorumu).
+            if (measurementSection) {
+                const grid = measurementSection.querySelector('.panel .grid');
+                if (grid) {
+                    const fields = Array.from(grid.querySelectorAll('.field'));
+                    const weightField = fields[0];
+                    const heightField = fields[1];
+                    const bmiField = fields[2];
+                    const bmiPanelStatusField = fields[3];
+                    if (weightField) {
+                        const v = weightField.querySelector('.value');
+                        if (v) v.textContent = measurement.weight?.toFixed(1) || '';
+                    }
+                    if (heightField) {
+                        const v = heightField.querySelector('div:not(.value)');
+                        if (v) v.textContent = measurement.height ? String(measurement.height) : '';
+                    }
+                    if (bmiField) {
+                        const v = bmiField.querySelector('.value');
+                        if (v) v.textContent = measurement.bmi?.toFixed(1) || '';
+                    }
+                    if (bmiPanelStatusField) {
+                        const s = bmiPanelStatusField.querySelector('.bmi-status');
+                        if (s) {
+                            s.textContent = bmiStatus;
+                            s.className = `bmi-status ${statusClass}`.trim();
+                        }
+                    }
+
+                    // Bel Çevresi (index 4)
+                    if (fields[4]) {
+                        const v = fields[4].querySelector('div');
+                        if (v) v.textContent = measurement.waistCircumference != null ? measurement.waistCircumference : '';
+                    }
+                    // Kalça Çevresi (index 5)
+                    if (fields[5]) {
+                        const v = fields[5].querySelector('div');
+                        if (v) v.textContent = measurement.hipCircumference != null ? measurement.hipCircumference : '';
+                    }
+                    // Bel/Kalça Oranı (index 6)
+                    if (fields[6]) {
+                        const v = fields[6].querySelector('div');
+                        if (v) {
+                            const ratio = (measurement.waistCircumference != null && measurement.hipCircumference != null && measurement.hipCircumference > 0)
+                                ? (measurement.waistCircumference / measurement.hipCircumference).toFixed(2)
+                                : '';
+                            v.textContent = ratio;
+                        }
+                    }
+                    // Vücut Yağ Oranı (index 7)
+                    if (fields[7]) {
+                        const v = fields[7].querySelector('div');
+                        if (v) v.textContent = measurement.bodyFatPercentage != null ? measurement.bodyFatPercentage : '';
+                    }
+                }
+
+                // Tracking-strip (demo değerleri yerine basit hesaplar).
+                const latestDate = measurement.measurementDate ? new Date(measurement.measurementDate) : null;
+                const sortedByDate = measurements
+                    .slice()
+                    .filter(m => m.measurementDate)
+                    .sort((a, b) => new Date(a.measurementDate) - new Date(b.measurementDate));
+                const latestIndex = sortedByDate.length - 1;
+                const previous = latestIndex > 0 ? sortedByDate[latestIndex - 1] : null;
+
+                const trackTodayWeight = document.getElementById('track-today-weight');
+                if (trackTodayWeight) trackTodayWeight.textContent = measurement.weight != null ? `${measurement.weight.toFixed(1)} kg` : '-';
+                const weightChangeEl = document.getElementById('track-weight-change');
+                if (weightChangeEl) {
+                    const diff = previous?.weight != null && measurement.weight != null ? measurement.weight - previous.weight : null;
+                    weightChangeEl.textContent = diff == null ? '-' : `${diff >= 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+                    weightChangeEl.className = diff == null ? 'muted' : diff > 0 ? 'trend-up' : diff < 0 ? 'trend-down' : 'trend-flat';
+                }
+
+                const trackBmi = document.getElementById('track-bmi');
+                if (trackBmi) trackBmi.textContent = measurement.bmi != null ? measurement.bmi.toFixed(1) : '-';
+                const trackBmiStatus = document.getElementById('track-bmi-status');
+                if (trackBmiStatus) trackBmiStatus.textContent = bmiStatus || '-';
+
+                if (latestDate && measurements.length) {
+                    const weekAgo = new Date(latestDate);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    const weekWeights = measurements
+                        .map(m => ({ d: m.measurementDate ? new Date(m.measurementDate) : null, w: m.weight }))
+                        .filter(x => x.d && x.d >= weekAgo && x.w != null)
+                        .map(x => x.w);
+                    const avg = weekWeights.length ? weekWeights.reduce((a, b) => a + b, 0) / weekWeights.length : null;
+                    const trackWeekly = document.getElementById('track-weekly-average');
+                    if (trackWeekly) trackWeekly.textContent = avg != null ? `${avg.toFixed(1)} kg` : '-';
+
+                    const trackWeeklyTrend = document.getElementById('track-weekly-trend');
+                    if (trackWeeklyTrend) {
+                        const diff = avg != null && previous?.weight != null ? avg - previous.weight : null;
+                        trackWeeklyTrend.textContent = diff == null ? '-' : `${diff >= 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+                    }
+
+                    const trackFrequency = document.getElementById('track-frequency');
+                    const trackFrequencyDetail = document.getElementById('track-frequency-detail');
+                    const count7 = weekWeights.length;
+                    if (trackFrequency) {
+                        trackFrequency.textContent = count7 >= 5 ? 'Günlük' : count7 >= 2 ? 'Haftalık' : 'Seyrek';
+                    }
+                    if (trackFrequencyDetail) {
+                        trackFrequencyDetail.textContent = `7 günde ${count7} kayıt`;
+                    }
+                }
+            }
+
+            // Measurement history tablosunu gerçek ölçümlerle render et.
+            const historyBody = document.getElementById('measurementHistory');
+            if (historyBody) {
+                const sorted = measurements
+                    .slice()
+                    .sort((a, b) => new Date(b.measurementDate) - new Date(a.measurementDate));
+
+                if (!sorted.length) {
+                    historyBody.innerHTML = '<tr><td colspan="7" class="muted">Kayıt yok.</td></tr>';
+                } else {
+                    historyBody.innerHTML = sorted.map((m, i) => {
+                        const prev = sorted[i + 1] || null; // daha eski kayıt
+                        const diff = prev ? (m.weight - prev.weight) : null;
+                        const diffText = diff == null ? '-' : `${diff >= 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+                        const diffClass = diff == null ? '' : diff > 0 ? 'success' : diff < 0 ? 'danger' : 'muted';
+
+                        const bmiText = m.bmi != null ? m.bmi.toFixed(1) : '';
+                        const dateText = m.measurementDate ? new Date(m.measurementDate).toLocaleDateString('tr-TR') : '';
+
+                        return `
+                            <tr>
+                                <td>${dateText}</td>
+                                <td>${m.weight != null ? `${m.weight.toFixed(1)} kg` : ''}</td>
+                                <td>${bmiText}</td>
+                                <td>${m.waistCircumference != null ? m.waistCircumference + ' cm' : ''}</td>
+                                <td>${m.hipCircumference != null ? m.hipCircumference + ' cm' : ''}</td>
+                                <td>${m.bodyFatPercentage != null ? m.bodyFatPercentage + '%' : ''}</td>
+                                <td class="${diffClass}">${diffText}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        // ===== KULLANICI İLERLEME GRAFİĞİ =====
+        let _userProgressChart = null;
+        let _userProgressKey = 'weight';
+        const _userProgressMetrics = [
+            { key: 'weight',            label: 'Kilo (kg)',  color: '#6f8e6b', get: m => m.weight },
+            { key: 'bmi',               label: 'BMI',        color: '#e58d4f', get: m => m.bmi },
+            { key: 'bodyFatPercentage', label: 'Yağ %',      color: '#c56b5c', get: m => m.bodyFatPercentage },
+            { key: 'waistCircumference',label: 'Bel (cm)',   color: '#7c3aed', get: m => m.waistCircumference },
+        ];
+
+        function renderUserProgressChart(measurements, patient) {
+            const canvas = document.getElementById('user-progress-canvas');
+            const emptyEl = document.getElementById('user-progress-empty');
+            const wrapEl = document.getElementById('user-progress-chart-wrap');
+            const tabsEl = document.getElementById('user-progress-tabs');
+            const statsEl = document.getElementById('user-progress-stats');
+            if (!canvas) return;
+
+            const sorted = (Array.isArray(measurements) ? measurements : [])
+                .filter(m => m.measurementDate)
+                .sort((a, b) => new Date(a.measurementDate) - new Date(b.measurementDate));
+
+            if (!sorted.length) {
+                emptyEl.style.display = 'block';
+                if (wrapEl) wrapEl.style.display = 'none';
+                return;
+            }
+            emptyEl.style.display = 'none';
+            if (wrapEl) wrapEl.style.display = 'block';
+
+            // Tıbbi geçmişe göre varsayılan metrik
+            const hist = ((patient?.medicalHistory || '') + ' ' + (patient?.notes || '')).toLowerCase();
+            if (hist.includes('diyabet') || hist.includes('şeker')) _userProgressKey = 'bmi';
+            else if (hist.includes('tansiyon') || hist.includes('kalp')) _userProgressKey = 'waistCircumference';
+            else _userProgressKey = 'weight';
+
+            // Sekmeler
+            tabsEl.innerHTML = '';
+            _userProgressMetrics.forEach(m => {
+                if (!sorted.some(r => m.get(r) != null)) return;
+                const btn = document.createElement('button');
+                btn.textContent = m.label;
+                btn.className = 'btn-action';
+                btn.style.cssText = 'padding:5px 12px;border-radius:20px;font-size:.78rem;';
+                if (m.key === _userProgressKey) { btn.style.background = m.color; btn.style.color = '#fff'; }
+                btn.onclick = () => {
+                    _userProgressKey = m.key;
+                    tabsEl.querySelectorAll('button').forEach(b => { b.style.background = ''; b.style.color = ''; });
+                    btn.style.background = m.color; btn.style.color = '#fff';
+                    drawUserChart(sorted);
+                };
+                tabsEl.appendChild(btn);
+            });
+
+            drawUserChart(sorted);
+
+            // İstatistikler
+            const last = sorted[sorted.length - 1];
+            const first = sorted[0];
+            const stats = [];
+            if (last.weight) {
+                const diff = +(last.weight - first.weight).toFixed(1);
+                stats.push({ label: 'Son Kilo', val: last.weight + ' kg' });
+                stats.push({ label: 'Toplam Değişim', val: (diff > 0 ? '+' : '') + diff + ' kg', color: diff <= 0 ? '#5c9b6a' : '#c56b5c' });
+            }
+            if (last.bmi) stats.push({ label: 'Son BMI', val: (+last.bmi).toFixed(1) });
+            if (last.bodyFatPercentage) stats.push({ label: 'Yağ %', val: (+last.bodyFatPercentage).toFixed(1) + '%' });
+            stats.push({ label: 'Ölçüm Sayısı', val: sorted.length });
+            statsEl.innerHTML = stats.map(s =>
+                `<div style="background:var(--gray-50);border-radius:10px;padding:8px 12px;border:1px solid var(--gray-200);">
+                    <div style="font-size:.72rem;color:var(--gray-500);font-weight:600;margin-bottom:3px;">${s.label}</div>
+                    <div style="font-size:1.05rem;font-weight:700;color:${s.color || 'var(--gray-800)'};">${s.val}</div>
+                </div>`
+            ).join('');
+        }
+
+        function drawUserChart(sorted) {
+            const canvas = document.getElementById('user-progress-canvas');
+            const metric = _userProgressMetrics.find(m => m.key === _userProgressKey) || _userProgressMetrics[0];
+            const labels = sorted.map(m => new Date(m.measurementDate).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }));
+            const data = sorted.map(m => metric.get(m));
+            const ctx = canvas.getContext('2d');
+            if (_userProgressChart) { _userProgressChart.destroy(); _userProgressChart = null; }
+            _userProgressChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: metric.label,
+                        data,
+                        borderColor: metric.color,
+                        backgroundColor: metric.color + '22',
+                        tension: 0.35,
+                        fill: true,
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        pointBackgroundColor: metric.color,
+                        spanGaps: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
+                    scales: {
+                        x: { grid: { color: '#f3f4f6' } },
+                        y: { grid: { color: '#f3f4f6' }, beginAtZero: false }
+                    }
+                }
+            });
+        }
+        // ===== /KULLANICI İLERLEME GRAFİĞİ =====
+
+        // ===== GÜNLÜK TAKİP =====
+        async function loadTracking() {
+            try {
+                const data = await apiRequest('/api/dailytracking/my');
+                renderTrackingHistory(Array.isArray(data) ? data : []);
+                const today = new Date().toISOString().slice(0, 10);
+                const todayEntry = (data || []).find(d => d.trackingDate && d.trackingDate.slice(0, 10) === today);
+                if (todayEntry) {
+                    const wEl = document.getElementById('tracking-water');
+                    const sEl = document.getElementById('tracking-steps');
+                    if (wEl && todayEntry.waterLiters != null) wEl.value = todayEntry.waterLiters;
+                    if (sEl && todayEntry.stepsCount != null) sEl.value = todayEntry.stepsCount;
+                }
+            } catch {}
+        }
+
+        function renderTrackingHistory(data) {
+            const el = document.getElementById('tracking-history');
+            if (!el) return;
+            if (!data.length) {
+                el.innerHTML = '<p style="color:var(--gray-400);font-size:.85rem;margin:0;">Henüz kayıt yok.</p>';
+                return;
+            }
+            el.innerHTML = data.slice(0, 7).map(d => {
+                const date = d.trackingDate
+                    ? new Date(d.trackingDate).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' })
+                    : '-';
+                const water = d.waterLiters != null ? `<span style="color:var(--primary);font-weight:600;">💧 ${d.waterLiters} L</span>` : '<span style="color:var(--gray-400);">💧 -</span>';
+                const steps = d.stepsCount != null ? `<span style="color:var(--accent);font-weight:600;">🚶 ${d.stepsCount.toLocaleString('tr-TR')}</span>` : '<span style="color:var(--gray-400);">🚶 -</span>';
+                return `<div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:10px;padding:10px 14px;">
+                    <div style="font-size:.75rem;color:var(--gray-500);font-weight:600;margin-bottom:6px;">${date}</div>
+                    <div style="display:flex;flex-direction:column;gap:3px;font-size:.88rem;">${water}${steps}</div>
+                </div>`;
+            }).join('');
+        }
+
+        async function saveTracking() {
+            const wEl = document.getElementById('tracking-water');
+            const sEl = document.getElementById('tracking-steps');
+            const msgEl = document.getElementById('tracking-msg');
+            const water = wEl ? wEl.value : '';
+            const steps = sEl ? sEl.value : '';
+            try {
+                await apiRequest('/api/dailytracking', 'POST', {
+                    waterLiters: water !== '' ? parseFloat(water) : null,
+                    stepsCount: steps !== '' ? parseInt(steps) : null
+                });
+                msgEl.textContent = 'Kaydedildi! Diyetisyeniniz verilerinizi görebilir.';
+                msgEl.style.cssText = 'display:block;background:#d1fae5;color:#065f46;padding:8px 14px;border-radius:8px;font-size:.85rem;margin-bottom:12px;';
+                await loadTracking();
+                setTimeout(() => { if (msgEl) msgEl.style.display = 'none'; }, 3000);
+            } catch (e) {
+                msgEl.textContent = 'Kayıt başarısız: ' + (e.message || 'Hata oluştu.');
+                msgEl.style.cssText = 'display:block;background:#fee2e2;color:#991b1b;padding:8px 14px;border-radius:8px;font-size:.85rem;margin-bottom:12px;';
+            }
+        }
+        let _myTrackingChart = null;
+        async function openMyTrackingChart(type) {
+            const modal = document.getElementById('my-tracking-chart-modal');
+            const title = document.getElementById('my-tracking-chart-title');
+            const canvas = document.getElementById('my-tracking-chart-canvas');
+            title.textContent = type === 'steps' ? 'Adım Takibim' : 'Su Tüketimim';
+            modal.classList.add('open');
+            if (_myTrackingChart) { _myTrackingChart.destroy(); _myTrackingChart = null; }
+            try {
+                const data = await apiRequest('/api/dailytracking/my');
+                const sorted = (Array.isArray(data) ? data : []).sort((a, b) => new Date(a.trackingDate) - new Date(b.trackingDate));
+                const labels = sorted.map(d => new Date(d.trackingDate).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }));
+                const values = sorted.map(d => type === 'steps' ? (d.stepsCount ?? 0) : (d.waterLiters ?? 0));
+                const color = type === 'steps' ? 'rgba(229,141,79,0.8)' : 'rgba(59,130,246,0.8)';
+                const border = type === 'steps' ? '#e58d4f' : '#3b82f6';
+                const label = type === 'steps' ? 'Adım Sayısı' : 'Su (L)';
+                _myTrackingChart = new Chart(canvas.getContext('2d'), {
+                    type: 'bar',
+                    data: { labels, datasets: [{ label, data: values, backgroundColor: color, borderColor: border, borderWidth: 1, borderRadius: 4 }] },
+                    options: { responsive: true, plugins: { legend: { display: false } }, scales: { x: { grid: { color: '#f3f4f6' } }, y: { beginAtZero: true, grid: { color: '#f3f4f6' } } } }
+                });
+            } catch { }
+        }
+
+        function closeMyTrackingChart() {
+            document.getElementById('my-tracking-chart-modal').classList.remove('open');
+            if (_myTrackingChart) { _myTrackingChart.destroy(); _myTrackingChart = null; }
+        }
+        // ===== /GÜNLÜK TAKİP =====
+
+        function renderAppointmentStats(patient, appointments) {
+            if (!patient || !Array.isArray(appointments)) return;
+
+            const now = new Date();
+            // API zaten bu danışana ait randevuları döndürüyor
+            const activeCount = appointments.filter(a => new Date(a.appointmentDate) >= now && a.status !== 2 && a.status !== 5).length;
+            const completedCount = appointments.filter(a => new Date(a.appointmentDate) < now && a.status === 1).length;
+
+            const activeEl = document.getElementById('activeAppointments');
+            const completedEl = document.getElementById('completedAppointments');
+            if (activeEl) activeEl.textContent = String(activeCount);
+            if (completedEl) completedEl.textContent = String(completedCount);
+        }
+
+        function fillDietitianData(patient) {
+            if (!patient) return;
+            setEl('dietitianName', patient.dietitianName || 'Atanmadı');
+            setEl('dietitianSpecialization', patient.dietitianSpecialization || 'Belirtilmemiş');
+            setEl('dietitianLicense', patient.dietitianLicense || 'Belirtilmemiş');
+            setEl('dietitianPhone', patient.dietitianPhone || 'Belirtilmemiş');
+            setEl('dietitianEmail', patient.dietitianEmail || 'Belirtilmemiş');
+        }
+
+        function fillNextAppointment(appointments) {
+            const nextAppointment = appointments
+                .filter(a => new Date(a.appointmentDate) >= new Date() && a.status !== 2 && a.status !== 5) // 2 = Cancelled, 5 = Requested
+                .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate))[0];
+
+            const cancelBtn = document.getElementById('overview-cancel-btn');
+            const rescheduleBtn = document.getElementById('overview-reschedule-btn');
+
+            if (nextAppointment) {
+                document.getElementById('nextAppointmentDate').textContent =
+                    new Date(nextAppointment.appointmentDate).toLocaleDateString('tr-TR') + ', ' +
+                    new Date(nextAppointment.appointmentDate).toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+                document.getElementById('nextAppointmentType').textContent = nextAppointment.reason || 'Kontrol Muayenesi';
+
+                if (cancelBtn) { cancelBtn.style.display = ''; cancelBtn.onclick = () => cancelAppointment(nextAppointment.id); }
+                if (rescheduleBtn) { rescheduleBtn.style.display = ''; rescheduleBtn.onclick = () => rescheduleAppointment(nextAppointment.id); }
+            } else {
+                document.getElementById('nextAppointmentDate').textContent = 'Yaklaşan randevunuz yok';
+                document.getElementById('nextAppointmentType').textContent = '';
+                if (cancelBtn) cancelBtn.style.display = 'none';
+                if (rescheduleBtn) rescheduleBtn.style.display = 'none';
+            }
+        }
+        function fillAppointments(patient, appointments) {
+            if (!patient || !Array.isArray(appointments)) return;
+
+            // API zaten bu danışana ait randevuları döndürüyor, ek filtreye gerek yok
+            const upcoming = appointments.filter(a => new Date(a.appointmentDate) >= new Date());
+            const past = appointments.filter(a => new Date(a.appointmentDate) < new Date());
+
+            const upcomingContainer = document.getElementById('upcomingAppointments');
+            const pastContainer = document.getElementById('pastAppointments');
+
+            upcomingContainer.innerHTML = upcoming.length ? upcoming.map(a => {
+                const statusText = getAppointmentStatusText(a.status);
+                const statusClass = getAppointmentStatusClass(a.status);
+                const canEdit = a.status !== 2 && a.status !== 5 && new Date(a.appointmentDate) >= new Date();
+                const actions = canEdit
+                    ? `<button class="btn-action" onclick="cancelAppointment(${a.id})">İptal</button>
+                       <button class="btn-action" onclick="rescheduleAppointment(${a.id})">Ertele</button>`
+                    : '<span class="muted">-</span>';
+                return `
+                <tr>
+                    <td>${new Date(a.appointmentDate).toLocaleDateString('tr-TR')}</td>
+                    <td>${new Date(a.appointmentDate).toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}</td>
+                    <td>${a.reason || 'Kontrol'}</td>
+                    <td><span class="pill ${statusClass}">${statusText}</span></td>
+                    <td>${actions}</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" class="muted">Gelecek randevunuz yok.</td></tr>';
+
+            pastContainer.innerHTML = past.length ? past.map(a => {
+                const statusText = getAppointmentStatusText(a.status);
+                const statusClass = getAppointmentStatusClass(a.status);
+                return `
+                <tr>
+                    <td>${new Date(a.appointmentDate).toLocaleDateString('tr-TR')}</td>
+                    <td>${a.reason || 'Kontrol'}</td>
+                    <td><span class="pill ${statusClass}">${statusText}</span></td>
+                    <td>${a.rating || '-'}</td>
+                    <td>${a.feedback || a.notes || '-'}</td>
+                </tr>`;
+            }).join('') : '<tr><td colspan="5" class="muted">Geçmiş randevunuz yok.</td></tr>';
+        }
+
+        function getBMIStatus(bmi) {
+            if (bmi < 18.5) return 'Zayıf';
+            if (bmi < 25) return 'Normal';
+            if (bmi < 30) return 'Fazla Kilolu';
+            return 'Obez';
+        }
+
+        function getAppointmentStatusText(status) {
+            switch (status) {
+                case 0: return 'Planlandı';
+                case 1: return 'Tamamlandı';
+                case 2: return 'İptal edildi';
+                case 4: return 'Ertelendi';
+                case 5: return 'Onay Bekliyor';
+                default: return 'Bilinmiyor';
+            }
+        }
+
+        function getAppointmentStatusClass(status) {
+            switch (status) {
+                case 0: return 'info';
+                case 1: return 'success';
+                case 2: return 'danger';
+                case 4: return 'warning';
+                case 5: return 'warning';
+                default: return 'muted';
+            }
+        }
+
+        // Modal yönetimi
+        let _cancelAppointmentId = null;
+        let _rescheduleAppointmentId = null;
+
+        function cancelAppointment(appointmentId) {
+            _cancelAppointmentId = appointmentId;
+            document.getElementById('cancel-confirm-modal').classList.add('open');
+        }
+
+        function closeCancelModal() {
+            _cancelAppointmentId = null;
+            document.getElementById('cancel-confirm-modal').classList.remove('open');
+        }
+
+        async function confirmCancel() {
+            if (!_cancelAppointmentId) return;
+            const btn = document.getElementById('confirm-cancel-btn');
+            btn.disabled = true;
+            btn.textContent = 'İptal ediliyor...';
+            try {
+                const response = await apiRequest(`/api/patients/appointments/${_cancelAppointmentId}/cancel`, 'PUT');
+                document.getElementById('cancel-confirm-modal').classList.remove('open');
+                _cancelAppointmentId = null;
+                showToast('Randevunuz başarıyla iptal edildi. Diyetisyeniniz bilgilendirildi.', 'success');
+                loadUserData();
+            } catch (error) {
+                showToast('Randevu iptal edilemedi: ' + (error.message || 'Bilinmeyen hata'), 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Evet, İptal Et';
+            }
+        }
+
+        function rescheduleAppointment(appointmentId) {
+            _rescheduleAppointmentId = appointmentId;
+            // Minimum tarih: şu andan 1 saat sonrası
+            const minDate = new Date(Date.now() + 60 * 60 * 1000);
+            const pad = n => String(n).padStart(2, '0');
+            const minStr = `${minDate.getFullYear()}-${pad(minDate.getMonth()+1)}-${pad(minDate.getDate())}T${pad(minDate.getHours())}:${pad(minDate.getMinutes())}`;
+            const input = document.getElementById('reschedule-datetime');
+            input.min = minStr;
+            input.value = '';
+            document.getElementById('reschedule-note').value = '';
+            document.getElementById('reschedule-msg').style.display = 'none';
+            document.getElementById('reschedule-modal').classList.add('open');
+        }
+
+        function closeRescheduleModal() {
+            _rescheduleAppointmentId = null;
+            document.getElementById('reschedule-modal').classList.remove('open');
+        }
+
+        async function confirmReschedule() {
+            if (!_rescheduleAppointmentId) return;
+            const datetimeVal = document.getElementById('reschedule-datetime').value;
+            if (!datetimeVal) {
+                showRescheduleMsg('Lütfen yeni bir tarih ve saat seçin.', 'error');
+                return;
+            }
+            const newDate = new Date(datetimeVal);
+            if (isNaN(newDate.getTime()) || newDate <= new Date()) {
+                showRescheduleMsg('Geçerli bir gelecek tarih seçin.', 'error');
+                return;
+            }
+            const btn = document.getElementById('confirm-reschedule-btn');
+            btn.disabled = true;
+            btn.textContent = 'Erteleniyor...';
+            try {
+                await apiRequest(`/api/patients/appointments/${_rescheduleAppointmentId}/reschedule`, 'PUT', {
+                    newAppointmentDate: newDate.toISOString()
+                });
+                document.getElementById('reschedule-modal').classList.remove('open');
+                _rescheduleAppointmentId = null;
+                showToast('Randevunuz başarıyla ertelendi. Diyetisyeniniz bilgilendirildi.', 'success');
+                loadUserData();
+            } catch (error) {
+                showRescheduleMsg('Randevu ertelenemedi: ' + (error.message || 'Bilinmeyen hata'), 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Ertele';
+            }
+        }
+
+        function showRescheduleMsg(text, type) {
+            const el = document.getElementById('reschedule-msg');
+            el.textContent = text;
+            el.style.display = 'block';
+            el.style.background = type === 'error' ? '#fef2f2' : '#f0fdf4';
+            el.style.color = type === 'error' ? '#dc2626' : '#16a34a';
+            el.style.border = `1px solid ${type === 'error' ? '#fecaca' : '#bbf7d0'}`;
+        }
+
+        function showToast(message, type = 'info') {
+            const host = document.getElementById('toast-host');
+            if (!host) return;
+            host.innerHTML = '';
+            const toast = document.createElement('div');
+            toast.className = `app-toast ${type}`;
+            toast.textContent = message;
+            host.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => toast.classList.add('hide'), 2000);
+            setTimeout(() => toast.remove(), 2600);
+        }
+
+        function openMeasurementChart() {
+            const modal = document.getElementById('measurement-chart-modal');
+            if (!modal) return;
+            modal.classList.add('open');
+            drawMeasurementChart();
+        }
+
+        function closeMeasurementChart() {
+            const modal = document.getElementById('measurement-chart-modal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        function drawMeasurementChart() {
+            const canvas = document.getElementById('measurement-chart-canvas');
+            const note = document.getElementById('measurement-chart-note');
+            if (!canvas) return;
+
+            const measurements = Array.isArray(window._patientMeasurements) ? window._patientMeasurements : [];
+            if (measurements.length < 2) {
+                if (note) note.textContent = 'Grafik için en az 2 ölçüm gerekir.';
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+
+            const sorted = measurements
+                .slice()
+                .filter(m => m.measurementDate && m.weight != null)
+                .sort((a, b) => new Date(a.measurementDate) - new Date(b.measurementDate));
+
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const padding = { left: 40, right: 16, top: 20, bottom: 30 };
+            const w = canvas.width - padding.left - padding.right;
+            const h = canvas.height - padding.top - padding.bottom;
+
+            const weights = sorted.map(x => x.weight).filter(x => x != null);
+            const bmis = sorted.map(x => x.bmi).filter(x => x != null);
+            const minW = Math.min(...weights);
+            const maxW = Math.max(...weights);
+            const minB = bmis.length ? Math.min(...bmis) : 0;
+            const maxB = bmis.length ? Math.max(...bmis) : 0;
+
+            const scale = (val, min, max) => {
+                if (max === min) return padding.top + h / 2;
+                const t = (val - min) / (max - min);
+                return padding.top + h - t * h;
+            };
+            const xAt = i => padding.left + (w * (i / (sorted.length - 1)));
+
+            ctx.strokeStyle = '#e5e7eb';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, padding.top);
+            ctx.lineTo(padding.left, padding.top + h);
+            ctx.lineTo(padding.left + w, padding.top + h);
+            ctx.stroke();
+
+            const drawLine = (values, min, max, color) => {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                values.forEach((val, i) => {
+                    const x = xAt(i);
+                    const y = scale(val, min, max);
+                    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+            };
+
+            drawLine(weights, minW, maxW, '#6f8e6b');
+            if (bmis.length === sorted.length && maxB !== minB) {
+                drawLine(bmis, minB, maxB, '#e58d4f');
+            }
+
+            if (note) note.textContent = 'Mavi: Ağırlık, Yeşil: BMI';
+        }
+
+        // Placeholder functions for future implementation
+        function refreshData() {
+            showToast('Veriler yenileniyor...', 'info');
+            loadUserData();
+        }
+
+        function editProfile() {
+            showToast('Profil düzenleme özelliği yakında eklenecek.', 'warning');
+        }
+
+        function viewMeasurementHistory() {
+            openMeasurementChart();
+        }
+
+        function exportMeasurements() {
+            const measurements = Array.isArray(window._patientMeasurements) ? window._patientMeasurements : [];
+            if (!measurements.length) {
+                showToast('Dışa aktarılacak ölçüm bulunamadı.', 'error');
+                return;
+            }
+            const rows = measurements
+                .slice()
+                .sort((a, b) => new Date(b.measurementDate) - new Date(a.measurementDate))
+                .map(m => ({
+                    date: m.measurementDate ? new Date(m.measurementDate).toLocaleDateString('tr-TR') : '',
+                    weight: m.weight ?? '',
+                    height: m.height ?? '',
+                    bmi: m.bmi ?? '',
+                    waist: m.waistCircumference ?? '',
+                    hip: m.hipCircumference ?? '',
+                    fat: m.bodyFatPercentage ?? ''
+                }));
+
+            const header = ['Tarih', 'Ağırlık', 'Boy', 'BMI', 'Bel', 'Kalça', 'Yağ %'];
+            const csv = [
+                header.join(';'),
+                ...rows.map(r => [r.date, r.weight, r.height, r.bmi, r.waist, r.hip, r.fat].join(';'))
+            ].join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'olcumler.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast('Ölçümler indirildi.', 'success');
+        }
+
+        function requestAppointment() {
+            openAppointmentRequestModal();
+        }
+
+        function initAppointmentRequestForm() {
+            const input = document.getElementById('appointment-request-datetime');
+            if (!input) return;
+            const minDate = new Date(Date.now() + 60 * 60 * 1000);
+            const pad = n => String(n).padStart(2, '0');
+            const minStr = `${minDate.getFullYear()}-${pad(minDate.getMonth() + 1)}-${pad(minDate.getDate())}T${pad(minDate.getHours())}:${pad(minDate.getMinutes())}`;
+            input.min = minStr;
+        }
+
+        function openAppointmentRequestModal() {
+            initAppointmentRequestForm();
+            const msgEl = document.getElementById('appointment-request-msg');
+            if (msgEl) msgEl.className = 'pp-msg';
+            const modal = document.getElementById('appointment-request-modal');
+            if (modal) modal.classList.add('open');
+            const input = document.getElementById('appointment-request-datetime');
+            if (input) input.focus();
+        }
+
+        function closeAppointmentRequestModal() {
+            const modal = document.getElementById('appointment-request-modal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        function openMealPlanRequestModal() {
+            const modal = document.getElementById('mealplan-request-modal');
+            if (modal) modal.classList.add('open');
+        }
+
+        function closeMealPlanRequestModal() {
+            const modal = document.getElementById('mealplan-request-modal');
+            if (modal) modal.classList.remove('open');
+        }
+
+        async function submitAppointmentRequest() {
+            const msgEl = document.getElementById('appointment-request-msg');
+            const btn = document.getElementById('appointment-request-btn');
+            const datetimeVal = document.getElementById('appointment-request-datetime').value;
+            const duration = Number(document.getElementById('appointment-request-duration').value || 0);
+            const reason = document.getElementById('appointment-request-reason').value.trim();
+
+            if (!currentPatient || !currentPatient.id) {
+                msgEl.textContent = 'Hasta bilgisi bulunamadı.';
+                msgEl.className = 'pp-msg err';
+                return;
+            }
+            if (!currentPatient.userId && !currentPatient.dietitianId) {
+                msgEl.textContent = 'Henüz bir diyetisyen atanmadı.';
+                msgEl.className = 'pp-msg err';
+                return;
+            }
+            if (!datetimeVal) {
+                msgEl.textContent = 'Lütfen tarih ve saat seçin.';
+                msgEl.className = 'pp-msg err';
+                return;
+            }
+            const date = new Date(datetimeVal);
+            if (Number.isNaN(date.getTime()) || date <= new Date()) {
+                msgEl.textContent = 'Geçerli bir gelecek tarih seçin.';
+                msgEl.className = 'pp-msg err';
+                return;
+            }
+            if (!reason) {
+                msgEl.textContent = 'Lütfen açıklama yazın.';
+                msgEl.className = 'pp-msg err';
+                return;
+            }
+
+            try {
+                btn.disabled = true;
+                btn.textContent = 'Gönderiliyor...';
+                msgEl.textContent = 'Talep gönderiliyor...';
+                msgEl.className = 'pp-msg';
+                await apiRequest('/api/appointments/request', 'POST', {
+                    appointmentDate: date.toISOString(),
+                    durationInMinutes: duration > 0 ? duration : 30,
+                    reason
+                });
+                msgEl.textContent = 'Randevu talebiniz iletildi. Onay bekleniyor.';
+                msgEl.className = 'pp-msg ok';
+                document.getElementById('appointment-request-reason').value = '';
+                loadUserData();
+                setTimeout(() => closeAppointmentRequestModal(), 500);
+            } catch (err) {
+                msgEl.textContent = err.message || 'Randevu talebi gönderilemedi.';
+                msgEl.className = 'pp-msg err';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Randevu Talep Et';
+            }
+        }
+
+        function getMealProgressMessage(percent) {
+            if (percent >= 100) return 'Harika, bugunun planini tamamen bitirdin. Zinciri bozma.';
+            if (percent >= 75) return 'Mukemmel gidiyorsun, cok az kaldi. Bugünu full bitirebilirsin.';
+            if (percent >= 50) return 'Ritmi yakaladin, boyle devam. Vucudun bu duzeni sevecek.';
+            if (percent >= 20) return 'Iyi gidiyorsun, tamamlamaya devam et. Her tik bir kazanim.';
+            if (percent > 0) return 'Baslangic yapildi. Kucuk adimlar buyuk fark yaratir.';
+            return 'Bugün basla, ilk gorevi tamamlayip motivasyonu ac.';
+        }
+
+        function renderMealPlanSection() {
+            const mealPlanDate = document.getElementById('mealPlanDate');
+            const calories = document.getElementById('mealPlanCalories');
+            const protein = document.getElementById('mealPlanProtein');
+            const carbs = document.getElementById('mealPlanCarbs');
+            const fat = document.getElementById('mealPlanFat');
+            const restriction = document.getElementById('mealPlanRestriction');
+            const status = document.getElementById('mealPlanStatus');
+            const taskLists = document.getElementById('meal-task-lists');
+            const history = document.getElementById('meal-plan-history');
+            const progressBar = document.getElementById('meal-progress-bar');
+            const progressValue = document.getElementById('meal-progress-value');
+            const progressMessage = document.getElementById('meal-progress-message');
+            const requestHelp = document.getElementById('meal-plan-request-help');
+
+            if (!activeMealPlan) {
+                if (mealPlanDate) mealPlanDate.textContent = 'Aktif plan bulunmuyor';
+                if (taskLists) taskLists.innerHTML = '<div class="muted">Diyetisyenin henüz senin için aktif bir beslenme plani hazirlamadi.</div>';
+                if (history) history.innerHTML = '<div class="muted">Geçmiş plan bulunmuyor.</div>';
+                if (requestHelp) requestHelp.textContent = 'Aktif plan olustugunda buradan degisiklik talebi gonderebilirsin.';
+                const chip = document.getElementById('meal-streak-chip');
+                if (chip) chip.textContent = '0 günlük seri';
+                return;
+            }
+
+            if (mealPlanDate) mealPlanDate.textContent = `${new Date(activeMealPlan.startDate).toLocaleDateString('tr-TR')} - ${activeMealPlan.endDate ? new Date(activeMealPlan.endDate).toLocaleDateString('tr-TR') : 'Devam ediyor'}`;
+            if (calories) calories.textContent = `${activeMealPlan.targetCalories || 0} kcal`;
+            if (protein) protein.textContent = `${activeMealPlan.targetProtein || 0} g`;
+            if (carbs) carbs.textContent = `${activeMealPlan.targetCarbs || 0} g`;
+            if (fat) fat.textContent = `${activeMealPlan.targetFat || 0} g`;
+            if (restriction) restriction.textContent = activeMealPlan.restrictions || 'Kısıtlama yok';
+            if (status) status.textContent = Number(activeMealPlan.status) === 1 ? 'Aktif plan' : 'Taslak plan';
+
+            const titleEl = document.getElementById('mealPlanTitle');
+            if (titleEl) titleEl.textContent = activeMealPlan.title || '-';
+            const durationEl = document.getElementById('mealPlanDuration');
+            if (durationEl) durationEl.textContent = activeMealPlan.durationInDays ? `${activeMealPlan.durationInDays} gün` : '-';
+            const notesEl = document.getElementById('mealPlanNotes');
+            if (notesEl) notesEl.textContent = activeMealPlan.restrictions || 'Diyetisyen tarafından not girilmemiş.';
+            const statusBadge = document.getElementById('meal-plan-status-badge');
+            if (statusBadge) {
+                const s = Number(activeMealPlan.status);
+                statusBadge.textContent = s === 1 ? 'Aktif' : s === 2 ? 'Tamamlandı' : s === 3 ? 'İptal' : 'Taslak';
+                statusBadge.className = `pill ${s === 1 ? 'success' : s === 2 ? 'info' : s === 3 ? 'danger' : 'warning'}`;
+            }
+
+            const tasks = Array.isArray(activeMealPlan.tasks) ? activeMealPlan.tasks : [];
+            const meals = activeMealPlan.meals;
+            if (taskLists) {
+                if (meals && (meals.breakfast || meals.lunch || meals.snack || meals.dinner)) {
+                    // Show meal cards layout
+                    const mealDefs = [
+                        {id:'meal-breakfast', icon:'🌅', label:'Sabah Öğünü', content: meals.breakfast},
+                        {id:'meal-lunch', icon:'☀️', label:'Öğle Öğünü', content: meals.lunch},
+                        {id:'meal-snack', icon:'🍎', label:'Ara Öğün', content: meals.snack},
+                        {id:'meal-dinner', icon:'🌙', label:'Akşam Öğünü', content: meals.dinner}
+                    ];
+                    const taskMap = {};
+                    tasks.forEach(t => { taskMap[t.id] = t; });
+                    taskLists.innerHTML = `<div class="meal-cards-grid" style="grid-column:1/-1;">${mealDefs.map(m => {
+                        const task = taskMap[m.id];
+                        const done = task ? task.isCompleted : false;
+                        const hasContent = m.content && m.content.trim();
+                        return `<div class="meal-card${done ? ' done' : ''}">
+                            <div class="meal-card-header">
+                                <span class="meal-card-title">${m.icon} ${m.label}</span>
+                                ${task ? `<label class="meal-card-check" title="Tamamlandı olarak işaretle"><input type="checkbox" class="meal-task-checkbox" data-task-id="${m.id}" ${done ? 'checked' : ''}><span style="font-size:0.78rem;color:var(--gray-500);">Tamamlandı</span></label>` : ''}
+                            </div>
+                            <div class="meal-card-content">${hasContent ? escapeHtmlUser(m.content.trim()) : '<span class="meal-card-empty">İçerik girilmemiş</span>'}</div>
+                        </div>`;
+                    }).join('')}</div>`;
+                } else {
+                    // Fallback: legacy task list layout
+                    const midpoint = Math.ceil(tasks.length / 2);
+                    const columns = [tasks.slice(0, midpoint), tasks.slice(midpoint)];
+                    taskLists.innerHTML = columns.map(group => `
+                        <ul class="meal-checklist">
+                            ${group.map(task => `
+                                <li class="meal-check ${task.isCompleted ? 'done' : ''}">
+                                    <input type="checkbox" class="meal-task-checkbox" data-task-id="${task.id}" ${task.isCompleted ? 'checked' : ''}>
+                                    <div><span class="meal-check-title">${task.title}</span><span class="meal-check-note">${task.note || 'Plan gorevi'}</span></div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `).join('');
+                }
+            }
+
+            const percent = Number(activeMealPlan.progressPercent || 0);
+            if (progressBar) progressBar.style.width = `${percent}%`;
+            if (progressValue) progressValue.textContent = `${percent}%`;
+            if (progressMessage) progressMessage.textContent = getMealProgressMessage(percent);
+            updateMealStreak(percent);
+
+            if (history) {
+                const previousPlans = currentMealPlans.filter(x => x.id !== activeMealPlan.id);
+                history.innerHTML = previousPlans.length ? previousPlans.map(plan => `
+                    <div class="history-card">
+                        <strong>${plan.title || 'Beslenme plani'}</strong>
+                        <span>${new Date(plan.startDate).toLocaleDateString('tr-TR')} - ${plan.endDate ? new Date(plan.endDate).toLocaleDateString('tr-TR') : 'Devam ediyor'}</span>
+                        <span>Tamamlama: %${plan.progressPercent || 0}</span>
+                        <span>Durum: ${Number(plan.status) === 1 ? 'Aktif' : Number(plan.status) === 2 ? 'Tamamlandi' : 'Taslak'}</span>
+                    </div>
+                `).join('') : '<div class="muted">Geçmiş plan bulunmuyor.</div>';
+            }
+
+            bindMealTaskEvents();
+        }
+
+        function updateMealStreak(percent) {
+            if (!activeMealPlan) return;
+            const key = `meal_streak_${activeMealPlan.id}`;
+            const today = new Date();
+            const dateKey = today.toISOString().slice(0, 10);
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayKey = yesterday.toISOString().slice(0, 10);
+
+            let data = { streak: 0, lastCompletedDate: '', brokenDate: '' };
+            try {
+                const raw = localStorage.getItem(key);
+                if (raw) data = { ...data, ...JSON.parse(raw) };
+            } catch { }
+
+            if (percent < 100) {
+                if (data.brokenDate !== dateKey) {
+                    data.brokenDate = dateKey;
+                    if (data.lastCompletedDate !== dateKey) {
+                        data.streak = 0;
+                    }
+                }
+            } else {
+                if (data.brokenDate === dateKey) {
+                    data.streak = 1;
+                } else if (data.lastCompletedDate === yesterdayKey) {
+                    data.streak = (data.streak || 0) + 1;
+                } else if (data.lastCompletedDate !== dateKey) {
+                    data.streak = 1;
+                }
+                data.lastCompletedDate = dateKey;
+                data.brokenDate = '';
+            }
+
+            localStorage.setItem(key, JSON.stringify(data));
+            const chip = document.getElementById('meal-streak-chip');
+            if (chip) chip.textContent = `${data.streak || 0} günlük seri`;
+        }
+
+        function bindMealTaskEvents() {
+            document.querySelectorAll('.meal-task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', updateMealPlanProgress);
+            });
+        }
+
+        async function updateMealPlanProgress() {
+            if (!activeMealPlan) return;
+            const completedTaskIds = Array.from(document.querySelectorAll('.meal-task-checkbox:checked')).map(x => x.dataset.taskId);
+            try {
+                activeMealPlan = await apiRequest(`/api/mealplans/${activeMealPlan.id}/progress`, 'PUT', { completedTaskIds });
+                currentMealPlans = currentMealPlans.map(x => x.id === activeMealPlan.id ? activeMealPlan : x);
+                renderMealPlanSection();
+            } catch (error) {
+                showToast(error.message || 'İlerleme kaydedilemedi.', 'error');
+            }
+        }
+
+        async function requestNewMealPlan() {
+            if (!activeMealPlan) {
+                showToast('Henüz aktif bir plan yok. Diyetisyenin plan oluşturduğunda tekrar deneyebilirsin.', 'warning');
+                return;
+            }
+
+            const type = document.getElementById('meal-plan-request-type')?.value || 'Yeni plan talebi';
+            const priority = document.getElementById('meal-plan-request-priority')?.value || 'Normal';
+            const note = document.getElementById('meal-plan-request-note')?.value || '';
+
+            try {
+                activeMealPlan = await apiRequest(`/api/mealplans/${activeMealPlan.id}/change-request`, 'POST', { type, priority, note });
+                currentMealPlans = currentMealPlans.map(x => x.id === activeMealPlan.id ? activeMealPlan : x);
+                renderMealPlanSection();
+                showToast('Talebin diyetisyenine gönderildi.', 'success');
+                const noteEl = document.getElementById('meal-plan-request-note');
+                if (noteEl) noteEl.value = '';
+                closeMealPlanRequestModal();
+            } catch (error) {
+                showToast(error.message || 'Talep gönderilemedi.', 'error');
+            }
+        }
+
+        function toggleSetting(button) {
+            if (!button) return;
+            button.classList.toggle('active');
+        }
+
+        // ===== Bildirim Ayarları =====
+        function _settingsKey() {
+            return currentUser ? 'fitrehber_settings_' + currentUser.email : null;
+        }
+
+        function loadNotifSettings() {
+            const key = _settingsKey();
+            if (!key) return;
+            try {
+                const saved = JSON.parse(localStorage.getItem(key) || '{}');
+                const appEnabled   = saved.appNotif   !== false; // default: açık
+                const btn = document.getElementById('notif-app-toggle');
+                if (btn) btn.classList.toggle('active', appEnabled);
+                // Badge görünürlüğünü güncelle
+                checkAndUpdateNotifBadge(window._userAppointments || []);
+            } catch {}
+        }
+
+        function saveNotifSettings() {
+            const key = _settingsKey();
+            if (!key) return;
+            const appEnabled = document.getElementById('notif-app-toggle')?.classList.contains('active') ?? true;
+            try {
+                const saved = JSON.parse(localStorage.getItem(key) || '{}');
+                saved.appNotif = appEnabled;
+                localStorage.setItem(key, JSON.stringify(saved));
+            } catch {}
+        }
+
+        function toggleAppNotif(btn) {
+            btn.classList.toggle('active');
+            saveNotifSettings();
+            // Badge'i hemen güncelle
+            if (btn.classList.contains('active')) {
+                checkAndUpdateNotifBadge(window._userAppointments || []);
+            } else {
+                const dot    = document.getElementById('profile-notif-dot');
+                const tabDot = document.getElementById('notif-tab-dot');
+                if (dot)    dot.style.display = 'none';
+                if (tabDot) tabDot.classList.remove('show');
+            }
+        }
+
+        function toggleEmailNotif(btn) {
+            btn.classList.toggle('active');
+            const enabled = btn.classList.contains('active');
+            apiRequest('/api/patients/email-notifications', 'PATCH', { enabled }).catch(() => {});
+        }
+
+        function syncEmailNotifToggle(emailNotificationsEnabled) {
+            const btn = document.getElementById('email-notif-toggle');
+            if (btn) btn.classList.toggle('active', emailNotificationsEnabled !== false);
+        }
+
+        function updateDmButton(isDark) {
+            const btn = document.getElementById('dark-mode-btn');
+            const knob = document.getElementById('dm-knob');
+            if (btn) btn.classList.toggle('active', isDark);
+            if (knob) knob.textContent = isDark ? '☀️' : '🌙';
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark');
+            updateDmButton(isDark);
+            const key = currentUser ? 'dm_' + currentUser.email : null;
+            if (key) localStorage.setItem(key, isDark ? '1' : '0');
+        }
+
+        function applyDarkModeForUser(email) {
+            const isDark = localStorage.getItem('dm_' + email) === '1';
+            document.body.classList.toggle('dark', isDark);
+            updateDmButton(isDark);
+        }
+
+        function printMealPlan() {
+            window.print();
+        }
+
+        function downloadMealPlan() {
+            if (!activeMealPlan) {
+                showToast('Aktif beslenme planı bulunamadı.', 'error');
+                return;
+            }
+            if (typeof window.jspdf === 'undefined' && typeof window.jsPDF === 'undefined') {
+                showToast('PDF kütüphanesi yükleniyor, lütfen tekrar deneyin.', 'error');
+                return;
+            }
+            const { jsPDF } = window.jspdf || window;
+            const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+            const pageW = doc.internal.pageSize.getWidth();
+            const margin = 18;
+            const contentW = pageW - margin * 2;
+            let y = 20;
+
+            // Helper: add text with wrapping
+            function addText(text, x, fontSize, style, color) {
+                doc.setFontSize(fontSize);
+                doc.setFont('helvetica', style || 'normal');
+                if (color) doc.setTextColor(color[0], color[1], color[2]);
+                else doc.setTextColor(40, 40, 40);
+                const lines = doc.splitTextToSize(text, contentW);
+                doc.text(lines, x, y);
+                y += lines.length * (fontSize * 0.45) + 2;
+            }
+            function addSection(title, value, icon) {
+                addText(`${icon || ''}  ${title}`, margin, 10, 'bold', [80, 120, 90]);
+                y -= 1;
+                addText(value || '-', margin + 4, 9.5, 'normal', [60, 60, 60]);
+                y += 2;
+            }
+            function checkPage(needed) {
+                if (y + needed > doc.internal.pageSize.getHeight() - 15) {
+                    doc.addPage();
+                    y = 20;
+                }
+            }
+
+            // Title / Header
+            doc.setFillColor(47, 71, 58);
+            doc.rect(0, 0, pageW, 28, 'F');
+            doc.setFontSize(17);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text('FitRehber - Beslenme Plani', margin, 12);
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Indirme tarihi: ${new Date().toLocaleDateString('tr-TR')}`, margin, 20);
+            doc.setTextColor(40, 40, 40);
+            y = 36;
+
+            // Plan info
+            addText(activeMealPlan.title || 'Beslenme Plani', margin, 14, 'bold');
+            y += 2;
+
+            const startStr = activeMealPlan.startDate ? new Date(activeMealPlan.startDate).toLocaleDateString('tr-TR') : '-';
+            const endStr = activeMealPlan.endDate ? new Date(activeMealPlan.endDate).toLocaleDateString('tr-TR') : 'Devam ediyor';
+            addSection('Danisan', activeMealPlan.patientName || '-', '');
+            addSection('Diyetisyen', activeMealPlan.dietitianName || '-', '');
+            addSection('Plan Suresi', `${startStr} - ${endStr}`, '');
+            y += 2;
+
+            // Macro targets
+            addText('Gunluk Hedefler', margin, 11, 'bold', [47, 71, 58]);
+            y += 1;
+            const macros = [
+                ['Kalori', `${activeMealPlan.targetCalories || 0} kcal`],
+                ['Protein', `${activeMealPlan.targetProtein || 0} g`],
+                ['Karbonhidrat', `${activeMealPlan.targetCarbs || 0} g`],
+                ['Yag', `${activeMealPlan.targetFat || 0} g`]
+            ];
+            macros.forEach(([label, val]) => {
+                doc.setFontSize(9.5);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(100, 130, 100);
+                doc.text(label + ':', margin + 4, y);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(40, 40, 40);
+                doc.text(val, margin + 32, y);
+                y += 6;
+            });
+            y += 2;
+
+            // Restrictions
+            if (activeMealPlan.restrictions) {
+                checkPage(14);
+                addSection('Kisitlamalar / Notlar', activeMealPlan.restrictions, '');
+                y += 2;
+            }
+
+            // Meal content
+            const meals = activeMealPlan.meals;
+            if (meals && (meals.breakfast || meals.lunch || meals.snack || meals.dinner)) {
+                checkPage(10);
+                addText('Gunluk Ogunler', margin, 11, 'bold', [47, 71, 58]);
+                y += 1;
+                const mealDefs = [
+                    ['Sabah Ogu nu', meals.breakfast],
+                    ['Ogle Ogu nu', meals.lunch],
+                    ['Ara Ogu n', meals.snack],
+                    ['Aksam Ogu nu', meals.dinner]
+                ];
+                mealDefs.forEach(([label, content]) => {
+                    if (!content) return;
+                    checkPage(20);
+                    addText(label, margin + 2, 10, 'bold', [80, 120, 90]);
+                    y -= 1;
+                    addText(content.trim(), margin + 6, 9, 'normal', [60, 60, 60]);
+                    y += 3;
+                });
+            } else {
+                // Tasks fallback
+                const tasks = Array.isArray(activeMealPlan.tasks) ? activeMealPlan.tasks : [];
+                if (tasks.length) {
+                    checkPage(10);
+                    addText('Gunluk Gorevler', margin, 11, 'bold', [47, 71, 58]);
+                    y += 1;
+                    tasks.forEach((t, i) => {
+                        checkPage(10);
+                        const line = `${i+1}. ${t.title || 'Gorev'}${t.note ? ' - ' + t.note : ''}`;
+                        addText(line, margin + 4, 9.5, 'normal');
+                    });
+                }
+            }
+
+            // Progress
+            checkPage(12);
+            y += 2;
+            addSection('Tamamlama Orani', `%${activeMealPlan.progressPercent || 0}`, '');
+
+            // Footer
+            const pageH = doc.internal.pageSize.getHeight();
+            doc.setFillColor(47, 71, 58);
+            doc.rect(0, pageH - 10, pageW, 10, 'F');
+            doc.setFontSize(7.5);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(180, 200, 180);
+            doc.text('FitRehber - Diyetisyen Klinik Otomasyon Sistemi', margin, pageH - 4);
+
+            const dateTag = new Date().toISOString().slice(0,10);
+            const safeName = (activeMealPlan.title || 'plan').replace(/[^a-zA-Z0-9\u00C0-\u024F]/g, '-').slice(0,30);
+            doc.save(`beslenme-plani-${safeName}-${dateTag}.pdf`);
+            showToast('Beslenme planı PDF olarak indirildi.', 'success');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            loadUserData();
+            showSection('overview');
+        });
+    </script>
+    <script>
+        // ===== Profil Paneli =====
+        function _ppPhotoKey() { return 'pp_photo_' + (currentUser?.id || currentPatient?.userId || 'k'); }
+        function loadPPPhoto() {
+            const photo = localStorage.getItem(_ppPhotoKey());
+            const avatarEl = document.getElementById('pp-avatar');
+            const profileBtn = document.querySelector('.profile-btn');
+            if (photo) {
+                if (avatarEl) avatarEl.innerHTML = `<img src="${photo}" alt="Profil">`;
+                if (profileBtn) profileBtn.innerHTML = `<img src="${photo}" alt="Profil" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            } else {
+                if (avatarEl) avatarEl.textContent = 'K';
+                if (profileBtn) profileBtn.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4" fill="white"></circle><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" fill="white" opacity="0.9"></path></svg>`;
+            }
+        }
+        function onPPPhotoSelect(input) {
+            const file = input.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const preview = document.getElementById('pp-edit-photo-preview');
+                const placeholder = document.getElementById('pp-edit-photo-placeholder');
+                preview.src = e.target.result; preview.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
+                localStorage.setItem(_ppPhotoKey(), e.target.result);
+                loadPPPhoto();
+            };
+            reader.readAsDataURL(file);
+        }
+        function deletePPPhoto() {
+            localStorage.removeItem(_ppPhotoKey());
+            const preview = document.getElementById('pp-edit-photo-preview');
+            const placeholder = document.getElementById('pp-edit-photo-placeholder');
+            preview.src = ''; preview.style.display = 'none';
+            if (placeholder) { placeholder.style.display = 'flex'; placeholder.textContent = 'K'; }
+            loadPPPhoto();
+        }
+        window.openProfilePanel = function () {
+            const src = currentPatient || currentUser;
+            const name = src ? ((src.firstName || '') + ' ' + (src.lastName || '')).trim() : (document.getElementById('userName')?.textContent || 'Kullanıcı');
+            const email = currentPatient?.email || currentUser?.email || '-';
+            const phone = currentPatient?.phone || currentUser?.phone || '-';
+            loadPPPhoto();
+            document.getElementById('pp-name').textContent = name || 'Kullanıcı';
+            document.getElementById('pp-role-label').textContent = 'Danışan';
+            document.getElementById('pp-info-name').textContent = name || '-';
+            document.getElementById('pp-info-role').textContent = 'Danışan';
+            document.getElementById('pp-info-email').textContent = email;
+            document.getElementById('pp-info-phone').textContent = phone;
+            // Bildirimler - yaklaşan randevular
+            const notifList = document.getElementById('pp-notif-list');
+            const allAppointments = window._userAppointments || [];
+            const upcoming = allAppointments
+                .filter(x => new Date(x.appointmentDate) >= new Date())
+                .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate))
+                .slice(0, 4);
+            notifList.innerHTML = upcoming.length
+                ? upcoming.map(a => {
+                    const dt = a.appointmentDate ? new Date(a.appointmentDate).toLocaleString('tr-TR') : '-';
+                    return `<div class="pp-notif"><span class="pp-notif-icon">•</span><div class="pp-notif-body"><strong>Yaklaşan Randevu</strong><span>${dt}</span></div></div>`;
+                }).join('')
+                : '<div class="pp-notif"><span class="pp-notif-icon">OK</span><div class="pp-notif-body"><strong>Bildirim yok</strong><span>Yaklaşan randevunuz bulunmuyor.</span></div></div>';
+            cancelPPEdit();
+            switchPPTab('info');
+            document.getElementById('pp-backdrop').classList.add('open');
+        };
+        window.closeProfilePanel = function () { document.getElementById('pp-backdrop').classList.remove('open'); };
+        window.switchPPTab = function (tab) {
+            const tabs = ['info', 'notif', 'settings'];
+            document.querySelectorAll('.pp-tab').forEach((t, i) => t.classList.toggle('active', tabs[i] === tab));
+            document.querySelectorAll('.pp-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('pp-content-' + tab).classList.add('active');
+        };
+        window.openPPEdit = function () {
+            const src = currentPatient || currentUser;
+            document.getElementById('pp-edit-firstname').value = src?.firstName || '';
+            document.getElementById('pp-edit-lastname').value = src?.lastName || '';
+            document.getElementById('pp-edit-email').value = currentPatient?.email || currentUser?.email || '';
+            document.getElementById('pp-edit-phone').value = currentPatient?.phone || currentUser?.phone || '';
+            document.getElementById('pp-edit-password').value = '';
+            document.getElementById('pp-edit-address').value = currentPatient?.address || '';
+            document.getElementById('pp-edit-city').value = currentPatient?.city || '';
+            // Photo preview
+            const photo = localStorage.getItem(_ppPhotoKey());
+            const preview = document.getElementById('pp-edit-photo-preview');
+            const placeholder = document.getElementById('pp-edit-photo-placeholder');
+            if (photo) {
+                preview.src = photo; preview.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
+            } else {
+                preview.style.display = 'none';
+                if (placeholder) { placeholder.style.display = 'flex'; placeholder.textContent = 'K'; }
+            }
+            document.getElementById('pp-edit-msg').className = 'pp-msg';
+            document.getElementById('pp-view-mode').style.display = 'none';
+            document.getElementById('pp-edit-form').style.display = 'block';
+        };
+        window.cancelPPEdit = function () {
+            document.getElementById('pp-view-mode').style.display = '';
+            document.getElementById('pp-edit-form').style.display = 'none';
+        };
+        window.savePPEdit = async function () {
+            const patientId = currentPatient?.id;
+            if (!patientId) { showPPMsg('Kullanıcı kimliği bulunamadı.', 'err'); return; }
+            const firstName = document.getElementById('pp-edit-firstname').value.trim();
+            const lastName = document.getElementById('pp-edit-lastname').value.trim();
+            const email = document.getElementById('pp-edit-email').value.trim();
+            const phone = document.getElementById('pp-edit-phone').value.trim();
+            const password = document.getElementById('pp-edit-password').value.trim();
+            const address = document.getElementById('pp-edit-address').value.trim();
+            const city = document.getElementById('pp-edit-city').value.trim();
+            if (!firstName || !lastName) { showPPMsg('Ad ve soyad zorunludur.', 'err'); return; }
+            const previousEmail = currentPatient?.email || currentUser?.email || '';
+            const saveBtn = document.getElementById('pp-save-btn');
+            saveBtn.disabled = true; saveBtn.textContent = 'Kaydediliyor...';
+            try {
+                const body = {
+                    firstName, lastName, email, phone, address, city,
+                    userId: currentPatient?.userId || currentPatient?.dietitianId || null,
+                    dietitianId: currentPatient?.dietitianId || currentPatient?.userId || null,
+                    medicalHistory: currentPatient?.medicalHistory || '',
+                    allergies: currentPatient?.allergies || '',
+                    notes: currentPatient?.notes || ''
+                };
+                if (password) {
+                    body.password = password;
+                }
+                await apiRequest(`/api/patients/${patientId}`, 'PUT', body);
+                // Bellekteki veriyi güncelle
+                if (currentPatient) { currentPatient.firstName = firstName; currentPatient.lastName = lastName; currentPatient.email = email; currentPatient.phone = phone; currentPatient.address = address; currentPatient.city = city; }
+                if (currentUser) { currentUser.firstName = firstName; currentUser.lastName = lastName; currentUser.email = email; currentUser.phone = phone; }
+                // Panel başlık ve satırlarını güncelle
+                const fullName = [firstName, lastName].filter(Boolean).join(' ');
+                document.getElementById('pp-name').textContent = fullName;
+                document.getElementById('pp-info-name').textContent = fullName;
+                document.getElementById('pp-info-email').textContent = email || '-';
+                document.getElementById('pp-info-phone').textContent = phone || '-';
+                // Sayfa genelinde güncelle
+                const userNameEl = document.getElementById('userName');
+                if (userNameEl) userNameEl.textContent = firstName;
+                cancelPPEdit();
+                showPPMsg('Bilgiler başarıyla güncellendi.', 'ok');
+                if (password || (previousEmail && previousEmail !== email)) {
+                    showToast('Bilgiler güncellendi. Lütfen yeni bilgilerle tekrar giriş yapın.', 'success');
+                    setTimeout(() => logout(), 1200);
+                }
+            } catch (err) {
+                showPPMsg(err.message || 'Güncelleme başarısız.', 'err');
+            } finally {
+                saveBtn.disabled = false; saveBtn.textContent = 'Kaydet';
+            }
+        };
+        window.showPPMsg = function (text, cls) {
+            const el = document.getElementById('pp-edit-msg');
+            el.textContent = text; el.className = 'pp-msg ' + cls;
+        };
+
+        window.showSection = function (eventOrSectionId, maybeSectionId) {
+            const sectionId = typeof eventOrSectionId === 'string' ? eventOrSectionId : maybeSectionId;
+            const event = typeof eventOrSectionId === 'object' ? eventOrSectionId : null;
+            if (!sectionId) return;
+
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                const matchedButton = document.querySelector(`.nav-button[onclick*="'${sectionId}'"]`);
+                if (matchedButton) {
+                    matchedButton.classList.add('active');
+                }
+            }
+
+            const appointmentFab = document.getElementById('appointment-request-fab');
+            const mealplanFab = document.getElementById('mealplan-request-fab');
+            if (appointmentFab) appointmentFab.style.display = sectionId === 'appointments' ? '' : 'none';
+            if (mealplanFab) mealplanFab.style.display = sectionId === 'mealplan' ? '' : 'none';
+        };
+
+        window.logout = function () {
+            localStorage.removeItem('authToken');
+            sessionStorage.removeItem('redirectAfterRoleCheck');
+            window.location.replace('/login.html');
+        };
+    </script>
+
+    <script>
+        // ===== Bildirim Sistemi =====
+        const NOTIF_READ_KEY = 'fitrehber_notif_read';
+
+        function getReadNotifIds() {
+            try { return JSON.parse(localStorage.getItem(NOTIF_READ_KEY) || '[]'); } catch { return []; }
+        }
+
+        function addReadNotifIds(ids) {
+            const existing = getReadNotifIds();
+            const merged = Array.from(new Set(existing.concat(ids)));
+            localStorage.setItem(NOTIF_READ_KEY, JSON.stringify(merged));
+        }
+
+        function getAlertAppointments(appointments) {
+            // 24 saat veya daha az kalan, iptal edilmemiş randevular
+            const now = new Date();
+            const cutoff = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+            return (appointments || []).filter(a => {
+                const d = new Date(a.appointmentDate);
+                return d >= now && d <= cutoff && Number(a.status) !== 2;
+            });
+        }
+
+        function checkAndUpdateNotifBadge(appointments) {
+            // Uygulama bildirimleri kapalıysa badge gösterme
+            const appNotifBtn = document.getElementById('notif-app-toggle');
+            const appNotifOn = appNotifBtn ? appNotifBtn.classList.contains('active') : true;
+            if (!appNotifOn) {
+                const dot    = document.getElementById('profile-notif-dot');
+                const tabDot = document.getElementById('notif-tab-dot');
+                if (dot)    dot.style.display = 'none';
+                if (tabDot) tabDot.classList.remove('show');
+                return;
+            }
+            const alertAppts = getAlertAppointments(appointments);
+            const readIds = getReadNotifIds();
+            const unread = alertAppts.filter(a => !readIds.includes(String(a.id)));
+            const hasUnread = unread.length > 0;
+            const dot = document.getElementById('profile-notif-dot');
+            const tabDot = document.getElementById('notif-tab-dot');
+            if (dot) dot.style.display = hasUnread ? 'block' : 'none';
+            if (tabDot) tabDot.classList.toggle('show', hasUnread);
+        }
+
+        function markCurrentNotifsRead(appointments) {
+            const alertAppts = getAlertAppointments(appointments);
+            const ids = alertAppts.map(a => String(a.id));
+            if (ids.length) addReadNotifIds(ids);
+            const dot = document.getElementById('profile-notif-dot');
+            const tabDot = document.getElementById('notif-tab-dot');
+            if (dot) dot.style.display = 'none';
+            if (tabDot) tabDot.classList.remove('show');
+        }
+
+        function buildNotifList(appointments, dietitianName) {
+            const now = new Date();
+            const allUpcoming = (appointments || [])
+                .filter(a => new Date(a.appointmentDate) >= now && Number(a.status) !== 2)
+                .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
+
+            if (!allUpcoming.length) {
+                return '<div class="pp-notif"><span class="pp-notif-icon">✓</span><div class="pp-notif-body"><strong>Bildirim yok</strong><span>Yaklaşan randevunuz bulunmuyor.</span></div></div>';
+            }
+
+            const readIds = getReadNotifIds();
+            const cutoff = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+            return allUpcoming.map(a => {
+                const d = new Date(a.appointmentDate);
+                const isUrgent = d <= cutoff;
+                const isUnread = isUrgent && !readIds.includes(String(a.id));
+                const dateStr = d.toLocaleDateString('tr-TR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                const timeStr = d.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+                const reason = a.reason || 'Kontrol Muayenesi';
+                const dName = dietitianName || 'Diyetisyeniniz';
+
+                let cls = 'pp-notif';
+                if (isUrgent) cls += ' urgent';
+                else if (isUnread) cls += ' unread';
+
+                const iconUrgent = isUrgent ? '⚠️' : '🗓️';
+                const title = isUrgent ? 'Randevu Hatırlatması — 24 Saat İçinde!' : 'Yaklaşan Randevu';
+
+                return `<div class="${cls}">
+                    <span class="pp-notif-icon">${iconUrgent}</span>
+                    <div class="pp-notif-body">
+                        <strong>${title}</strong>
+                        <span>${dateStr}, saat ${timeStr}</span>
+                        <div class="notif-detail-line">Diyetisyen: ${dName}</div>
+                        <div class="notif-detail-line">Tür: ${reason}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // openProfilePanel ve switchPPTab'ı bildirim sistemiyle genişlet
+        const _origOpenProfilePanel = window.openProfilePanel;
+        window.openProfilePanel = function () {
+            const appointments = window._userAppointments || [];
+            const dietitianName = (typeof currentPatient !== 'undefined' && currentPatient)
+                ? (currentPatient.dietitianName || null)
+                : null;
+
+            // Profil panelini aç (orjinal fonksiyon)
+            if (typeof _origOpenProfilePanel === 'function') {
+                _origOpenProfilePanel();
+            }
+
+            // Bildirimleri gerçek verilerle doldur
+            const notifList = document.getElementById('pp-notif-list');
+            if (notifList) {
+                notifList.innerHTML = buildNotifList(appointments, dietitianName);
+            }
+        };
+
+        const _origSwitchPPTab = window.switchPPTab;
+        window.switchPPTab = function (tab) {
+            if (typeof _origSwitchPPTab === 'function') {
+                _origSwitchPPTab(tab);
+            }
+            if (tab === 'notif') {
+                const appointments = window._userAppointments || [];
+                markCurrentNotifsRead(appointments);
+                // Bildirimleri güncelle (okundu olarak göster)
+                const notifList = document.getElementById('pp-notif-list');
+                const dietitianName = (typeof currentPatient !== 'undefined' && currentPatient)
+                    ? (currentPatient.dietitianName || null) : null;
+                if (notifList) notifList.innerHTML = buildNotifList(appointments, dietitianName);
+            }
+        };
+
+        // loadUserData tamamlandıktan sonra bildirim kontrolü tetiklenir
+        const _origLoadUserData = typeof window.loadUserDataCallback === 'function'
+            ? window.loadUserDataCallback : null;
+
+        // MutationObserver yerine loadUserData sonrası hook: _userAppointments set edildiğinde tetiklenir
+        Object.defineProperty(window, '_userAppointments', {
+            set(val) {
+                this._userAppointmentsVal = val;
+                checkAndUpdateNotifBadge(val);
+            },
+            get() { return this._userAppointmentsVal || []; },
+            configurable: true
+        });
+
+        // ===== Müsaitlik Verisi =====
+        function availKeyForPatient(id) { return 'fitrehber_avail_' + id; }
+        function getAvailabilityForDietitian(id) {
+            try {
+                const r = localStorage.getItem(availKeyForPatient(String(id)));
+                if (r) { const p = JSON.parse(r); if (p.schedule) return p; }
+            } catch {}
+            return { schedule: {} };
+        }
+
+        // loadUserData tamamlandığında booked slotları yükle
+        async function loadAvailabilityPanel() {
+            const dietitianId = currentPatient ? (currentPatient.userId || currentPatient.dietitianId) : null;
+            if (!dietitianId) return;
+            try {
+                const resp = await fetch(`/api/appointments/booked-slots?dietitianId=${dietitianId}`, {
+                    headers: { 'Authorization': 'Bearer ' + (localStorage.getItem('authToken') || '') }
+                });
+                if (resp.ok) window._bookedSlots = await resp.json();
+            } catch {}
+        }
+
+        // ===== Randevu Sihirbazı =====
+        let _apptStep = 1, _apptSelectedDate = null, _apptSelectedHour = null, _apptWeekOffset = 0;
+
+        function openApptWizard() {
+            const dietitianId = currentPatient ? (currentPatient.userId || currentPatient.dietitianId) : null;
+            if (!dietitianId) { showToast('Henüz diyetisyen atanmadı.', 'error'); return; }
+            _apptStep = 1; _apptSelectedDate = null; _apptSelectedHour = null; _apptWeekOffset = 0;
+            renderApptWizStep();
+            document.getElementById('appt-wizard').classList.add('open');
+        }
+
+        function closeApptWizard() {
+            document.getElementById('appt-wizard').classList.remove('open');
+            const msg = document.getElementById('appt-wiz-msg');
+            if (msg) msg.style.display = 'none';
+        }
+
+        // Intercept old modal triggers
+        window.openAppointmentRequestModal = openApptWizard;
+
+        function apptWizBack() {
+            if (_apptStep > 1) { _apptStep--; renderApptWizStep(); }
+        }
+
+        function apptWizNext() {
+            if (_apptStep === 1) {
+                if (!_apptSelectedDate) { apptWizMsg('Lütfen bir tarih seçin.', true); return; }
+                _apptStep = 2; renderApptWizStep();
+            } else if (_apptStep === 2) {
+                if (!_apptSelectedHour) { apptWizMsg('Lütfen bir saat seçin.', true); return; }
+                _apptStep = 3; renderApptWizStep();
+            } else {
+                submitApptWizard();
+            }
+        }
+
+        function apptWizMsg(text, isErr) {
+            const el = document.getElementById('appt-wiz-msg');
+            el.textContent = text;
+            el.style.cssText = `display:block;background:${isErr?'#fee2e2':'#d1fae5'};color:${isErr?'#991b1b':'#065f46'};padding:8px 12px;border-radius:8px;font-size:.85rem;margin-top:10px;`;
+        }
+
+        function renderApptWizStep() {
+            const body = document.getElementById('appt-wiz-body');
+            const stepLbl = document.getElementById('appt-wiz-step-lbl');
+            const title = document.getElementById('appt-wiz-title');
+            const backBtn = document.getElementById('appt-wiz-back');
+            const nextBtn = document.getElementById('appt-wiz-next');
+            const msg = document.getElementById('appt-wiz-msg');
+            if (msg) msg.style.display = 'none';
+            backBtn.style.display = _apptStep > 1 ? '' : 'none';
+
+            const dietitianId = currentPatient ? (currentPatient.userId || currentPatient.dietitianId) : null;
+            const schedule = dietitianId ? (getAvailabilityForDietitian(dietitianId).schedule || {}) : {};
+
+            if (_apptStep === 1) {
+                stepLbl.textContent = 'Adım 1 / 3'; title.textContent = 'Tarih Seçin'; nextBtn.textContent = 'Devam';
+                // Build 28-day grid (4 weeks)
+                const today = new Date(); today.setHours(0,0,0,0);
+                const startOfWeek = new Date(today);
+                const dow = today.getDay();
+                startOfWeek.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) + _apptWeekOffset * 7);
+                const weekDates = Array.from({length:7}, (_,i) => { const d=new Date(startOfWeek); d.setDate(startOfWeek.getDate()+i); return d; });
+                const dayNames = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+                const fmt = d => `${d.getDate()}/${d.getMonth()+1}`;
+                const cells = weekDates.map(d => {
+                    const isPast = d < today;
+                    const dayIdx = d.getDay();
+                    const hasAvail = Array.isArray(schedule[dayIdx]) && schedule[dayIdx].length > 0;
+                    const isSel = _apptSelectedDate && d.toDateString() === _apptSelectedDate.toDateString();
+                    let cls = 'appt-date-btn';
+                    if (isSel) cls += ' selected';
+                    else if (!isPast && hasAvail) cls += ' avail';
+                    else cls += ' disabled';
+                    const dateStr = d.toISOString();
+                    return `<button class="${cls}" onclick="selectApptDate('${dateStr}',this)">
+                        <span class="day-name">${dayNames[dayIdx]}</span>${fmt(d)}</button>`;
+                }).join('');
+                const wkFmt = d => d.toLocaleDateString('tr-TR',{day:'numeric',month:'short'});
+                body.innerHTML = `<div class="appt-date-nav">
+                    <button onclick="_apptWeekOffset--;renderApptWizStep()">&#8592;</button>
+                    <span style="font-size:.8rem;color:var(--gray-600);">${wkFmt(weekDates[0])} – ${wkFmt(weekDates[6])}</span>
+                    <button onclick="_apptWeekOffset++;renderApptWizStep()">&#8594;</button>
+                </div><div class="appt-date-grid">${cells}</div>
+                <p style="font-size:.78rem;color:var(--gray-500);margin-top:6px;">Yeşil: Müsait gün &nbsp;|&nbsp; Silik: Müsait değil veya geçmiş</p>`;
+
+            } else if (_apptStep === 2) {
+                stepLbl.textContent = 'Adım 2 / 3'; title.textContent = 'Saat Seçin'; nextBtn.textContent = 'Devam';
+                const dayIdx = _apptSelectedDate.getDay();
+                const availHours = (schedule[dayIdx] || []).sort();
+                const dateStr = _apptSelectedDate.toISOString().slice(0,10);
+                const booked = (window._bookedSlots || []).filter(s => {
+                    const sd = new Date(s.appointmentDate);
+                    return sd.toISOString().slice(0,10) === dateStr;
+                }).map(s => String(new Date(s.appointmentDate).getHours()).padStart(2,'0') + ':00');
+                const hourBtns = availHours.map(h => {
+                    const isBooked = booked.includes(h);
+                    const isSel = h === _apptSelectedHour;
+                    let cls = 'appt-hour-btn';
+                    if (isBooked) cls += ' booked';
+                    else if (isSel) cls += ' selected';
+                    else cls += ' avail';
+                    return `<button class="${cls}" ${isBooked?'disabled':''} onclick="selectApptHour('${h}',this)">${h}${isBooked?' (Dolu)':''}</button>`;
+                }).join('');
+                const selDateStr = _apptSelectedDate.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
+                body.innerHTML = `<p style="font-size:.9rem;margin-bottom:12px;color:var(--gray-700);">📅 <strong>${selDateStr}</strong></p>
+                    <div class="appt-hour-grid">${hourBtns || '<span class="muted">Bu gün için uygun saat bulunmuyor.</span>'}</div>
+                    <p style="font-size:.78rem;color:var(--gray-500);margin-top:4px;">Yeşil: Uygun &nbsp;|&nbsp; Kırmızı: Dolu</p>`;
+
+            } else {
+                stepLbl.textContent = 'Adım 3 / 3'; title.textContent = 'Onayla'; nextBtn.textContent = 'Randevu Talep Et';
+                const selDateStr = _apptSelectedDate.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+                body.innerHTML = `<div class="appt-confirm-summary">
+                    <strong>📅 Tarih:</strong> ${selDateStr}<br>
+                    <strong>🕐 Saat:</strong> ${_apptSelectedHour}<br>
+                    <strong>⏱ Süre:</strong> 60 dakika
+                </div>
+                <div class="field full"><label for="appt-wiz-reason">Açıklama</label>
+                <textarea id="appt-wiz-reason" style="width:100%;min-height:72px;border:1.5px solid var(--gray-200);border-radius:8px;padding:9px 11px;font:inherit;font-size:.9rem;resize:vertical;" placeholder="Randevu nedeninizi belirtin..."></textarea></div>`;
+            }
+        }
+
+        function selectApptDate(isoStr, btn) {
+            _apptSelectedDate = new Date(isoStr);
+            document.querySelectorAll('#appt-wiz-body .appt-date-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.remove('avail'); btn.classList.add('selected');
+        }
+
+        function selectApptHour(h, btn) {
+            _apptSelectedHour = h;
+            document.querySelectorAll('#appt-wiz-body .appt-hour-btn').forEach(b => { b.classList.remove('selected'); if (!b.classList.contains('booked')) b.classList.add('avail'); });
+            btn.classList.remove('avail'); btn.classList.add('selected');
+        }
+
+        async function submitApptWizard() {
+            const reason = document.getElementById('appt-wiz-reason')?.value?.trim();
+            if (!reason) { apptWizMsg('Lütfen açıklama yazın.', true); return; }
+            const [h] = _apptSelectedHour.split(':');
+            const apptDate = new Date(_apptSelectedDate);
+            apptDate.setHours(parseInt(h), 0, 0, 0);
+            if (apptDate <= new Date()) { apptWizMsg('Seçilen tarih geçmişte kalmış.', true); return; }
+            const nextBtn = document.getElementById('appt-wiz-next');
+            nextBtn.disabled = true; nextBtn.textContent = 'Gönderiliyor...';
+            try {
+                await apiRequest('/api/appointments/request', 'POST', {
+                    appointmentDate: apptDate.toISOString(),
+                    durationInMinutes: 60,
+                    reason
+                });
+                apptWizMsg('Randevu talebiniz iletildi! Onay bekleniyor.', false);
+                loadUserData();
+                setTimeout(() => closeApptWizard(), 1800);
+            } catch (err) {
+                apptWizMsg(err.message || 'Talep gönderilemedi.', true);
+            } finally {
+                nextBtn.disabled = false; nextBtn.textContent = 'Randevu Talep Et';
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        // ===== USER CHAT =====
+        let _userChatConn = null;
+        let _userChatDietitianId = null;
+        let _userChatPendingFile = null;
+        const _userMeId = () => { try { return JSON.parse(atob(localStorage.getItem('authToken').split('.')[1])).sub; } catch { return null; } };
+
+        function initUserChat() {
+            const dietitianId = currentPatient?.userId || currentPatient?.dietitianId;
+            if (!dietitianId) return;
+            _userChatDietitianId = dietitianId;
+            // Panel başlığına diyetisyen adını yaz
+            const titleEl = document.getElementById('user-chat-title');
+            if (titleEl && currentPatient?.dietitianName) {
+                titleEl.textContent = currentPatient.dietitianName;
+            }
+            document.getElementById('user-chat-btn').style.display = '';
+            if (_userChatConn) return; // zaten başlatıldı, tekrar bağlanma
+            const token = localStorage.getItem('authToken');
+            _userChatConn = new signalR.HubConnectionBuilder()
+                .withUrl('/hubs/chat', { accessTokenFactory: () => token })
+                .configureLogging(signalR.LogLevel.None)
+                .withAutomaticReconnect()
+                .build();
+            _userChatConn.on('ReceiveMessage', msg => {
+                const me = String(_userMeId());
+                const isPanelOpen = document.getElementById('user-chat-panel').classList.contains('open');
+                const isMyConversation = String(msg.senderId) === String(_userChatDietitianId) ||
+                                        String(msg.receiverId) === String(_userChatDietitianId);
+                if (isMyConversation) {
+                    if (isPanelOpen) {
+                        appendUserMsg(msg);
+                    } else if (String(msg.senderId) !== me) {
+                        // Mesaj diyetisyenden geldi, panel kapalı — badge güncelle
+                        fetchUserUnread();
+                    }
+                } else if (String(msg.senderId) !== me) {
+                    fetchUserUnread();
+                }
+            });
+            _userChatConn.start().catch(() => {});
+            fetchUserUnread();
+            setInterval(fetchUserUnread, 30000);
+        }
+
+        async function toggleUserChat() {
+            const panel = document.getElementById('user-chat-panel');
+            const isOpen = panel.classList.toggle('open');
+            if (isOpen) await loadUserConversation();
+        }
+
+        async function loadUserConversation() {
+            if (!_userChatDietitianId) return;
+            const msgs = document.getElementById('user-chat-messages');
+            msgs.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">Yükleniyor...</div>';
+            try {
+                const data = await apiRequest(`/api/messages/${_userChatDietitianId}`);
+                msgs.innerHTML = '';
+                (Array.isArray(data) ? data : []).forEach(appendUserMsg);
+                msgs.scrollTop = msgs.scrollHeight;
+                updateUserBadge(0);
+            } catch { msgs.innerHTML = '<div style="text-align:center;color:#999;">Yüklenemedi</div>'; }
+        }
+
+        function appendUserMsg(msg) {
+            const me = String(_userMeId());
+            const isMine = String(msg.senderId) === me;
+            const msgs = document.getElementById('user-chat-messages');
+            if (!msgs) return;
+            const time = msg.createdDate ? new Date(msg.createdDate).toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}) : '';
+            let att = '';
+            if (msg.attachmentUrl) {
+                att = msg.attachmentType === 'image'
+                    ? `<div><img class="chat-attach" src="${escapeHtmlUser(msg.attachmentUrl)}" alt="${escapeHtmlUser(msg.attachmentName||'')}"></div>`
+                    : `<div><a class="chat-attach-link" href="${escapeHtmlUser(msg.attachmentUrl)}" target="_blank">📄 ${escapeHtmlUser(msg.attachmentName||'Dosya')}</a></div>`;
+            }
+            const div = document.createElement('div');
+            div.className = `chat-msg ${isMine ? 'mine' : 'theirs'}`;
+            div.innerHTML = `${msg.content ? `<div>${escapeHtmlUser(msg.content)}</div>` : ''}${att}<div class="chat-time">${time}</div>`;
+            msgs.appendChild(div);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        async function sendUserChatMessage() {
+            if (!_userChatDietitianId) return;
+            const input = document.getElementById('user-chat-input');
+            const content = input?.value.trim() || '';
+            if (!content && !_userChatPendingFile) return;
+            const body = { receiverId: parseInt(_userChatDietitianId), content };
+            if (_userChatPendingFile) { body.attachmentUrl = _userChatPendingFile.url; body.attachmentName = _userChatPendingFile.name; body.attachmentType = _userChatPendingFile.type; }
+            try {
+                await apiRequest('/api/messages', 'POST', body);
+                if (input) input.value = '';
+                _userChatPendingFile = null;
+                document.getElementById('user-chat-preview').textContent = '';
+                document.getElementById('user-chat-file').value = '';
+            } catch {}
+        }
+
+        async function handleUserChatFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const preview = document.getElementById('user-chat-preview');
+            preview.textContent = 'Yükleniyor...';
+            const form = new FormData();
+            form.append('file', file);
+            try {
+                const token = localStorage.getItem('authToken');
+                const resp = await fetch('/api/messages/upload', { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: form });
+                if (!resp.ok) throw new Error();
+                const data = await resp.json();
+                _userChatPendingFile = data;
+                preview.textContent = data.name;
+            } catch { preview.textContent = 'Hata'; }
+        }
+
+        async function fetchUserUnread() {
+            try {
+                const token = localStorage.getItem('authToken');
+                const resp = await fetch('/api/messages/unread-count', { headers: { Authorization: `Bearer ${token}` } });
+                const data = await resp.json();
+                updateUserBadge(data.count || 0);
+            } catch {}
+        }
+
+        function updateUserBadge(count) {
+            const badge = document.getElementById('user-chat-badge');
+            if (!badge) return;
+            badge.textContent = count > 9 ? '9+' : count;
+            badge.classList.toggle('show', count > 0);
+        }
+    </script>
+</body>
+</html>
+
+

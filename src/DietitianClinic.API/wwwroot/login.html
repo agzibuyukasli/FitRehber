@@ -1,0 +1,1031 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitRehber - Giriş Yap</title>
+    <style>
+        :root {
+            --cream-50: #f7f2e8;
+            --cream-100: #efe6d8;
+            --sage-200: #c9d6c4;
+            --sage-400: #9fb596;
+            --sage-600: #6f8e6b;
+            --forest-700: #3e5f4b;
+            --forest-900: #25372d;
+            --accent: #e58d4f;
+            --accent-dark: #cf7437;
+            --ink: #2a3a32;
+            --muted: #6a7a6f;
+            --border: #e2d8c8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top left, #fef8ee 0%, #eef3ea 35%, #dbe5d5 100%);
+            min-height: 100vh;
+            color: var(--ink);
+        }
+
+        .login-stage {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
+            overflow: hidden;
+        }
+
+        .floating-items {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .float-item {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            opacity: 0.35;
+            filter: drop-shadow(0 8px 18px rgba(38, 58, 47, 0.2));
+            animation: floatY 9s ease-in-out infinite;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+        }
+
+        .item-1 { top: 8%; left: 8%; animation-duration: 10s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M22 26c2-9 9-12 18-10 6 1 10 7 8 14-2 8-9 16-16 18-9 2-13-8-10-22z' fill='%23e58d4f'/%3E%3Cpath d='M34 16c2-4 6-6 10-6' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+        .item-2 { top: 18%; right: 12%; animation-duration: 11s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='16' y='10' width='32' height='42' rx='12' fill='%239fb596'/%3E%3Crect x='20' y='14' width='24' height='34' rx='10' fill='%23f7f2e8' opacity='0.65'/%3E%3Crect x='26' y='6' width='12' height='8' rx='4' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .item-3 { bottom: 18%; left: 14%; animation-duration: 9.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M18 28c4-8 16-12 26-8 8 3 10 12 6 20-5 10-16 14-26 10-8-3-10-14-6-22z' fill='%23d6a85d'/%3E%3Ccircle cx='40' cy='22' r='4' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .item-4 { bottom: 10%; right: 18%; animation-duration: 12s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='12' y='26' width='40' height='12' rx='6' fill='%233e5f4b'/%3E%3Crect x='6' y='22' width='10' height='20' rx='5' fill='%239fb596'/%3E%3Crect x='48' y='22' width='10' height='20' rx='5' fill='%239fb596'/%3E%3C/svg%3E"); }
+        .item-5 { top: 52%; left: 4%; animation-duration: 11.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M18 42c0-10 6-20 18-20 8 0 12 5 12 12 0 12-8 20-18 20-6 0-12-4-12-12z' fill='%23e58d4f' opacity='0.9'/%3E%3Cpath d='M30 20c-2-4-1-8 4-12' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+        .item-6 { top: 62%; right: 6%; animation-duration: 10.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='18' y='8' width='28' height='48' rx='10' fill='%23c9d6c4'/%3E%3Crect x='22' y='14' width='20' height='24' rx='8' fill='%23f7f2e8'/%3E%3Crect x='26' y='42' width='12' height='8' rx='4' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .item-7 { top: 30%; left: 2%; animation-duration: 9s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M20 38c0-8 6-14 14-14 8 0 14 6 14 14s-6 14-14 14-14-6-14-14z' fill='%23f0b36b'/%3E%3Cpath d='M28 20c1-4 4-7 9-8' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+        .item-8 { top: 38%; right: 3%; animation-duration: 8.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='18' y='18' width='28' height='28' rx='14' fill='%239fb596'/%3E%3Crect x='26' y='10' width='12' height='10' rx='5' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .item-9 { bottom: 28%; left: 20%; animation-duration: 10.5s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='12' y='30' width='40' height='10' rx='5' fill='%236f8e6b'/%3E%3Crect x='8' y='26' width='8' height='18' rx='4' fill='%23c9d6c4'/%3E%3Crect x='48' y='26' width='8' height='18' rx='4' fill='%23c9d6c4'/%3E%3C/svg%3E"); }
+        .item-10 { bottom: 30%; right: 14%; animation-duration: 9.8s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M16 30c6-12 20-14 30-8 6 4 6 14 0 20-8 8-22 8-28-2-4-6-5-8-2-10z' fill='%23e58d4f'/%3E%3Ccircle cx='42' cy='24' r='4' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+        .item-11 { top: 12%; right: 26%; animation-duration: 8.8s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M20 46c0-12 8-20 18-20 6 0 10 4 10 10 0 12-10 20-20 20-4 0-8-4-8-10z' fill='%23d6a85d'/%3E%3Cpath d='M30 22c2-4 6-6 10-6' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E"); }
+        .item-12 { bottom: 6%; left: 30%; animation-duration: 9.2s; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Crect x='20' y='12' width='24' height='40' rx='10' fill='%239fb596'/%3E%3Crect x='24' y='18' width='16' height='20' rx='8' fill='%23f7f2e8'/%3E%3Crect x='28' y='40' width='8' height='6' rx='3' fill='%236f8e6b'/%3E%3C/svg%3E"); }
+
+        @keyframes floatY {
+            0% { transform: translate(0, 0) rotate(-2deg); }
+            50% { transform: translate(12px, -22px) rotate(2deg); }
+            100% { transform: translate(-10px, 4px) rotate(-1deg); }
+        }
+
+        .login-panel {
+            position: relative;
+            z-index: 2;
+            width: min(1100px, 100%);
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 26px;
+            border: 1px solid var(--border);
+            box-shadow: 0 30px 80px rgba(43, 63, 51, 0.18);
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        .info-side {
+            padding: 48px 48px 44px;
+            background: linear-gradient(140deg, rgba(255,255,255,0.95) 0%, rgba(247,242,232,0.95) 55%, rgba(233,229,214,0.9) 100%),
+                        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'%3E%3Crect width='420' height='420' fill='%23f7f2e8'/%3E%3Cpath d='M40 80c40-30 120-20 150 40 20 40-10 90-50 100-60 14-120-60-100-140z' fill='%23d6e3d2' opacity='0.7'/%3E%3Cpath d='M300 40c40 10 70 50 60 90-12 48-68 70-110 40-30-22-30-78 10-110 14-10 26-16 40-20z' fill='%23e9d7bf' opacity='0.7'/%3E%3Cpath d='M80 280c60-30 140-10 180 40 26 34 16 70-12 90-44 34-130 4-180-48-26-28-20-60 12-82z' fill='%23d1dacb' opacity='0.65'/%3E%3C/svg%3E");
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .brand {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .logo-badge {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(145deg, rgba(255,255,255,0.98), rgba(239,230,216,0.7));
+            border: 1px solid rgba(226, 216, 200, 0.9);
+            box-shadow: 0 10px 24px rgba(43, 63, 51, 0.16);
+        }
+
+        .logo-badge img {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
+        }
+
+        .brand h1 {
+            font-size: 1.8rem;
+            margin-bottom: 4px;
+        }
+
+        .brand-title {
+            display: inline-block;
+            font-style: italic;
+            letter-spacing: 0.8px;
+            transform: skewX(-7deg);
+            color: #3e5f4b;
+            text-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            font-family: "Georgia", "Times New Roman", serif;
+        }
+
+        .brand p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .hero-card {
+            position: relative;
+            border-radius: 22px;
+            padding: 24px;
+            background: linear-gradient(135deg, #d9e2d3 0%, #f7f2e8 55%, #f0e1cf 100%);
+            min-height: 220px;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            position: absolute;
+            inset: 16px 18px 16px 55%;
+            border-radius: 18px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='320' viewBox='0 0 260 320'%3E%3Crect width='260' height='320' rx='24' fill='%23f7f2e8'/%3E%3Cpath d='M30 70c20-20 60-20 80 0 10 10 10 30 0 40-20 20-70 0-80-20-6-10-6-12 0-20z' fill='%23d6e3d2'/%3E%3Cpath d='M150 60c20-10 50 0 60 20 10 20-10 50-40 50-30 0-40-40-20-60z' fill='%23e8c69c'/%3E%3Cpath d='M60 200c20-20 60-10 80 20 10 16 6 36-10 46-26 16-70-6-90-30-10-12-6-24 20-36z' fill='%23d2ddc7'/%3E%3Ccircle cx='210' cy='230' r='28' fill='%23e58d4f'/%3E%3Cpath d='M200 220c8-10 26-10 32 0' stroke='%236f8e6b' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") center/cover no-repeat;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+            display: none;
+        }
+
+        .hero-card h2 {
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+            color: var(--forest-700);
+        }
+
+        .hero-card p {
+            max-width: 55%;
+            color: #516257;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .info-list {
+            list-style: none;
+            display: grid;
+            gap: 12px;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .info-list li {
+            padding-left: 24px;
+            position: relative;
+        }
+
+        .info-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .form-side {
+            padding: 44px 40px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .form-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            color: var(--forest-700);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .form-brand img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .form-brand span {
+            font-style: italic;
+            transform: skewX(-7deg);
+            display: inline-block;
+            color: var(--forest-700);
+            text-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            font-family: "Georgia", "Times New Roman", serif;
+            font-size: 3.75rem;
+        }
+
+        .content {
+            margin-top: 18px;
+        }
+
+        .form-side.forgot-open .tabs,
+        .form-side.forgot-open .content {
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            background: var(--cream-100);
+            border-radius: 12px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 10px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--muted);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .tab.active {
+            background: #fff;
+            color: var(--forest-700);
+            box-shadow: 0 6px 14px rgba(43, 63, 51, 0.1);
+        }
+
+        .tab.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: #fcfbf7;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--sage-600);
+            box-shadow: 0 0 0 3px rgba(159, 181, 150, 0.2);
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(229, 141, 79, 0.35);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            display: none;
+            background: #f9f1e7;
+            color: #8f5a2a;
+            border-left: 4px solid var(--accent);
+        }
+
+        .message.show { display: block; }
+        .message.error { background: #f7e3dd; color: #8c3b2f; border-left-color: #c56b5c; }
+        .message.success { background: #e4f2e6; color: #346447; border-left-color: #5c9b6a; }
+
+        .toast-host {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1200;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .app-toast {
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.35s ease, transform 0.35s ease;
+            max-width: min(320px, calc(100vw - 32px));
+            text-align: center;
+        }
+
+        .app-toast.show { opacity: 1; transform: translateY(0); }
+        .app-toast.hide { opacity: 0; transform: translateY(-8px); }
+        .app-toast.success { background: rgba(34, 197, 94, 0.18); color: #1f5a38; border: 1px solid rgba(34, 197, 94, 0.35); }
+        .app-toast.warning { background: rgba(245, 158, 11, 0.2); color: #8a4b13; border: 1px solid rgba(245, 158, 11, 0.35); }
+        .app-toast.error { background: rgba(239, 68, 68, 0.2); color: #7f1d1d; border: 1px solid rgba(239, 68, 68, 0.35); }
+        .app-toast.info { background: rgba(34, 197, 94, 0.18); color: #1f5a38; border: 1px solid rgba(34, 197, 94, 0.35); }
+
+        .forgot-link {
+            margin-top: 8px;
+            border: 0;
+            background: none;
+            color: var(--forest-700);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .pw-hints {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 6px;
+        }
+        .ph {
+            font-size: 12px;
+            color: #e74c3c;
+            transition: color 0.2s;
+        }
+        .ph.ok {
+            color: #27ae60;
+        }
+
+        .forgot-panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .forgot-panel.active {
+            display: block;
+        }
+
+        .forgot-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .forgot-head h3 {
+            margin: 0 0 4px;
+            font-size: 1.15rem;
+            color: var(--forest-700);
+        }
+
+        .forgot-head p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .ghost-btn {
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--forest-700);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            text-decoration: none;
+            color: var(--forest-700);
+            font-size: 0.88rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(111, 142, 107, 0.1);
+            border: 1px solid rgba(111, 142, 107, 0.2);
+            transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(111, 142, 107, 0.2);
+            transform: translateX(-3px);
+            box-shadow: 0 4px 12px rgba(63, 95, 75, 0.12);
+        }
+
+        .back-link svg {
+            flex-shrink: 0;
+        }
+
+        .fp-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            color: #fff;
+            margin-top: 4px;
+        }
+        .fp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(229,141,79,0.35); }
+        .fp-btn:disabled { opacity: 0.65; transform: none; cursor: not-allowed; }
+
+        .fp-info {
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.5;
+            background: var(--cream-100);
+            padding: 10px 14px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        .fp-steps {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        .fp-dot {
+            flex: 1;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border);
+            transition: background 0.35s;
+        }
+        .fp-dot.active { background: var(--accent); }
+
+        #forgotCode {
+            letter-spacing: 10px;
+            font-size: 1.5rem;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        @media (max-width: 980px) {
+            .login-panel { grid-template-columns: 1fr; }
+            .hero-card p { max-width: 100%; }
+            .hero-image { position: relative; inset: auto; width: 100%; height: 160px; margin-top: 16px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-stage">
+        <div class="floating-items">
+            <span class="float-item item-1"></span>
+            <span class="float-item item-2"></span>
+            <span class="float-item item-3"></span>
+            <span class="float-item item-4"></span>
+            <span class="float-item item-5"></span>
+            <span class="float-item item-6"></span>
+            <span class="float-item item-7"></span>
+            <span class="float-item item-8"></span>
+            <span class="float-item item-9"></span>
+            <span class="float-item item-10"></span>
+            <span class="float-item item-11"></span>
+            <span class="float-item item-12"></span>
+        </div>
+
+        <div class="login-panel">
+            <section class="info-side">
+                <div class="brand">
+                    <div class="logo-badge">
+                        <img src="assets/fitrehber-logo.png" alt="FitRehber logosu">
+                    </div>
+                    <div>
+                        <h1 class="brand-title">FitRehber</h1>
+                        <p>Beslenme odaklı akıllı klinik otomasyonu</p>
+                    </div>
+                </div>
+
+                <div class="hero-card">
+                    <h2>Sağlıklı yaşam için güçlü bir sistem</h2>
+                    <p>Randevu, ölçüm ve beslenme planlarını tek panelde yönetin. Danışanlarınızla hızlı, düzenli ve güvenli ilerleyin.</p>
+                </div>
+
+                <ul class="info-list">
+                    <li>Randevuları tek ekranda yönetme ve onaylama</li>
+                    <li>Beslenme planlarını kolayca hazırlama ve takip</li>
+                    <li>Danışan ilerlemesini ölçümlerle görselleştirme</li>
+                </ul>
+
+                <div class="footer">
+                    <a class="back-link" href="/index.html">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Anasayfaya Dön
+                    </a>
+                    <span>© 2026 FitRehber - Tüm Hakları Saklıdır</span>
+                </div>
+            </section>
+
+            <section class="form-side" id="login-form-side">
+                <div class="form-brand">
+                    <img src="assets/fitrehber-logo.png" alt="FitRehber logosu">
+                    <spöan>FitRehber</spöan>
+                </div>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(event, 'admin')">Admin</button>
+                    <button class="tab" onclick="switchTab(event, 'dietitian')">Diyetisyen</button>
+                    <button class="tab" onclick="switchTab(event, 'user')">Danışan</button>
+                </div>
+
+                <div class="content">
+                    <div id="admin" class="tab-content active">
+                        <div class="message" id="adminMessage"></div>
+                    <form onsubmit="handleLogin(event, 'admin')" autocomplete="off">
+                            <div class="form-group">
+                                <label for="adminEmail">E-posta</label>
+                        <input type="email" id="adminEmail" placeholder="admin@example.com" required autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="adminPassword">Şifre</label>
+                        <input type="password" id="adminPassword" placeholder="Şifrenizi girin" required autocomplete="new-password">
+                            </div>
+                            <button type="submit">Giriş Yap</button>
+                            <button type="button" class="forgot-link" onclick="openForgot('admin')">Şifremi unuttum</button>
+                        </form>
+                    </div>
+
+                    <div id="dietitian" class="tab-content">
+                        <div class="message" id="dietitianMessage"></div>
+                    <form onsubmit="handleLogin(event, 'dietitian')" autocomplete="off">
+                            <div class="form-group">
+                                <label for="dietitianEmail">E-posta</label>
+                        <input type="email" id="dietitianEmail" placeholder="diyetisyen@example.com" required autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="dietitianPassword">Şifre</label>
+                        <input type="password" id="dietitianPassword" placeholder="Şifrenizi girin" required autocomplete="new-password">
+                            </div>
+                            <button type="submit">Giriş Yap</button>
+                            <button type="button" class="forgot-link" onclick="openForgot('dietitian')">Şifremi unuttum</button>
+                        </form>
+                    </div>
+
+                    <div id="user" class="tab-content">
+                        <div class="message" id="userMessage"></div>
+                    <form onsubmit="handleLogin(event, 'user')" autocomplete="off">
+                            <div class="form-group">
+                                <label for="userEmail">E-posta</label>
+                        <input type="email" id="userEmail" placeholder="danisan@example.com" required autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="userPassword">Şifre</label>
+                        <input type="password" id="userPassword" placeholder="Şifrenizi girin" required autocomplete="new-password">
+                            </div>
+                            <button type="submit">Giriş Yap</button>
+                            <button type="button" class="forgot-link" onclick="openForgot('user')">Şifremi unuttum</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="forgot-panel" class="forgot-panel">
+                    <div class="forgot-head">
+                        <div>
+                            <h3 id="fp-title">Şifre Sıfırlama</h3>
+                            <p id="fp-subtitle" style="margin:2px 0 0;color:var(--muted);font-size:0.85rem;">E-posta adresinize doğrulama kodu göndereceğiz.</p>
+                        </div>
+                        <button type="button" class="ghost-btn" onclick="closeForgot()">Geri</button>
+                    </div>
+
+                    <!-- Adım göstergesi -->
+                    <div class="fp-steps">
+                        <div class="fp-dot active" id="fp-dot1"></div>
+                        <div class="fp-dot"        id="fp-dot2"></div>
+                        <div class="fp-dot"        id="fp-dot3"></div>
+                    </div>
+
+                    <div class="message" id="forgotMessage"></div>
+
+                    <!-- Adım 1: E-posta -->
+                    <div id="fp-step1">
+                        <div class="form-group">
+                            <label for="forgotEmail">E-posta</label>
+                            <input type="email" id="forgotEmail" placeholder="ornek@mail.com" autocomplete="off">
+                        </div>
+                        <button type="button" class="fp-btn" id="fp-btn1" onclick="fpSendCode()">Kod Gönder</button>
+                    </div>
+
+                    <!-- Adım 2: Kod doğrulama -->
+                    <div id="fp-step2" style="display:none">
+                        <p class="fp-info" id="fp-code-info"></p>
+                        <div class="form-group">
+                            <label for="forgotCode">Doğrulama Kodu</label>
+                            <input type="text" id="forgotCode" placeholder="• • • • • •" maxlength="6" autocomplete="off" inputmode="numeric">
+                        </div>
+                        <button type="button" class="fp-btn" id="fp-btn2" onclick="fpVerifyCode()">Kodu Doğrula</button>
+                        <button type="button" class="forgot-link" style="margin-top:10px;display:block;" onclick="fpResendCode()">Kodu tekrar gönder</button>
+                    </div>
+
+                    <!-- Adım 3: Yeni şifre -->
+                    <div id="fp-step3" style="display:none">
+                        <div class="form-group">
+                            <label for="forgotPassword">Yeni Şifre</label>
+                            <input type="password" id="forgotPassword" placeholder="Yeni şifrenizi girin" autocomplete="new-password" oninput="checkPasswordStrength(this.value)">
+                            <div id="pwHints" class="pw-hints">
+                                <span id="ph-len"   class="ph">✗ En az 8 karakter</span>
+                                <span id="ph-upper" class="ph">✗ Büyük harf (A-Z)</span>
+                                <span id="ph-lower" class="ph">✗ Küçük harf (a-z)</span>
+                                <span id="ph-digit" class="ph">✗ Rakam (0-9)</span>
+                                <span id="ph-spec"  class="ph">✗ Özel karakter (!@#$%)</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="forgotPasswordConfirm">Yeni Şifre (Tekrar)</label>
+                            <input type="password" id="forgotPasswordConfirm" placeholder="Yeni şifrenizi tekrar girin" autocomplete="new-password">
+                        </div>
+                        <button type="button" class="fp-btn" id="fp-btn3" onclick="fpResetPassword()">Şifreyi Güncelle</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div id="toast-host" class="toast-host" aria-live="polite" aria-atomic="true"></div>
+
+    <script>
+        function showToast(message, type = 'info') {
+            const host = document.getElementById('toast-host');
+            if (!host) return;
+            host.innerHTML = '';
+            const toast = document.createElement('div');
+            toast.className = `app-toast ${type}`;
+            toast.textContent = message;
+            host.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => toast.classList.add('hide'), 2000);
+            setTimeout(() => toast.remove(), 2600);
+        }
+
+        function switchTab(event, tabName) {
+            event.preventDefault();
+            const tab = event.target;
+
+            if (tab.classList.contains('disabled')) {
+                return;
+            }
+
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            tab.classList.add('active');
+            currentRole = tabName;
+        }
+
+        async function handleLogin(event, role) {
+            event.preventDefault();
+
+            const emailInput = document.getElementById(role + 'Email');
+            const passwordInput = document.getElementById(role + 'Password');
+            const messageEl = document.getElementById(role + 'Message');
+
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                showMessage(messageEl, 'E-posta ve şifre zorunludur', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/users/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                let data = {};
+                const contentType = response.headers.get('content-type') || '';
+                if (contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    const text = await response.text();
+                    data = { message: text };
+                }
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        showToast(data.message || 'Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.', 'warning');
+                        if (messageEl) { messageEl.className = 'message'; }
+                        return;
+                    }
+                    throw new Error(data.message || 'Giriş başarısız oldu');
+                }
+
+                if (!data.token) {
+                    throw new Error('Token alınamadı');
+                }
+
+                const payload = parseJwtPayload(data.token);
+                const tokenRole = String(payload.role
+                    || payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+                    || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/role']
+                    || '').toLowerCase();
+
+                const isAdmin      = tokenRole === '0' || tokenRole === 'admin';
+                const isDietitian  = tokenRole === '1' || tokenRole === 'dietitian';
+                const isPatient    = tokenRole === '3' || tokenRole === 'user' || tokenRole === 'patient';
+
+                const allowed =
+                    (role === 'admin'     && isAdmin)     ||
+                    (role === 'dietitian' && isDietitian) ||
+                    (role === 'user'      && isPatient);
+
+                if (!allowed) {
+                    const tabLabels = { admin: 'Admin', dietitian: 'Diyetisyen', user: 'Danışan' };
+                    throw new Error(`Bu hesap ${tabLabels[role]} sekmesinden giriş yapamaz. Lütfen doğru sekmeyi kullanın.`);
+                }
+
+                localStorage.setItem('authToken', data.token);
+                showMessage(messageEl, 'Giriş başarılı. Yönlendiriliyorsunuz...', 'success');
+
+                setTimeout(() => {
+                    if (role === 'user') {
+                        window.location.href = '/user.html';
+                    } else {
+                        window.location.href = '/dashboard.html';
+                    }
+                }, 500);
+            } catch (error) {
+                showMessage(messageEl, error.message, 'error');
+            }
+        }
+
+        let currentRole  = 'admin';
+        let _fpEmail     = '';
+        let _fpToken     = '';
+
+        // ── Şifre sıfırlama — Adım yönetimi ──────────────────────────────
+        function showFpStep(n) {
+            [1,2,3].forEach(i => {
+                document.getElementById('fp-step' + i).style.display = (i === n) ? '' : 'none';
+                const dot = document.getElementById('fp-dot' + i);
+                if (dot) dot.classList.toggle('active', i <= n);
+            });
+            const titles = { 1: 'Şifre Sıfırlama', 2: 'Kodu Girin', 3: 'Yeni Şifre' };
+            const subs   = {
+                1: 'E-posta adresinize doğrulama kodu göndereceğiz.',
+                2: _fpEmail ? _fpEmail + ' adresine gönderilen 6 haneli kodu girin.' : 'E-postanıza gelen kodu girin.',
+                3: 'Güçlü bir yeni şifre oluşturun.'
+            };
+            const titleEl = document.getElementById('fp-title');
+            const subEl   = document.getElementById('fp-subtitle');
+            if (titleEl) titleEl.textContent = titles[n] || '';
+            if (subEl)   subEl.textContent   = subs[n]   || '';
+            const msgEl = document.getElementById('forgotMessage');
+            if (msgEl) msgEl.className = 'message';
+        }
+
+        function openForgot(role) {
+            const formSide = document.getElementById('login-form-side');
+            const panel    = document.getElementById('forgot-panel');
+            if (formSide) formSide.classList.add('forgot-open');
+            if (panel)    panel.classList.add('active');
+            currentRole = role || currentRole;
+            _fpEmail = '';
+            _fpToken = '';
+            const el = document.getElementById('forgotEmail');
+            if (el) { el.value = ''; }
+            showFpStep(1);
+            setTimeout(() => { if (el) el.focus(); }, 50);
+        }
+
+        function closeForgot() {
+            const formSide = document.getElementById('login-form-side');
+            const panel    = document.getElementById('forgot-panel');
+            if (formSide) formSide.classList.remove('forgot-open');
+            if (panel)    panel.classList.remove('active');
+            _fpEmail = '';
+            _fpToken = '';
+            showFpStep(1);
+        }
+
+        // ── Adım 1: Kod gönder ────────────────────────────────────────────
+        async function fpSendCode() {
+            const msgEl = document.getElementById('forgotMessage');
+            const email = (document.getElementById('forgotEmail').value || '').trim();
+            if (!email) { showMessage(msgEl, 'Lütfen e-posta adresinizi girin.', 'error'); return; }
+
+            const btn = document.getElementById('fp-btn1');
+            btn.disabled = true; btn.textContent = 'Gönderiliyor...';
+            try {
+                const res  = await fetch('/api/users/send-reset-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Kod gönderilemedi.');
+                _fpEmail = email;
+                showFpStep(2);
+                const infoEl = document.getElementById('fp-code-info');
+                if (infoEl) infoEl.textContent = email + ' adresine 6 haneli bir kod gönderdik. Kodun gelmesi birkaç saniye sürebilir.';
+                showMessage(msgEl, 'Kod gönderildi.', 'success');
+                setTimeout(() => { const c = document.getElementById('forgotCode'); if (c) { c.value=''; c.focus(); } }, 100);
+            } catch (err) {
+                showMessage(msgEl, err.message, 'error');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Kod Gönder';
+            }
+        }
+
+        // ── Adım 1'e dönüp tekrar gönder ─────────────────────────────────
+        async function fpResendCode() {
+            showFpStep(1);
+            const el = document.getElementById('forgotEmail');
+            if (el && _fpEmail) el.value = _fpEmail;
+            await fpSendCode();
+        }
+
+        // ── Adım 2: Kodu doğrula ──────────────────────────────────────────
+        async function fpVerifyCode() {
+            const msgEl = document.getElementById('forgotMessage');
+            const code  = (document.getElementById('forgotCode').value || '').trim();
+            if (!code || code.length < 6) { showMessage(msgEl, 'Lütfen 6 haneli kodu girin.', 'error'); return; }
+
+            const btn = document.getElementById('fp-btn2');
+            btn.disabled = true; btn.textContent = 'Doğrulanıyor...';
+            try {
+                const res  = await fetch('/api/users/verify-reset-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: _fpEmail, code })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Kod doğrulanamadı.');
+                _fpToken = data.token;
+                showFpStep(3);
+                setTimeout(() => { const p = document.getElementById('forgotPassword'); if (p) p.focus(); }, 100);
+            } catch (err) {
+                showMessage(msgEl, err.message, 'error');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Kodu Doğrula';
+            }
+        }
+
+        // ── Adım 3: Şifreyi güncelle ──────────────────────────────────────
+        async function fpResetPassword() {
+            const msgEl   = document.getElementById('forgotMessage');
+            const pw      = document.getElementById('forgotPassword').value;
+            const confirm = document.getElementById('forgotPasswordConfirm').value;
+
+            if (!pw)           { showMessage(msgEl, 'Şifre zorunludur.',      'error'); return; }
+            if (pw !== confirm) { showMessage(msgEl, 'Şifreler eşleşmiyor.', 'error'); return; }
+            if (!isPasswordStrong(pw)) {
+                showMessage(msgEl, 'Şifre kurallara uymuyor: en az 8 karakter, büyük/küçük harf, rakam ve özel karakter gereklidir.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('fp-btn3');
+            btn.disabled = true; btn.textContent = 'Güncelleniyor...';
+            try {
+                const res  = await fetch('/api/users/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: _fpEmail, token: _fpToken, newPassword: pw })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Şifre güncellenemedi.');
+                showMessage(msgEl, 'Şifre başarıyla güncellendi! Şimdi giriş yapabilirsiniz.', 'success');
+                setTimeout(closeForgot, 1800);
+            } catch (err) {
+                showMessage(msgEl, err.message, 'error');
+                // Token tüketilmişse ya da süresi dolduysa kullanıcıyı başa al
+                if (err.message && (err.message.includes('Geçersiz') || err.message.includes('süresi'))) {
+                    setTimeout(() => { showFpStep(1); const el = document.getElementById('forgotEmail'); if (el && _fpEmail) el.value = _fpEmail; }, 2000);
+                }
+            } finally {
+                btn.disabled = false; btn.textContent = 'Şifreyi Güncelle';
+            }
+        }
+
+        function isPasswordStrong(val) {
+            return val.length >= 8 && /[A-Z]/.test(val) && /[a-z]/.test(val) && /[0-9]/.test(val) && /[^A-Za-z0-9]/.test(val);
+        }
+
+        function checkPasswordStrength(val) {
+            const set = (id, ok) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.className = 'ph' + (ok ? ' ok' : '');
+                el.textContent = (ok ? '✓ ' : '✗ ') + el.textContent.slice(2);
+            };
+            set('ph-len',   val.length >= 8);
+            set('ph-upper', /[A-Z]/.test(val));
+            set('ph-lower', /[a-z]/.test(val));
+            set('ph-digit', /[0-9]/.test(val));
+            set('ph-spec',  /[^A-Za-z0-9]/.test(val));
+        }
+
+        function showMessage(element, message, type) {
+            showToast(message, type);
+            if (element) {
+                element.innerHTML = message;
+                element.className = 'message ' + type;
+            }
+        }
+
+        function parseJwtPayload(token) {
+            try {
+                const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                return JSON.parse(decodeURIComponent(atob(payload).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join('')));
+            } catch {
+                return {};
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            localStorage.removeItem('authToken');
+
+            const inputs = document.querySelectorAll('#adminEmail,#adminPassword,#dietitianEmail,#dietitianPassword,#userEmail,#userPassword');
+            inputs.forEach(input => { input.value = ''; });
+        });
+    </script>
+</body>
+</html>
