@@ -79,6 +79,10 @@ Diyetisyen ve hastalar arasında anlık mesajlaşma imkanı sağlar. WebSocket p
     dotnet run
     ```
 
+    **Admin giriş bilgileri:
+        username: admin@fitrehber.com
+        password: Admin123!
+    Admin giriş bilgileri ile giriş yapıp diyetisyen ekleyerek giriş yapabilirsiniz. Devamında diyetisyen girişi ile de danışan hesabı oluşturup danışan paneline giriş yapabilirsiniz.
 ---
 
 ## 👨‍💻 Geliştirici
