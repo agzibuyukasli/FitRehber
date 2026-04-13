@@ -29,6 +29,24 @@ Proje, **Clean Architecture** prensiplerine uygun olarak 4 ana katmandan oluşma
 
 ---
 
+## 🤖 FitRehber AI Entegrasyonu (Smart Consultation)
+
+Sistem, diyetisyenlerin karar destek süreçlerini hızlandırmak ve danışan verilerini daha verimli analiz edebilmek için gelişmiş bir yapay zeka katmanına sahiptir.
+
+### 🧠 Teknoloji ve Model
+* **Model:** Anthropic Claude 3 Haiku (OpenRouter aracılığıyla).
+* **Altyapı:** OpenRouter API kullanılarak OpenAI uyumlu **Chat Completions** formatında entegre edilmiştir.
+* **Esneklik:** `appsettings.json` üzerinden model ve API anahtarı yönetimi sayesinde "Loosely Coupled" (Gevşek Bağlı) bir yapı sunar; kod değişikliği gerektirmeden model güncellenebilir.
+
+### 🔌 Sunulan Servisler (Endpoints)
+* **`POST /api/ai/consult` (Danışma Modu):** Diyetisyenlerin serbest formatta soru sorabildiği, klinik odaklı AI asistanı.
+* **`GET /api/ai/quick-analysis/{patientId}` (Hızlı Analiz):** Belirli bir danışanın ölçüm verilerini, beslenme planlarını ve geçmiş randevu kayıtlarını otomatik olarak analiz ederek 3-4 maddelik kritik klinik özetler üretir.
+
+### 🛠️ Sistem Yönlendirmesi (Prompt Engineering)
+Model, yalnızca beslenme ve sağlıklı yaşam tarzı önerileri sunacak şekilde optimize edilmiş özel **Türkçe sistem komutlarıyla** sınırlandırılmıştır. Tüm analizler, hasta veritabanındaki güncel kayıtlar bağlam (context) olarak iletilerek kişiselleştirilmiş sonuçlar üretir.
+
+---
+
 ## ✨ Temel Özellikler & Teknik Detaylar
 
 ### 🔐 Güvenlik ve Yetkilendirme
