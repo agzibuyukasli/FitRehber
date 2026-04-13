@@ -53,7 +53,6 @@ namespace DietitianClinic.API.Controllers
                     .Where(u => !u.IsDeleted && u.Role == UserRole.Dietitian)
                     .ToDictionaryAsync(u => u.Id, u => $"{u.FirstName} {u.LastName}");
 
-                // Hasta email → login User.Id eşleşmesi (C# tarafında yapılır, EF çevirisi sorun çıkarmaz)
                 var allUserIdsByEmail = await _context.Users
                     .AsNoTracking()
                     .Where(u => !u.IsDeleted)
@@ -197,7 +196,6 @@ namespace DietitianClinic.API.Controllers
                     }
                 }
 
-                // Diyetisyen/admin rolünde aktif kullanıcı varsa kesin engelle
                 var existingNonPatientUser = await _context.Users
                     .IgnoreQueryFilters()
                     .AsNoTracking()
@@ -207,7 +205,6 @@ namespace DietitianClinic.API.Controllers
                     return BadRequest(new ApiResponse { Success = false, Message = "Bu e-posta ile kayitli bir kullanici zaten var" });
                 }
 
-                // Aktif hasta kaydı VE aktif hasta kullanıcısı varsa engelle (gerçek duplicate)
                 var activePatientUser = await _context.Users
                     .IgnoreQueryFilters()
                     .AsNoTracking()
@@ -226,7 +223,6 @@ namespace DietitianClinic.API.Controllers
                     return BadRequest(new ApiResponse { Success = false, Message = "Danisan girisi icin sifre zorunludur" });
                 }
 
-                // Sahipsiz hasta kaydı varsa (kullanıcısı silinmiş/yok ama hasta kaydı aktif) temizle
                 if (activePatientRecord && !activePatientUser)
                 {
                     var orphan = await _context.Patients
@@ -240,7 +236,6 @@ namespace DietitianClinic.API.Controllers
                     }
                 }
 
-                // Kullanıcı kaydını oluştur veya yeniden aktif et
                 var anyExistingUser = await _context.Users
                     .IgnoreQueryFilters()
                     .FirstOrDefaultAsync(u => u.Email == request.Email);
@@ -388,11 +383,8 @@ namespace DietitianClinic.API.Controllers
                     }
                 }
 
-                // Kullanıcı girişi 'Users' tablosu üzerinden yapılıyor.
-                // Admin panelinde e-posta/şifre güncellendiğinde, burada da aynı bilgileri
-                // patient'in kullanıcı kaydına yansıtıyoruz.
                 var oldPatientEmail = patient.Email;
-                var requestPassword = request.Password; // boş/null => güncelleme yapma
+                var requestPassword = request.Password;
 
                 var emailExists = await _context.Patients
                     .AsNoTracking()
@@ -402,8 +394,6 @@ namespace DietitianClinic.API.Controllers
                     return BadRequest(new ApiResponse { Success = false, Message = "Bu e-posta ile kayitli bir hasta zaten var" });
                 }
 
-                // Users tablosunda (role=Patient) e-posta tekil olmalı.
-                // Şayet e-posta değiştiriliyorsa ve aynı e-posta başka bir patient'e aitse engelle.
                 var existingPatientUser = await _context.Users
                     .FirstOrDefaultAsync(u => !u.IsDeleted && u.Role == UserRole.Patient && u.Email == oldPatientEmail);
 
@@ -435,7 +425,6 @@ namespace DietitianClinic.API.Controllers
                 patient.Allergies = request.Allergies;
                 patient.Notes = request.Notes;
 
-                // Login için Users tablosundaki e-posta/şifre bilgisini de güncelle.
                 existingPatientUser.Email = request.Email;
                 existingPatientUser.Phone = request.Phone;
                 if (!string.IsNullOrWhiteSpace(requestPassword))
@@ -557,7 +546,6 @@ namespace DietitianClinic.API.Controllers
             try
             {
                 var (currentUserId, isDietitian) = GetCurrentUserContext();
-                // DeletedPatients tablosu BaseEntity'den türetilmediği için global query filter yok
                 var query = _context.DeletedPatients.AsNoTracking();
                 if (isDietitian && currentUserId.HasValue)
                     query = query.Where(p => p.OwnerUserId == currentUserId.Value);
@@ -593,13 +581,11 @@ namespace DietitianClinic.API.Controllers
 
                 var archivedEmails = archivedPatients.Select(p => p.Email).Distinct().ToList();
 
-                // Patients tablosundaki soft-delete kayıtları hard-delete et
                 var softDeletedPatients = await _context.Patients
                     .IgnoreQueryFilters()
                     .Where(p => p.IsDeleted && archivedEmails.Contains(p.Email))
                     .ToListAsync();
 
-                // Users tablosundaki deaktif hasta kullanıcılarını hard-delete et
                 var deletedUsers = await _context.Users
                     .IgnoreQueryFilters()
                     .Where(u => u.IsDeleted && u.Role == UserRole.Patient && archivedEmails.Contains(u.Email))
@@ -651,8 +637,6 @@ namespace DietitianClinic.API.Controllers
                     .OrderByDescending(m => m.MeasurementDate)
                     .FirstOrDefault();
 
-                // patient.User is the dietitian when created via PatientsController.
-                // Also check appointments as fallback.
                 var dietitianUser = (patient.User != null && patient.User.Role == UserRole.Dietitian)
                     ? patient.User
                     : patient.Appointments
@@ -660,7 +644,6 @@ namespace DietitianClinic.API.Controllers
                         .Select(a => a.User)
                         .FirstOrDefault(u => u != null && u.Role == UserRole.Dietitian);
 
-                // Direct DB fallback: if UserId is set but User wasn't loaded with Dietitian role
                 if (dietitianUser == null && patient.UserId.HasValue)
                 {
                     dietitianUser = await _context.Users

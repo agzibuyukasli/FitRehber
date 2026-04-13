@@ -2,10 +2,6 @@ using System.Collections.Concurrent;
 
 namespace DietitianClinic.API.Services
 {
-    /// <summary>
-    /// Şifre sıfırlama kodlarını ve doğrulama tokenlarını bellekte yönetir.
-    /// Singleton olarak kayıt edilmeli.
-    /// </summary>
     public class PasswordResetService
     {
         private readonly ConcurrentDictionary<string, (string Code, DateTime Expiry)> _codes = new();
@@ -14,7 +10,6 @@ namespace DietitianClinic.API.Services
         private static readonly TimeSpan CodeExpiry  = TimeSpan.FromMinutes(10);
         private static readonly TimeSpan TokenExpiry = TimeSpan.FromMinutes(5);
 
-        /// <summary>6 haneli kod üretir, önceki kodu geçersiz kılar.</summary>
         public string GenerateCode(string email)
         {
             Cleanup();
@@ -23,7 +18,6 @@ namespace DietitianClinic.API.Services
             return code;
         }
 
-        /// <summary>Kod doğruysa tek kullanımlık reset token döner.</summary>
         public bool VerifyCode(string email, string code, out string resetToken)
         {
             resetToken = string.Empty;
@@ -36,7 +30,6 @@ namespace DietitianClinic.API.Services
             return true;
         }
 
-        /// <summary>Şifre sıfırlama aşamasında token geçerliyse tüketir ve true döner.</summary>
         public bool ConsumeToken(string email, string token)
         {
             var key = Normalize(email);

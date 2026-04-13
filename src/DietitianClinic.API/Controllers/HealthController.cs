@@ -2,9 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DietitianClinic.API.Controllers
 {
-    /// <summary>
-    /// Ana controller - API sağlığını kontrol et
-    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class HealthController : ControllerBase
@@ -16,9 +13,6 @@ namespace DietitianClinic.API.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// API sağlığını kontrol et
-        /// </summary>
         [HttpGet("status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Status()
@@ -33,9 +27,6 @@ namespace DietitianClinic.API.Controllers
             return Ok(response);
         }
 
-        /// <summary>
-        /// Veritabanı bağlantısını kontrol et
-        /// </summary>
         [HttpGet("database")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
@@ -75,9 +66,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// API bilgilerini al
-        /// </summary>
         [HttpGet("info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Info()

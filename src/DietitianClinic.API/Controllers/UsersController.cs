@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Security.Claims;
@@ -12,9 +12,6 @@ using DietitianClinic.API.Services;
 
 namespace DietitianClinic.API.Controllers
 {
-    /// <summary>
-    /// User yönetimi endpoint'leri
-    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
@@ -39,9 +36,6 @@ namespace DietitianClinic.API.Controllers
             _logger = logger;
         }
 
-        /// <summary>
-        /// Yeni kullanÄ±cÄ± kaydÄ± (Diyetisyen/Admin)
-        /// </summary>
         [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -105,9 +99,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// KullanÄ±cÄ± giriÅŸi
-        /// </summary>
         [HttpPost("login")]
         [Microsoft.AspNetCore.RateLimiting.EnableRateLimiting("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -150,9 +141,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Şifre değiştirme (oturum açık kullanıcı)
-        /// </summary>
         [HttpPost("change-password")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -189,9 +177,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Adım 1 — E-posta adresine 6 haneli doğrulama kodu gönder.
-        /// </summary>
         [HttpPost("send-reset-code")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -203,7 +188,6 @@ namespace DietitianClinic.API.Controllers
             var user = await _userService.GetUserByEmailAsync(request.Email.Trim()) as User;
             if (user == null)
             {
-                // Güvenli: e-posta bulunamasa bile aynı mesajı ver (enum saldırısı önleme)
                 return Ok(new ApiResponse { Success = true, Message = "Kod gönderildi." });
             }
 
@@ -221,9 +205,6 @@ namespace DietitianClinic.API.Controllers
             return Ok(new ApiResponse { Success = true, Message = "Kod gönderildi." });
         }
 
-        /// <summary>
-        /// Adım 2 — Kodu doğrula; başarılıysa 5 dakika geçerli tek kullanımlık token döner.
-        /// </summary>
         [HttpPost("verify-reset-code")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -239,9 +220,6 @@ namespace DietitianClinic.API.Controllers
             return Ok(new { success = true, token });
         }
 
-        /// <summary>
-        /// Adım 3 — Token + yeni şifre ile şifreyi sıfırla.
-        /// </summary>
         [HttpPost("reset-password")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -279,9 +257,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Tüm kullanıcıları getir (role filtrelemesi ile)
-        /// </summary>
         [HttpGet]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -314,9 +289,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// ID'ye gÃ¶re kullanÄ±cÄ± getir
-        /// </summary>
         [HttpGet("{id:int}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -352,9 +324,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// KullanÄ±cÄ± gÃ¼ncelle
-        /// </summary>
         [HttpPut("{id:int}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -388,9 +357,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// KullanÄ±cÄ± sil
-        /// </summary>
         [HttpDelete("{id:int}")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -414,9 +380,6 @@ namespace DietitianClinic.API.Controllers
             }
         }
 
-        /// <summary>
-        /// Mevcut kullanÄ±cÄ±nÄ±n profili
-        /// </summary>
         [HttpGet("profile")]
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -424,7 +387,6 @@ namespace DietitianClinic.API.Controllers
         {
             try
             {
-                // JWT token'dan user ID'yi al
                 var userIdClaim = User.FindFirst("userId")
                     ?? User.FindFirst(JwtRegisteredClaimNames.Sub)
                     ?? User.FindFirst(ClaimTypes.NameIdentifier);

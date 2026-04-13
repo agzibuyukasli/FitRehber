@@ -14,11 +14,9 @@ namespace DietitianClinic.Business.Services
         private readonly ITokenService _tokenService;
         private readonly IPasswordService _passwordService;
 
-        // Hesap kilitleme sabitleri
         private const int MaxFailedAttempts = 5;
         private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
-        // Login hata mesajı kasıtlı olarak geneldir (kullanıcı adı/şifre ayrımı yapılmaz)
         private const string GenericLoginError = "E-posta veya şifre hatalı.";
 
         public UserService(
@@ -74,19 +72,16 @@ namespace DietitianClinic.Business.Services
         {
             try
             {
-                // Kullanıcı bulunamasa bile aynı genel hata mesajı döner (timing saldırısını engeller)
                 var user = await _unitOfWork.UserRepository
                     .FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user == null)
                 {
-                    // Kullanıcı yok ama timing saldırısını önlemek için sahte doğrulama yap
                     _passwordService.VerifyPassword(password, "$2a$12$dummyhashtopreventtimingattack000000000000000000000000");
                     _logger.LogWarning("Başarısız giriş (kullanıcı yok): {Email}", email);
                     throw new NotFoundException("Bu e-posta adresiyle kayıtlı bir kullanıcı bulunamadı.");
                 }
 
-                // Hesap kilitli mi?
                 if (user.LockoutEndUtc.HasValue && user.LockoutEndUtc.Value > DateTime.UtcNow)
                 {
                     var remaining = (int)(user.LockoutEndUtc.Value - DateTime.UtcNow).TotalMinutes + 1;
@@ -97,10 +92,8 @@ namespace DietitianClinic.Business.Services
                 if (user.IsDeleted || !user.IsActive)
                     throw new UnauthorizedException(GenericLoginError);
 
-                // Şifre doğrula
                 if (!_passwordService.VerifyPassword(password, user.PasswordHash))
                 {
-                    // Başarısız deneme sayısını artır
                     user.AccessFailedCount++;
                     if (user.AccessFailedCount >= MaxFailedAttempts)
                     {
@@ -113,11 +106,9 @@ namespace DietitianClinic.Business.Services
                     throw new UnauthorizedException(GenericLoginError);
                 }
 
-                // Başarılı giriş: sayaçları sıfırla
                 user.AccessFailedCount = 0;
                 user.LockoutEndUtc = null;
 
-                // Eski SHA-256 hash varsa BCrypt ile yenile (sessiz yükseltme)
                 if (_passwordService.NeedsRehash(user.PasswordHash))
                 {
                     user.PasswordHash = _passwordService.HashPassword(password);
@@ -143,9 +134,6 @@ namespace DietitianClinic.Business.Services
             }
         }
 
-        /// <summary>
-        /// Şifre değiştirme: eski şifre doğrulama + güç kuralı kontrolü
-        /// </summary>
         public async Task<bool> ChangePasswordAsync(int userId, string oldPassword, string newPassword)
         {
             try
@@ -154,21 +142,17 @@ namespace DietitianClinic.Business.Services
                 if (user == null)
                     throw new NotFoundException($"Kullanıcı (ID: {userId}) bulunamadı.");
 
-                // Eski şifreyi doğrula
                 if (!_passwordService.VerifyPassword(oldPassword, user.PasswordHash))
                     throw new UnauthorizedException("Mevcut şifre hatalı.");
 
-                // Yeni şifre eski şifreyle aynı olmamalı
                 if (oldPassword == newPassword)
                     throw new ValidationException("Yeni şifre mevcut şifre ile aynı olamaz.");
 
-                // Şifre güç kurallarını kontrol et
                 var (isValid, errors) = await _passwordService.ValidatePasswordStrengthAsync(newPassword);
                 if (!isValid)
                     throw new ValidationException(string.Join(" ", errors));
 
                 user.PasswordHash = _passwordService.HashPassword(newPassword);
-                // Şifre değiştiğinde hesap kilidini sıfırla
                 user.AccessFailedCount = 0;
                 user.LockoutEndUtc = null;
 
@@ -193,7 +177,6 @@ namespace DietitianClinic.Business.Services
                 if (string.IsNullOrWhiteSpace(newPassword))
                     throw new ValidationException("Şifre boş olamaz.");
 
-                // Güç kurallarını kontrol et
                 var (isValid, errors) = await _passwordService.ValidatePasswordStrengthAsync(newPassword);
                 if (!isValid)
                     throw new ValidationException(string.Join(" ", errors));
@@ -201,7 +184,6 @@ namespace DietitianClinic.Business.Services
                 var user = await _unitOfWork.UserRepository.FirstOrDefaultAsync(u => u.Email == email);
                 if (user == null)
                 {
-                    // Güvenli: kullanıcı olmasa bile aynı mesajı ver (enum atak önleme)
                     _logger.LogWarning("Şifre sıfırlama - kullanıcı bulunamadı: {Email}", email);
                     throw new NotFoundException("Kullanıcı bulunamadı.");
                 }

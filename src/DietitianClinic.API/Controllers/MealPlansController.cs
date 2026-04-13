@@ -230,6 +230,24 @@ namespace DietitianClinic.API.Controllers
                 }
 
                 var metadata = ReadMetadata(mealPlan.Notes);
+
+                // Geçmiş kaydı: mevcut ilerlemeyi sıfırlamadan önce kaydet
+                if (request.RecordHistory && !string.IsNullOrWhiteSpace(request.HistoryDate))
+                {
+                    var currentCompleted = metadata.CompletedTaskIds ?? new List<string>();
+                    var currentTasks = metadata.Tasks ?? new List<MealPlanTaskItem>();
+                    var total = currentTasks.Count;
+                    var done = currentTasks.Count(x => currentCompleted.Contains(x.Id, StringComparer.OrdinalIgnoreCase));
+                    var historyPercent = total == 0 ? 0 : (int)Math.Round((double)done / total * 100);
+
+                    metadata.ComplianceHistory ??= new List<ComplianceHistoryEntry>();
+                    metadata.ComplianceHistory.RemoveAll(h => h.Date == request.HistoryDate);
+                    metadata.ComplianceHistory.Add(new ComplianceHistoryEntry { Date = request.HistoryDate, Percent = historyPercent });
+
+                    var cutoff = DateTime.UtcNow.AddDays(-90).ToString("yyyy-MM-dd");
+                    metadata.ComplianceHistory.RemoveAll(h => string.Compare(h.Date, cutoff) < 0);
+                }
+
                 metadata.CompletedTaskIds = request.CompletedTaskIds?
                     .Where(x => !string.IsNullOrWhiteSpace(x))
                     .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -405,7 +423,10 @@ namespace DietitianClinic.API.Controllers
                     snack = metadata.Meals.Snack,
                     dinner = metadata.Meals.Dinner
                 },
-                details = BuildMealPlanDetails(mealPlan, tasks, metadata.ChangeRequests)
+                details = BuildMealPlanDetails(mealPlan, tasks, metadata.ChangeRequests),
+                complianceHistory = (metadata.ComplianceHistory ?? new List<ComplianceHistoryEntry>())
+                    .OrderBy(h => h.Date)
+                    .Select(h => new { date = h.Date, percent = h.Percent })
             };
         }
 
@@ -521,6 +542,13 @@ namespace DietitianClinic.API.Controllers
             public List<string>? CompletedTaskIds { get; set; }
             public List<MealPlanChangeRequestItem>? ChangeRequests { get; set; }
             public MealPlanMeals? Meals { get; set; }
+            public List<ComplianceHistoryEntry>? ComplianceHistory { get; set; }
+        }
+
+        private sealed class ComplianceHistoryEntry
+        {
+            public string Date { get; set; } = string.Empty;
+            public int Percent { get; set; }
         }
 
         private sealed class MealPlanMeals

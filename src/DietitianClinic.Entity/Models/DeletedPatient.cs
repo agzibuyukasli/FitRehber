@@ -1,9 +1,5 @@
 namespace DietitianClinic.Entity.Models
 {
-    /// <summary>
-    /// Silinen hastaların arşiv kaydı.
-    /// BaseEntity'den türetilmez — global soft-delete query filter'dan muaf tutmak için.
-    /// </summary>
     public class DeletedPatient
     {
         public int Id { get; set; }

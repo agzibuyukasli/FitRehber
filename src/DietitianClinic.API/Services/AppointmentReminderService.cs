@@ -3,16 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DietitianClinic.API.Services
 {
-    /// <summary>
-    /// Her gün belirlenen saatte çalışarak ertesi güne randevusu olan
-    /// ve e-posta bildirimleri açık hastalara hatırlatma maili gönderir.
-    /// </summary>
     public class AppointmentReminderService : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly ILogger<AppointmentReminderService> _logger;
 
-        // Her gün bu UTC saatinde çalışır (örn. 09:00 UTC → Türkiye'de 12:00)
         private const int RunAtHourUtc = 7;
 
         public AppointmentReminderService(
@@ -46,7 +41,6 @@ namespace DietitianClinic.API.Services
             var now = DateTime.UtcNow;
             var nextRun = new DateTime(now.Year, now.Month, now.Day, RunAtHourUtc, 0, 0, DateTimeKind.Utc);
 
-            // Bugünkü çalışma saati geçmişse yarına planla
             if (now >= nextRun)
                 nextRun = nextRun.AddDays(1);
 
@@ -63,7 +57,6 @@ namespace DietitianClinic.API.Services
                 var db = scope.ServiceProvider.GetRequiredService<DietitianClinicDbContext>();
                 var emailService = scope.ServiceProvider.GetRequiredService<EmailService>();
 
-                // Yarının randevularını bul (lokal saat bazında)
                 var tomorrow = DateTime.Today.AddDays(1);
                 var dayAfter = tomorrow.AddDays(1);
 
@@ -84,7 +77,6 @@ namespace DietitianClinic.API.Services
                     if (appt.Patient == null || appt.User == null)
                         continue;
 
-                    // E-posta bildirimleri kapalıysa gönderme
                     if (!appt.Patient.EmailNotificationsEnabled)
                     {
                         _logger.LogInformation("E-posta bildirimi kapalı, atlandı: PatientId={Id}", appt.PatientId);

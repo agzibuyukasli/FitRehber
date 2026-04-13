@@ -4,9 +4,6 @@ using DietitianClinic.Entity.Base;
 
 namespace DietitianClinic.Entity.Models
 {
-    /// <summary>
-    /// Öğün bilgisi (Kahvaltı, Öğle, Akşam vb.)
-    /// </summary>
     public class Meal : BaseEntity
     {
         public int MealPlanDayId { get; set; }
@@ -18,7 +15,6 @@ namespace DietitianClinic.Entity.Models
         public double Fat { get; set; }
         public string Notes { get; set; }
 
-        // İlişkiler
         public virtual MealPlanDay MealPlanDay { get; set; }
         public virtual ICollection<FoodItem> FoodItems { get; set; } = new List<FoodItem>();
     }

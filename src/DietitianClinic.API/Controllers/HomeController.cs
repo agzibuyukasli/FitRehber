@@ -2,16 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DietitianClinic.API.Controllers
 {
-    /// <summary>
-    /// Ana sayfa ve test endpoint'leri
-    /// </summary>
     [ApiController]
     [Route("")]
     public class HomeController : ControllerBase
     {
-        /// <summary>
-        /// Ana sayfa - index.html
-        /// </summary>
         [HttpGet]
         public IActionResult Index()
         {
@@ -24,7 +18,6 @@ namespace DietitianClinic.API.Controllers
                 return Content(content, "text/html");
             }
             
-            // Fallback: HTML bulunamadıysa JSON response döndür
             var response = new
             {
                 message = "🏥 Dietitian Clinic Automation API'ye hoş geldiniz!",
@@ -44,9 +37,6 @@ namespace DietitianClinic.API.Controllers
             return Ok(response);
         }
 
-        /// <summary>
-        /// Root path'te Swagger'a yönlendir
-        /// </summary>
         [HttpGet("swagger")]
         public IActionResult Swagger()
         {

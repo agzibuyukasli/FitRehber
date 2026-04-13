@@ -3,9 +3,6 @@ using DietitianClinic.Entity.Models;
 
 namespace DietitianClinic.DataAccess.Repositories
 {
-    /// <summary>
-    /// Unit of Work implementation
-    /// </summary>
     public class UnitOfWork : IUnitOfWork
     {
         private readonly DietitianClinicDbContext _context;

@@ -1,8 +1,5 @@
 namespace DietitianClinic.API.Models.Requests
 {
-    /// <summary>
-    /// Beslenme planı oluşturma isteği
-    /// </summary>
     public class CreateMealPlanRequest
     {
         public int PatientId { get; set; }
@@ -22,9 +19,6 @@ namespace DietitianClinic.API.Models.Requests
         public string? DinnerContent { get; set; }
     }
 
-    /// <summary>
-    /// Beslenme planı güncelleme isteği
-    /// </summary>
     public class UpdateMealPlanRequest
     {
         public string Title { get; set; }
@@ -45,6 +39,8 @@ namespace DietitianClinic.API.Models.Requests
     public class UpdateMealPlanProgressRequest
     {
         public List<string>? CompletedTaskIds { get; set; }
+        public bool RecordHistory { get; set; } = false;
+        public string? HistoryDate { get; set; }
     }
 
     public class CreateMealPlanChangeRequest

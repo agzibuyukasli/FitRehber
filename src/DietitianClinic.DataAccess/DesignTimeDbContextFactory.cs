@@ -5,15 +5,10 @@ using System.IO;
 
 namespace DietitianClinic.DataAccess.Context
 {
-    /// <summary>
-    /// Design-time factory for creating the DbContext used by EF Core tools (migrations, database update, etc.).
-    /// This is needed because the tools can't create the DbContext from the application DI container.
-    /// </summary>
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<DietitianClinicDbContext>
     {
         public DietitianClinicDbContext CreateDbContext(string[] args)
         {
-            // Build config the same way the app does
             var basePath = Directory.GetCurrentDirectory();
             var builder = new ConfigurationBuilder()
                 .SetBasePath(basePath)

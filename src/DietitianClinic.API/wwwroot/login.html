@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -80,11 +80,13 @@
             50% { transform: translate(12px, -22px) rotate(2deg); }
             100% { transform: translate(-10px, 4px) rotate(-1deg); }
         }
+        /* /////////////// */
 
         .login-panel {
             position: relative;
             z-index: 2;
-            width: min(1100px, 100%);
+            height: min(1300px, 100%);
+            width: min(1500px, 100%);
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
             background: rgba(255, 255, 255, 0.9);
@@ -94,7 +96,7 @@
             overflow: hidden;
             backdrop-filter: blur(8px);
         }
-
+        /* ///////////////////// */
         .info-side {
             padding: 48px 48px 44px;
             background: linear-gradient(140deg, rgba(255,255,255,0.95) 0%, rgba(247,242,232,0.95) 55%, rgba(233,229,214,0.9) 100%),
@@ -238,7 +240,7 @@
             color: var(--forest-700);
             text-shadow: 0 4px 10px rgba(0,0,0,0.08);
             font-family: "Georgia", "Times New Roman", serif;
-            font-size: 3.75rem;
+            font-size: 40px;
         }
 
         .content {
@@ -251,6 +253,8 @@
         }
 
         .tabs {
+ 
+ 
             display: flex;
             background: var(--cream-100);
             border-radius: 12px;
@@ -600,7 +604,7 @@
             <section class="form-side" id="login-form-side">
                 <div class="form-brand">
                     <img src="assets/fitrehber-logo.png" alt="FitRehber logosu">
-                    <spöan>FitRehber</spöan>
+                    <span>FitRehber</span>
                 </div>
                 <div class="tabs">
                     <button class="tab active" onclick="switchTab(event, 'admin')">Admin</button>
@@ -667,7 +671,7 @@
                         <button type="button" class="ghost-btn" onclick="closeForgot()">Geri</button>
                     </div>
 
-                    <!-- Adım göstergesi -->
+                    
                     <div class="fp-steps">
                         <div class="fp-dot active" id="fp-dot1"></div>
                         <div class="fp-dot"        id="fp-dot2"></div>
@@ -676,7 +680,7 @@
 
                     <div class="message" id="forgotMessage"></div>
 
-                    <!-- Adım 1: E-posta -->
+                    
                     <div id="fp-step1">
                         <div class="form-group">
                             <label for="forgotEmail">E-posta</label>
@@ -685,7 +689,6 @@
                         <button type="button" class="fp-btn" id="fp-btn1" onclick="fpSendCode()">Kod Gönder</button>
                     </div>
 
-                    <!-- Adım 2: Kod doğrulama -->
                     <div id="fp-step2" style="display:none">
                         <p class="fp-info" id="fp-code-info"></p>
                         <div class="form-group">
@@ -696,7 +699,6 @@
                         <button type="button" class="forgot-link" style="margin-top:10px;display:block;" onclick="fpResendCode()">Kodu tekrar gönder</button>
                     </div>
 
-                    <!-- Adım 3: Yeni şifre -->
                     <div id="fp-step3" style="display:none">
                         <div class="form-group">
                             <label for="forgotPassword">Yeni Şifre</label>
@@ -839,7 +841,6 @@
         let _fpEmail     = '';
         let _fpToken     = '';
 
-        // ── Şifre sıfırlama — Adım yönetimi ──────────────────────────────
         function showFpStep(n) {
             [1,2,3].forEach(i => {
                 document.getElementById('fp-step' + i).style.display = (i === n) ? '' : 'none';
@@ -884,7 +885,6 @@
             showFpStep(1);
         }
 
-        // ── Adım 1: Kod gönder ────────────────────────────────────────────
         async function fpSendCode() {
             const msgEl = document.getElementById('forgotMessage');
             const email = (document.getElementById('forgotEmail').value || '').trim();
@@ -913,7 +913,6 @@
             }
         }
 
-        // ── Adım 1'e dönüp tekrar gönder ─────────────────────────────────
         async function fpResendCode() {
             showFpStep(1);
             const el = document.getElementById('forgotEmail');
@@ -921,7 +920,6 @@
             await fpSendCode();
         }
 
-        // ── Adım 2: Kodu doğrula ──────────────────────────────────────────
         async function fpVerifyCode() {
             const msgEl = document.getElementById('forgotMessage');
             const code  = (document.getElementById('forgotCode').value || '').trim();
@@ -947,7 +945,6 @@
             }
         }
 
-        // ── Adım 3: Şifreyi güncelle ──────────────────────────────────────
         async function fpResetPassword() {
             const msgEl   = document.getElementById('forgotMessage');
             const pw      = document.getElementById('forgotPassword').value;
@@ -974,7 +971,6 @@
                 setTimeout(closeForgot, 1800);
             } catch (err) {
                 showMessage(msgEl, err.message, 'error');
-                // Token tüketilmişse ya da süresi dolduysa kullanıcıyı başa al
                 if (err.message && (err.message.includes('Geçersiz') || err.message.includes('süresi'))) {
                     setTimeout(() => { showFpStep(1); const el = document.getElementById('forgotEmail'); if (el && _fpEmail) el.value = _fpEmail; }, 2000);
                 }

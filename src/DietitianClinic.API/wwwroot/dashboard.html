@@ -193,7 +193,6 @@
             .panel-stack { grid-template-columns: 1fr; }
         }
 
-        /* ===== Profil Paneli - Düzenleme Formu ===== */
         .pp-edit-form { display: none; }
         .pp-fld { margin-bottom: 10px; }
         .pp-fld label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--gray-500); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
@@ -204,7 +203,6 @@
         .pp-msg.ok { display: block; background: #d1fae5; color: #065f46; }
         .pp-msg.err { display: block; background: #fee2e2; color: #991b1b; }
 
-        /* ===== Profil Paneli ===== */
         .toggle { width: 52px; height: 30px; border-radius: 999px; background: var(--gray-300); position: relative; border: 0; cursor: pointer; transition: background 0.2s ease; flex-shrink: 0; }
         .toggle::after { content: ''; width: 22px; height: 22px; background: #fff; border-radius: 50%; position: absolute; top: 4px; left: 4px; transition: transform 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
         .toggle.active { background: #22c55e; }
@@ -252,7 +250,6 @@
         .pp-setting-text span { font-size: 0.78rem; color: var(--gray-500); }
         .pp-footer { padding: 14px 22px; border-top: 1px solid var(--gray-100); background: var(--gray-50); display: flex; justify-content: flex-end; }
 
-        /* ===== Müsaitlik Çizelgesi ===== */
         .avail-wizard-wrap { position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:1200;padding:20px; }
         .avail-wizard-wrap.open { display:flex;animation:fadeIn .2s ease; }
         .avail-wizard-box { background:#fff;border-radius:16px;padding:28px;width:min(520px,100%);max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.22); }
@@ -275,13 +272,13 @@
         .avail-admin-name { font-weight:700;color:var(--gray-800);font-size:.9rem; }
         .avail-admin-spec { color:var(--gray-500);font-size:.77rem; }
         .avail-no-slots { color:var(--gray-400);font-size:.82rem;font-style:italic; }
-        /* Öğün alanları */
+
         .meal-fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
         .meal-field-card { border: 1.5px solid var(--gray-200); border-radius: 10px; padding: 12px 14px; background: var(--gray-50); }
         .meal-field-label { font-size: 0.78rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
         .meal-field-card textarea { width: 100%; border: 1px solid var(--gray-200); border-radius: 6px; padding: 7px 9px; font: inherit; font-size: 0.85rem; resize: vertical; min-height: 80px; background: #fff; }
         .meal-field-card textarea:focus { outline: 0; border-color: var(--primary); }
-        /* Chat Widget */
+
         .chat-btn { position:fixed; top:18px; right:76px; z-index:600; width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); border:3px solid rgba(255,255,255,0.9); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:white; box-shadow:0 4px 16px rgba(111,142,107,.45); transition:all 0.2s; overflow:visible; }
         .chat-btn:hover { transform:scale(1.1); }
         .chat-badge { position:absolute; top:-4px; right:-4px; background:#ef4444; color:#fff; border-radius:999px; font-size:.65rem; font-weight:700; min-width:16px; height:16px; display:none; align-items:center; justify-content:center; padding:0 3px; }
@@ -308,7 +305,7 @@
         .chat-upload-label { cursor:pointer; font-size:.78rem; color:var(--gray-500); display:flex; align-items:center; gap:4px; padding:4px 8px; border:1px dashed var(--border); border-radius:6px; }
         .chat-upload-label:hover { border-color:var(--primary); color:var(--primary); }
         .chat-preview { font-size:.72rem; color:var(--primary-dark); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-        /* AI Asistan */
+
         .ai-btn { position:fixed; top:18px; right:130px; z-index:600; width:46px; height:46px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#5b21b6); border:3px solid rgba(255,255,255,0.9); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:white; box-shadow:0 4px 16px rgba(124,58,237,.45); transition:all 0.2s; }
         .ai-btn:hover { transform:scale(1.1); box-shadow:0 6px 22px rgba(124,58,237,.6); }
         .ai-panel { position:fixed; top:72px; right:130px; z-index:700; width:380px; max-height:560px; background:#fff; border-radius:16px; box-shadow:0 24px 64px rgba(0,0,0,.22); display:none; flex-direction:column; overflow:hidden; animation:slideUp .2s ease; }
@@ -332,27 +329,23 @@
         .ai-loading span:nth-child(2) { animation-delay:.15s; }
         .ai-loading span:nth-child(3) { animation-delay:.3s; }
         @keyframes aiBounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
-        /* Expanded Chart Modal */
+
         .chart-modal-backdrop { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); align-items:center; justify-content:center; z-index:1050; padding:24px; }
         .chart-modal-backdrop.open { display:flex; animation:fadeIn 0.2s ease; }
         .chart-modal-box { background:#fff; border-radius:14px; padding:24px; width:min(620px,100%); box-shadow:0 20px 60px rgba(0,0,0,0.2); }
         .chart-modal-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
         .chart-modal-head h4 { margin:0; font-size:1rem; font-weight:700; color:var(--gray-800); }
-        /* Gamification panel */
-        .gamif-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-top:8px; }
-        .gamif-card { background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:12px 14px; }
-        .gamif-card .g-name { font-weight:600; font-size:.85rem; margin-bottom:6px; }
-        .gamif-card .g-bar-wrap { background:#e5e7eb; border-radius:999px; height:10px; overflow:hidden; }
-        .gamif-card .g-bar { height:100%; background:linear-gradient(90deg,#10b981,#059669); border-radius:999px; transition:width .4s; }
-        .gamif-card .g-pct { font-size:.78rem; color:#6b7280; margin-top:4px; }
 
-        /* ===== DARK MODE TOGGLE BUTTON ===== */
+        .compliance-patient-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--gray-100); }
+        .compliance-patient-row:last-child { border-bottom:none; }
+        .compliance-patient-name { font-weight:600; font-size:.9rem; color:var(--gray-800); }
+        .compliance-patient-plan { font-size:.78rem; color:var(--gray-500); margin-top:2px; }
+
         .dm-toggle { width:66px; height:34px; border-radius:999px; border:0; cursor:pointer; position:relative; background:#94a3b8; transition:background 0.35s ease; padding:0; flex-shrink:0; }
         .dm-knob { position:absolute; top:4px; left:4px; width:26px; height:26px; border-radius:50%; background:#fff; transition:transform 0.35s cubic-bezier(.4,0,.2,1), background 0.3s ease, box-shadow 0.3s ease; display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,0.22); pointer-events:none; line-height:1; }
         .dm-toggle.active { background:#2d4f38; }
         .dm-toggle.active .dm-knob { transform:translateX(32px); background:#ffd060; box-shadow:0 0 12px rgba(255,208,60,0.65), 0 2px 8px rgba(0,0,0,0.2); }
 
-        /* ===== DARK MODE ===== */
         body.dark {
             --primary: #5a8f54; --primary-dark: #357040; --primary-light: #1a3020;
             --surface: #0d1710; --surface-2: #111e16; --border: #2e5038;
@@ -389,8 +382,8 @@
         body.dark .sidebar-brand .brand-mark { box-shadow: 0 0 20px rgba(255,218,80,0.22), inset 0 0 8px rgba(255,218,80,0.06); border-color: rgba(255,218,80,0.28); }
         body.dark .sidebar-toggle { background: #152019; color: #d8f0e0; box-shadow: 0 8px 20px rgba(0,0,0,0.45); }
         body.dark .sidebar-overlay { background: rgba(0,0,0,0.55); }
-        body.dark .gamif-card { background: #152019; border-color: #2a4235; }
-        body.dark .gamif-card .g-bar-wrap { background: #2a4235; }
+        body.dark .compliance-patient-row { border-bottom-color:#2a4235; }
+        body.dark .compliance-patient-name { color:#d8f0e0; }
         body.dark .btn-ghost { background: #1a2e22; color: #bcdec6; }
         body.dark .btn-ghost:hover { background: #2a4235; }
         body.dark .btn-secondary { background: #1a2e22; color: #bcdec6; }
@@ -402,7 +395,7 @@
         body.dark .pill.warning { background: #451a03; color: #fed7aa; }
         body.dark .pill.danger { background: #450a0a; color: #fca5a5; }
         body.dark .pill.info { background: #1e3a8a; color: #bfdbfe; }
-        /* Müsaitlik sihirbazı */
+
         body.dark .avail-wizard-box { background: #152019; box-shadow: 0 24px 64px rgba(0,0,0,.55); }
         body.dark .avail-wiz-head h3 { color: #edfaf2; }
         body.dark .avail-wiz-step { color: #9ec8aa; }
@@ -412,18 +405,18 @@
         body.dark .avail-hour-btn.sel { background: #1a3020; border-color: #5a8f54; color: #86efac; }
         body.dark .avail-hour-label { color: #bcdec6; }
         body.dark .avail-summary-pill { background: #1a3020; color: #86efac; }
-        /* Admin müsaitlik kartları */
+
         body.dark .avail-admin-card { background: #152019; border-color: #2a4235; }
         body.dark .avail-admin-name { color: #d8f0e0; }
         body.dark .avail-admin-spec { color: #9ec8aa; }
         body.dark .avail-no-slots { color: #5a8068; }
-        /* Beslenme planı detay modal - görev yazıları */
+
         body.dark .mini-card { background: #1a2e22; border-color: #2e5038; }
         body.dark .mini-card span { color: #d8f0e0; }
         body.dark .mini-card strong { color: #edfaf2; }
         body.dark .field label { color: #9ec8aa; }
         body.dark .field .muted { color: #7da88a; }
-        /* Mesaj kutusu */
+
         body.dark .chat-panel { background: #152019; box-shadow: 0 24px 64px rgba(0,0,0,.55); }
         body.dark #chat-contact-list { background: #152019; }
         body.dark #chat-contact-list > div { border-bottom: 1px solid #2a4235; }
@@ -434,7 +427,7 @@
         body.dark #chat-messages-area { background: #111d15; }
         body.dark .chat-input-area { background: #111d15; border-color: #2a4235; }
         body.dark .chat-input-row input[type=text] { background: #152019; color: #d8f0e0; border-color: #2a4235; }
-        /* Yapay zeka paneli */
+
         body.dark .ai-panel { background: #152019; box-shadow: 0 24px 64px rgba(0,0,0,.55); }
         body.dark .ai-input-area { background: #111d15; border-color: #2a4235; }
         body.dark .ai-input-area input { background: #152019; color: #d8f0e0; border-color: #2a4235; }
@@ -485,7 +478,7 @@
                 <div id="admin-dashboard" class="admin-only">
                     <div class="stats">
                         <div class="card"><div class="label">Toplam Diyetisyen</div><div class="value" id="stat-dietitians">-</div></div>
-                        <div class="card"><div class="label">Toplam Hasta</div><div class="value" id="stat-patients">-</div></div>
+                        <div class="card"><div class="label">Toplam Danışan</div><div class="value" id="stat-patients">-</div></div>
                         <div class="card"><div class="label">Toplam Randevu</div><div class="value" id="stat-appointments">-</div></div>
                         <div class="card"><div class="label">Bugün</div><div class="value" id="stat-today">-</div></div>
                         <div class="card" id="stat-top-dietitian-card" style="min-width:180px;">
@@ -522,7 +515,7 @@
                         <div class="panel-head"><div><h3>Bugünün Randevu Çizelgesi</h3></div></div>
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>Saat</th><th>Hasta</th><th>Sure</th><th>Durum</th></tr></thead>
+                                <thead><tr><th>Saat</th><th>Danışan</th><th>Sure</th><th>Durum</th></tr></thead>
                                 <tbody id="admin-today-schedule"><tr><td colspan="4" class="muted">Yükleniyor...</td></tr></tbody>
                             </table>
                         </div>
@@ -531,7 +524,7 @@
 
                 <div id="dietitian-dashboard" class="dietitian-only">
                     <div class="stats">
-                        <div class="card"><div class="label">Hastalarım</div><div class="value" id="my-patients">-</div></div>
+                        <div class="card"><div class="label">Danışanlarım</div><div class="value" id="my-patients">-</div></div>
                         <div class="card"><div class="label">Toplam Randevu</div><div class="value" id="my-appointments">-</div></div>
                         <div class="card"><div class="label">Yaklasan Randevu</div><div class="value" id="my-upcoming">-</div></div>
                         <div class="card"><div class="label">Aktif Plan</div><div class="value" id="my-plans">-</div></div>
@@ -540,7 +533,7 @@
                         <div class="panel-head"><div><h3>Yaklasan Randevular</h3></div></div>
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>Hasta</th><th>Tarih</th><th>Sure</th><th>Durum</th></tr></thead>
+                                <thead><tr><th>Danışan</th><th>Tarih</th><th>Sure</th><th>Durum</th></tr></thead>
                                 <tbody id="upcoming-appointments"><tr><td colspan="4" class="muted">Yükleniyor...</td></tr></tbody>
                             </table>
                         </div>
@@ -569,17 +562,16 @@
             <section id="patients-section" class="section dietitian-only">
                 <div class="panel">
                     <div class="panel-head">
-                        <div><h3>Hastalarım</h3></div>
-                        <button class="btn" onclick="openPatientModal()">Yeni Hasta</button>
+                        <div><h3>Danışanlarım</h3></div>
+                        <button class="btn" onclick="openPatientModal()">Yeni Danışan</button>
                     </div>
                     <div class="table-wrap">
                         <table>
-                            <thead><tr><th>Hasta</th><th>Yaş</th><th>İletişim</th><th>Şehir</th><th>Ölçümler</th><th>Durum</th><th>İşlem</th></tr></thead>
+                            <thead><tr><th>Danışan</th><th>Yaş</th><th>İletişim</th><th>Şehir</th><th>Ölçümler</th><th>Durum</th><th>İşlem</th></tr></thead>
                             <tbody id="patients-list"><tr><td colspan="7" class="muted">Yükleniyor...</td></tr></tbody>
                         </table>
                     </div>
                 </div>
-                <!-- Günlük Su & Adım Takibi -->
                 <div class="panel" id="tracking-accordion-panel" style="margin-top:16px;">
                     <div class="panel-head" style="cursor:pointer;" onclick="toggleTrackingPanel()">
                         <div><h3>Günlük Su &amp; Adım Takibi</h3><p style="font-size:.82rem;color:var(--gray-500);margin:0;">Danışanların su ve adım takibi</p></div>
@@ -597,7 +589,7 @@
 
                 <div class="panel" id="deleted-patients-panel" style="margin-top:16px;">
                     <div class="panel-head" style="cursor:pointer;" onclick="toggleDeletedPanel('deleted-patients-table-wrap')">
-                        <div><h3>Eski Hastalar</h3><p style="font-size:.8rem;color:#999;">Sistemden silinen danışanlar</p></div>
+                        <div><h3>Eski Danışanlar</h3><p style="font-size:.8rem;color:#999;">Sistemden silinen danışanlar</p></div>
                         <span id="deleted-patients-toggle" style="font-size:1.2rem;">▼</span>
                     </div>
                     <div id="deleted-patients-table-wrap" style="display:none;">
@@ -612,7 +604,6 @@
             </section>
 
             <section id="patients-admin-section" class="section admin-only">
-                <!-- Arama & Filtre Kartı -->
                 <div class="panel" style="margin-bottom:12px;padding:14px 18px;">
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
                         <input type="text" id="admin-search" placeholder="Danışan adı, telefon, şehir ara..."
@@ -627,7 +618,6 @@
                         </button>
                         <span id="admin-filter-count" style="font-size:.82rem;color:var(--gray-500);margin-left:2px;"></span>
                     </div>
-                    <!-- Filtre Paneli -->
                     <div id="admin-filter-panel" style="display:none;margin-top:12px;padding:14px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;position:relative;">
                         <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
                             <div style="display:flex;flex-direction:column;gap:4px;min-width:140px;">
@@ -675,14 +665,14 @@
                     </div>
                     <div class="table-wrap">
                         <table>
-                            <thead><tr><th>Hasta</th><th>Diyetisyen</th><th>İletişim</th><th>Şehir</th><th>Son BMI</th><th>Durum</th><th>İşlem</th></tr></thead>
+                            <thead><tr><th>Danışan</th><th>Diyetisyen</th><th>İletişim</th><th>Şehir</th><th>Son BMI</th><th>Durum</th><th>İşlem</th></tr></thead>
                             <tbody id="patients-admin-list"><tr><td colspan="7" class="muted">Yükleniyor...</td></tr></tbody>
                         </table>
                     </div>
                 </div>
                 <div class="panel" style="margin-top:16px;">
                     <div class="panel-head" style="cursor:pointer;" onclick="toggleDeletedPanel('deleted-patients-admin-table-wrap')">
-                        <div><h3>Eski Hastalar</h3><p style="font-size:.8rem;color:#999;">Sistemden silinen tüm danışanlar</p></div>
+                        <div><h3>Eski Danışanlar</h3><p style="font-size:.8rem;color:#999;">Sistemden silinen tüm danışanlar</p></div>
                         <span id="deleted-patients-admin-toggle" style="font-size:1.2rem;">▼</span>
                     </div>
                     <div id="deleted-patients-admin-table-wrap" style="display:none;">
@@ -704,7 +694,6 @@
                     <div class="panel-head">
                         <div>
                             <h3>Randevu İzleme Merkezi</h3>
-                            <!-- <p>Admin tum randevulari gorur; ekleme, silme veya duzenleme yapmaz.</p> -->
                         </div>
                     </div>
                     <div class="split">
@@ -712,7 +701,7 @@
                             <div class="panel-head"><div><h3>Gelecek Randevular</h3></div></div>
                             <div class="table-wrap">
                                 <table>
-                                    <thead><tr><th>Hasta</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
+                                    <thead><tr><th>Danışan</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
                                     <tbody id="admin-appointments-upcoming"><tr><td colspan="5" class="muted">Yükleniyor...</td></tr></tbody>
                                 </table>
                             </div>
@@ -721,7 +710,7 @@
                             <div class="panel-head"><div><h3>Geçmiş Randevular</h3></div></div>
                             <div class="table-wrap">
                                 <table>
-                                    <thead><tr><th>Hasta</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
+                                    <thead><tr><th>Danışan</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
                                     <tbody id="admin-appointments-history"><tr><td colspan="5" class="muted">Yükleniyor...</td></tr></tbody>
                                 </table>
                             </div>
@@ -732,7 +721,7 @@
                             <div class="panel-head"><div><h3>İptal Edilenler</h3></div></div>
                             <div class="table-wrap">
                                 <table>
-                                    <thead><tr><th>Hasta</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
+                                    <thead><tr><th>Danışan</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
                                     <tbody id="admin-appointments-cancelled"><tr><td colspan="5" class="muted">Yükleniyor...</td></tr></tbody>
                                 </table>
                             </div>
@@ -741,7 +730,7 @@
                             <div class="panel-head"><div><h3>Ertelenenler</h3></div></div>
                             <div class="table-wrap">
                                 <table>
-                                    <thead><tr><th>Hasta</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
+                                    <thead><tr><th>Danışan</th><th>Diyetisyen</th><th>Tarih</th><th>Bilgi</th><th>Durum</th></tr></thead>
                                     <tbody id="admin-appointments-rescheduled"><tr><td colspan="5" class="muted">Yükleniyor...</td></tr></tbody>
                                 </table>
                             </div>
@@ -753,19 +742,17 @@
                     <div class="panel-head">
                         <div>
                             <h3>Randevu Yönetimi</h3>
-                            <!-- <p>Hastalarınıza ait tüm randevuları yönetin.</p> -->
                         </div>
                     </div>
                     <div class="panel" style="margin-bottom:18px;">
                         <div class="panel-head">
                             <div>
                                 <h3>Onay Bekleyen Randevular</h3>
-                                <!-- <p>Danışanlardan gelen randevu talepleri.</p> -->
                             </div>
                         </div>
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>Hasta</th><th>Tarih</th><th>Süre</th><th>Durum</th><th>İşlem</th></tr></thead>
+                                <thead><tr><th>Danışan</th><th>Tarih</th><th>Süre</th><th>Durum</th><th>İşlem</th></tr></thead>
                                 <tbody id="appointments-pending-list"><tr><td colspan="5" class="muted">Yükleniyor...</td></tr></tbody>
                             </table>
                         </div>
@@ -775,7 +762,7 @@
                             <div class="panel-head"><div><h3>Gelecek Randevular</h3></div></div>
                             <div class="table-wrap">
                                 <table>
-                                    <thead><tr><th>Hasta</th><th>Tarih</th><th>Süre</th><th>Durum</th><th>İşlem</th></tr></thead>
+                                    <thead><tr><th>Danışan</th><th>Tarih</th><th>Süre</th><th>Durum</th><th>İşlem</th></tr></thead>
                                     <tbody id="appointments-list"><tr><td colspan="5" class="muted">Yükleniyor...</td></tr></tbody>
                                 </table>
                             </div>
@@ -784,7 +771,7 @@
                             <div class="panel-head"><div><h3>Geçmiş Randevular</h3></div></div>
                             <div class="table-wrap">
                                 <table>
-                                    <thead><tr><th>Hasta</th><th>Tarih</th><th>Süre</th><th>Durum</th><th>Bilgi</th></tr></thead>
+                                    <thead><tr><th>Danışan</th><th>Tarih</th><th>Süre</th><th>Durum</th><th>Bilgi</th></tr></thead>
                                     <tbody id="appointments-history-list"><tr><td colspan="5" class="muted">Yükleniyor...</td></tr></tbody>
                                 </table>
                             </div>
@@ -796,7 +783,6 @@
                     <button id="add-appointment-button" class="btn" onclick="openAppointmentModal()">+ Randevu Ekle</button>
                 </div>
 
-                <!-- Diyetisyen: Müsaitlik Çizelgesi -->
                 <div class="panel dietitian-only" id="availability-editor-panel">
                     <div class="panel-head">
                         <div>
@@ -809,7 +795,6 @@
                     <div id="avail-editor-msg" style="display:none;margin-top:12px;padding:8px 12px;border-radius:8px;font-size:0.85rem;font-weight:600;"></div>
                 </div>
 
-                <!-- Admin: Tüm Diyetisyenlerin Müsaitlikleri -->
                 <div class="panel admin-only" id="admin-availability-panel">
                     <div class="panel-head">
                         <div>
@@ -830,7 +815,6 @@
                             <div>
                                 <span class="section-badge" style="background:#d1fae5;color:#065f46;">Beslenme Planı Oluştur</span>
                                 <h3>Danışana Beslenme Planı Gönder</h3>
-                                <!-- <p>Danışanın profiline bağlı, gerçek zamanlı olarak kaydedilir ve anında iletilir.</p> -->
                             </div>
                         </div>
                         <div class="grid">
@@ -877,7 +861,6 @@
                         <div class="panel-head">
                             <div>
                                 <h3>Beslenme Planı Yönetimi</h3>
-                                <!-- <p>Planlar ve danışan talepleri tek kart içinde listelenir.</p> -->
                             </div>
                         </div>
                         <div class="split">
@@ -903,8 +886,8 @@
                     </div>
 
                 <div class="panel dietitian-only" style="margin-top:16px;">
-                    <div class="panel-head"><div><h3>Danışan Hedef Uyum Takibi</h3></div></div>
-                    <div class="gamif-grid" id="gamif-compliance-grid"><span class="muted">Yükleniyor...</span></div>
+                    <div class="panel-head"><div><h3>Danışan Hedefe Uyum Takibi</h3></div></div>
+                    <div id="patient-compliance-list"><span class="muted">Yükleniyor...</span></div>
                 </div>
                 </div>
             </section>
@@ -957,7 +940,7 @@
     <div id="patient-modal-backdrop" class="modal-backdrop">
         <div class="modal">
             <div class="modal-head">
-                <h3 id="patient-modal-title">Hasta Ekle</h3>
+                <h3 id="patient-modal-title">Danışan Ekle</h3>
                 <button class="close" type="button" onclick="closeModal('patient-modal-backdrop')">x</button>
             </div>
             <form id="patient-form">
@@ -1004,7 +987,7 @@
             </div>
             <form id="appointment-form">
                 <div class="grid">
-                    <div class="field"><label for="appointment-patient">Hasta</label><select id="appointment-patient" required></select></div>
+                    <div class="field"><label for="appointment-patient">Danışan</label><select id="appointment-patient" required></select></div>
                     <div class="field"><label for="appointment-date">Tarih ve Saat</label><input id="appointment-date" type="datetime-local" required></div>
                     <div class="field"><label for="appointment-duration">Sure (dk)</label><input id="appointment-duration" type="number" min="15" step="5" value="30" required></div>
                     <div class="field">
@@ -1028,7 +1011,7 @@
     <div id="measurement-modal-backdrop" class="modal-backdrop">
         <div class="modal">
             <div class="modal-head">
-                <h3 id="measurement-modal-title">Hasta Ölçümleri</h3>
+                <h3 id="measurement-modal-title">Danışan Ölçümleri</h3>
                 <button class="close" type="button" onclick="closeModal('measurement-modal-backdrop')">x</button>
             </div>
             <div id="measurement-summary" class="panel" style="margin-bottom: 12px;"></div>
@@ -1141,7 +1124,6 @@
         </div>
     </div>
 
-    <!-- Eski Hasta Detay Modali -->
     <div id="old-patient-modal-backdrop" class="modal-backdrop">
         <div class="modal" style="width:min(520px,100%);">
             <div class="modal-head">
@@ -1155,8 +1137,7 @@
         </div>
     </div>
 
-    <!-- Silme Onay Modali -->
-    <!-- Müsaitlik Sihirbazı -->
+
     <div id="avail-wizard" class="avail-wizard-wrap" onclick="if(event.target===this)closeAvailWizard()">
         <div class="avail-wizard-box">
             <div class="avail-wiz-head">
@@ -1222,9 +1203,7 @@
             const nameValue = payload.unique_name || payload.name || payload.given_name || 'Kullanici';
             state.role = String(roleValue);
 
-            // Kullanıcı rolüne göre sayfa yönlendirmesi
             if (state.role.toLowerCase() === 'user') {
-                // User rolü için dashboard değil user.html kullanılır
                 localStorage.setItem('redirectAfterRoleCheck', 'user');
                 window.location.href = '/user.html';
                 return;
@@ -1232,8 +1211,8 @@
 
             document.getElementById('user-meta').textContent = `${nameValue} - ${isDietitian() ? 'Diyetisyen' : 'Yönetici'}`;
             document.getElementById('page-subtitle').textContent = isDietitian()
-                ? 'Sana ait hastalar, randevular ve olcumler burada listelenir.'
-                : 'Klinikteki genel durum ve tum kayitlar burada listelenir.';
+                ? 'Sana ait danışanlar, randevular ve ölçümler burada listelenir.'
+                : 'Klinikteki genel durum ve tum kayıtlar burada listelenir.';
             document.querySelectorAll('.admin-only').forEach(el => el.style.display = isDietitian() ? 'none' : '');
             document.querySelectorAll('.dietitian-only').forEach(el => el.style.display = isDietitian() ? '' : 'none');
             const uid = payload.sub || payload.email || payload.unique_name || 'default';
@@ -1331,7 +1310,7 @@
             state.dietitians = await api('/api/users?role=1');
             populateDietitianSelect();
             renderRows('dietitians-list', state.dietitians, dietitianRow, 7, 'Kayitli diyetisyen yok.');
-            renderRows('patients-admin-list', state.patients, patientAdminRow, 7, 'Henuz hasta kaydi yok.');
+            renderRows('patients-admin-list', state.patients, patientAdminRow, 7, 'Henuz danışan kaydi yok.');
             renderAdminAvailabilityView();
         }
 
@@ -1339,8 +1318,8 @@
             state.patients = await api('/api/patients');
             populatePatientSelect();
             populateMealPlanPatientSelect();
-            renderRows('patients-list', state.patients, patientRow, 7, 'Henuz hasta kaydi yok.');
-            renderRows('patients-admin-list', state.patients, patientAdminRow, 7, 'Henuz hasta kaydi yok.');
+            renderRows('patients-list', state.patients, patientRow, 7, 'Henuz danışan kaydi yok.');
+            renderRows('patients-admin-list', state.patients, patientAdminRow, 7, 'Henuz danışan kaydi yok.');
             await loadDeletedPatients();
         }
 
@@ -1410,7 +1389,7 @@
                 window._deletedPatientsCache = Array.isArray(deleted) ? deleted : [];
                 renderRows('deleted-patients-list', window._deletedPatientsCache, deletedPatientRow, 5, 'Eski danışan bulunmuyor.');
                 renderRows('deleted-patients-admin-list', window._deletedPatientsCache, deletedPatientRow, 5, 'Eski danışan bulunmuyor.');
-            } catch(e) { console.error('Eski hastalar yüklenemedi:', e); }
+            } catch(e) { console.error('Eski danışanlar yüklenemedi:', e); }
         }
 
         function deletedPatientRow(p) {
@@ -1454,7 +1433,7 @@
         }
 
         async function purgeDeletedPatients() {
-            if (!confirm('Tüm eski hastalar veritabanından kalıcı olarak silinecek. Emin misiniz?')) return;
+            if (!confirm('Tüm eski danışanlar veritabanından kalıcı olarak silinecek. Emin misiniz?')) return;
             try {
                 const result = await api('/api/patients/purge-deleted', { method: 'DELETE' });
                 setSuccess(result.message || 'Temizlendi');
@@ -1704,7 +1683,7 @@
             const dietitian = state.dietitians.find(d => d.id === x.userId);
             return {
                 ...x,
-                patientName: x.patientName || patient?.fullName || `Hasta #${x.patientId ?? '-'}`,
+                patientName: x.patientName || patient?.fullName || `Danışan #${x.patientId ?? '-'}`,
                 dietitianName: x.dietitianName || (dietitian ? fullName(dietitian.firstName, dietitian.lastName) : patient?.dietitianName) || 'Atanmamis',
                 appointmentType: x.appointmentType || x.reason || 'Kontrol randevusu'
             };
@@ -1872,7 +1851,6 @@
             });
         }
 
-        // Legacy alias
         function previewMealPlanCreate() { return submitMealPlanCreate(); }
 
         async function editDietitian(id) {
@@ -1942,7 +1920,7 @@
             const x = await api(`/api/patients/${id}`);
             state.editingPatientId = id;
             document.getElementById('patient-form').reset();
-            setText('patient-modal-title', 'Hasta Duzenle');
+            setText('patient-modal-title', 'Danışan Düzenle');
             setValue('patient-first-name', x.firstName);
             setValue('patient-last-name', x.lastName);
             setValue('patient-email', x.email);
@@ -1963,13 +1941,11 @@
         async function openPatientModal() {
             state.editingPatientId = null;
             document.getElementById('patient-form').reset();
-            setText('patient-modal-title', 'Hasta Ekle');
-            // Admin tarafında diyetisyen select'i dolu değilse önce çek.
+            setText('patient-modal-title', 'Danışan Ekle');
             if (isAdmin() && (!Array.isArray(state.dietitians) || state.dietitians.length === 0)) {
                 try {
                     await loadDietitians();
                 } catch {
-                    // Dietitian yüklenemediyse submit tarafında mesajı gösteririz.
                 }
             }
             setValue('patient-dietitian', isDietitian() ? '' : (state.dietitians[0]?.id ?? ''));
@@ -1981,12 +1957,12 @@
             e.preventDefault();
             const selectedDietitianId = getValue('patient-dietitian') ? Number(getValue('patient-dietitian')) : null;
             if (isAdmin() && !selectedDietitianId) {
-                setError('Admin hasta eklerken bir diyetisyen secmelidir.');
+                setError('Admin danışan eklerken bir diyetisyen seçmelidir.');
                 return;
             }
             const patientPassword = getValue('patient-password');
             if (!state.editingPatientId && !patientPassword) {
-                setError('Danisan girisi icin sifre zorunludur.');
+                setError('Danışan girişi için şifre zorunludur.');
                 return;
             }
             if (!state.editingPatientId && !validatePassword(patientPassword)) {
@@ -2016,21 +1992,20 @@
                     await api('/api/patients', { method: 'POST', body: JSON.stringify(payload) });
                 }
                 closeModal('patient-modal-backdrop');
-                setSuccess('Hasta kaydi guncellendi.');
+                setSuccess('Danışan kaydi guncellendi.');
                 await loadPatients();
                 renderComputedSummary();
             } catch (error) {
-                setError(error?.message || 'Hasta kaydi yapilamadi.');
+                setError(error?.message || 'Danışan kaydi yapilamadi.');
             }
         }
 
         async function deletePatient(id) {
-            showDeleteConfirm('Bu hastayı silmek istediğinizden emin misiniz?', async () => {
+            showDeleteConfirm('Bu danışanı silmek istediğinizden emin misiniz?', async () => {
                 await api(`/api/patients/${id}`, { method: 'DELETE' });
-                setSuccess('Hasta silindi.');
-                await loadPatients(); // loadDeletedPatients zaten içinde çağrılıyor (await ile)
+                setSuccess('Danışan silindi.');
+                await loadPatients();
                 renderComputedSummary();
-                // Eski hastalar panelini otomatik aç
                 const wrap = document.getElementById('deleted-patients-table-wrap');
                 if (wrap && wrap.style.display === 'none') toggleDeletedPanel('deleted-patients-table-wrap');
             });
@@ -2098,7 +2073,7 @@
             const reason = getValue('appointment-reason');
 
             if (!patientId || !appointmentDateInput || durationInMinutes <= 0 || !reason) {
-                setError('Randevu icin hasta, tarih, sure ve aciklama zorunludur.');
+                setError('Randevu için danışan, tarih, süre ve açıklama zorunludur.');
                 return;
             }
 
@@ -2124,7 +2099,7 @@
                 state.pendingAppointment = {
                     id: createdOrUpdatedId,
                     patientId: payload.patientId || Number(getValue('appointment-patient')),
-                    patientName: patient?.fullName || `Hasta #${payload.patientId || getValue('appointment-patient')}`,
+                    patientName: patient?.fullName || `Danışan #${payload.patientId || getValue('appointment-patient')}`,
                     appointmentDate: payload.appointmentDate,
                     durationInMinutes: payload.durationInMinutes,
                     status: payload.status,
@@ -2138,7 +2113,7 @@
                     state.pendingAppointment = {
                         id: createdOrUpdatedId,
                         patientId: payload.patientId,
-                        patientName: patient?.fullName || `Hasta #${payload.patientId}`,
+                        patientName: patient?.fullName || `Danışan #${payload.patientId}`,
                         appointmentDate: payload.appointmentDate,
                         durationInMinutes: payload.durationInMinutes,
                         status: payload.status,
@@ -2148,7 +2123,7 @@
                 }
             }
             closeModal('appointment-modal-backdrop');
-            setSuccess(state.editingAppointmentId ? 'Randevu guncellendi.' : 'Randevu eklendi.');
+            setSuccess(state.editingAppointmentId ? 'Randevu güncellendi.' : 'Randevu eklendi.');
             renderAppointmentViews();
             try {
                 await loadAppointments();
@@ -2233,14 +2208,14 @@
             }
             state.measurementPatientId = patientId;
             document.getElementById('measurement-form').reset();
-            setText('measurement-modal-title', `${patientName} - Hasta Ölçümleri`);
+            setText('measurement-modal-title', `${patientName} - Danışan Ölçümleri`);
             setValue('measurement-date', formatDateInput(new Date().toISOString()));
             document.getElementById('measurement-summary').innerHTML = '<div class="muted">Ölçümler yukleniyor...</div>';
             document.getElementById('measurement-history-list').innerHTML = '<tr><td colspan="5" class="muted">Ölçümler yukleniyor...</td></tr>';
             openModal('measurement-modal-backdrop');
             const rows = await api(`/api/patients/${patientId}/measurements`);
             renderMeasurementSummary(rows);
-            renderRows('measurement-history-list', rows, measurementRow, 8, 'Henuz olcum kaydi yok.');
+            renderRows('measurement-history-list', rows, measurementRow, 8, 'Henüz ölçüm kaydı yok.');
         }
 
         async function submitMeasurementForm(e) {
@@ -2265,7 +2240,7 @@
             setSuccess('Ölçüm kaydedildi.');
             const rows = await api(`/api/patients/${state.measurementPatientId}/measurements`);
             renderMeasurementSummary(rows);
-            renderRows('measurement-history-list', rows, measurementRow, 8, 'Henuz olcum kaydi yok.');
+            renderRows('measurement-history-list', rows, measurementRow, 8, 'Henüz ölçüm kaydı yok.');
             await loadPatients();
         }
 
@@ -2276,7 +2251,7 @@
         function renderMeasurementSummary(rows) {
             const box = document.getElementById('measurement-summary');
             if (!rows || !rows.length) {
-                box.innerHTML = '<div class="muted">Henuz olcum yok.</div>';
+                box.innerHTML = '<div class="muted">Henüz ölçüm yok.</div>';
                 return;
             }
             const x = rows[0];
@@ -2286,21 +2261,21 @@
         function populatePatientSelect() {
             const select = document.getElementById('appointment-patient');
             if (!state.patients.length) {
-                select.innerHTML = '<option value="">Hasta yok</option>';
+                select.innerHTML = '<option value="">Danışan yok</option>';
                 return;
             }
-            select.innerHTML = `<option value="">Hasta secin</option>` + state.patients.map(x => `<option value="${x.id}">${escapeHtml(x.fullName || ('Hasta #' + x.id))}</option>`).join('');
+            select.innerHTML = `<option value="">Danışan secin</option>` + state.patients.map(x => `<option value="${x.id}">${escapeHtml(x.fullName || ('Danışan #' + x.id))}</option>`).join('');
         }
 
         function populateMealPlanPatientSelect() {
             const select = document.getElementById('meal-plan-preview-patient');
             if (!select) return;
             if (!state.patients.length) {
-                select.innerHTML = '<option value="">Danisan yok</option>';
+                select.innerHTML = '<option value="">Danışan yok</option>';
                 return;
             }
 
-            select.innerHTML = `<option value="">Danisan secin</option>` + state.patients.map(x => `<option value="${x.id}">${escapeHtml(x.fullName || ('Danisan #' + x.id))}</option>`).join('');
+            select.innerHTML = `<option value="">Danışan secin</option>` + state.patients.map(x => `<option value="${x.id}">${escapeHtml(x.fullName || ('Danışan #' + x.id))}</option>`).join('');
             if (!select.value) {
                 select.value = String(state.patients[0].id);
             }
@@ -2314,7 +2289,7 @@
                 return;
             }
 
-            select.innerHTML = `<option value="">Diyetisyen secin</option>` + state.dietitians.map(x => `<option value="${x.id}">${escapeHtml(fullName(x.firstName, x.lastName) || ('Diyetisyen #' + x.id))}</option>`).join('');
+            select.innerHTML = `<option value="">Diyetisyen seçin</option>` + state.dietitians.map(x => `<option value="${x.id}">${escapeHtml(fullName(x.firstName, x.lastName) || ('Diyetisyen #' + x.id))}</option>`).join('');
         }
 
         async function api(url, options = {}) {
@@ -2332,7 +2307,7 @@
             console.log('API response status:', response.status, 'data:', data);
 
             if (response.status === 401 || response.status === 403) {
-                console.warn('Yetkilendirme hatasi bulundu, login sayfasina yonlendiriliyor.');
+                console.warn('Yetkilendirme hatası bulundu, login sayfasına yönlendiriliyor.');
                 localStorage.removeItem('authToken');
                 window.location.href = '/login.html';
                 return;
@@ -2443,7 +2418,6 @@
         function escapeHtml(value) { return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&#39;'); }
         function escapeForJs(value) { return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, '\\\''); }
 
-        // ===== Müsaitlik Çizelgesi =====
         const AVAIL_HOURS = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00'];
         const AVAIL_DAYS_LIST = [
             {index:1,name:'Pazartesi'},{index:2,name:'Salı'},{index:3,name:'Çarşamba'},
@@ -2580,7 +2554,6 @@
             }).join('');
         }
 
-        // ===== Profil Paneli =====
         let _ppUserProfile = null;
 
         async function openProfilePanel() {
@@ -2589,7 +2562,7 @@
             const jwtEmail = payload.email || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '-';
             const roleName = isDietitian() ? 'Diyetisyen' : 'Yönetici';
             const avatar = isDietitian() ? 'D' : 'A';
-            // JWT'den hızlı doldur
+
             document.getElementById('pp-avatar').textContent = avatar;
             loadPPPhoto();
             document.getElementById('pp-name').textContent = jwtName;
@@ -2598,7 +2571,7 @@
             document.getElementById('pp-info-role').textContent = roleName;
             document.getElementById('pp-info-email').textContent = jwtEmail;
             document.getElementById('pp-info-phone').textContent = '-';
-            // Tam profili API'den çek (telefon ve güncel bilgiler için)
+
             api('/api/users/profile').then(profile => {
                 if (!profile) return;
                 _ppUserProfile = profile;
@@ -2608,7 +2581,7 @@
                 document.getElementById('pp-info-name').textContent = fullName;
                 document.getElementById('pp-info-email').textContent = profile.email || jwtEmail;
                 document.getElementById('pp-info-phone').textContent = profile.phone || '-';
-                // Diyetisyen'e özel satırlar (görüntüleme modu)
+
                 const rowSpec = document.getElementById('pp-row-spec');
                 const rowLic = document.getElementById('pp-row-license');
                 if (isDietitian()) {
@@ -2620,13 +2593,13 @@
                     if (rowSpec) rowSpec.style.display = 'none';
                     if (rowLic) rowLic.style.display = 'none';
                 }
-                // Diyetisyen'e özel edit alanlarının görünürlüğü
+
                 const specField = document.getElementById('pp-edit-spec-field');
                 const licField = document.getElementById('pp-edit-license-field');
                 if (specField) specField.style.display = isDietitian() ? '' : 'none';
                 if (licField) licField.style.display = isDietitian() ? '' : 'none';
             }).catch(() => {});
-            // Bildirimler
+
             const upcoming = (state.appointments || [])
                 .filter(x => new Date(x.appointmentDate) >= new Date())
                 .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate))
@@ -2666,9 +2639,9 @@
             saveBtn.disabled = true; saveBtn.textContent = 'Kaydediliyor...';
             try {
                 await api(`/api/users/${userId}`, { method: 'PUT', body: JSON.stringify(body) });
-                // Bellekteki profili güncelle
+
                 if (_ppUserProfile) { _ppUserProfile.firstName = firstName; _ppUserProfile.lastName = lastName; _ppUserProfile.phone = phone; if (isDietitian()) { _ppUserProfile.specialization = body.specialization; _ppUserProfile.license = body.license; } }
-                // Panel başlık ve satırlarını güncelle
+
                 const fullName = [firstName, lastName].filter(Boolean).join(' ');
                 document.getElementById('pp-name').textContent = fullName;
                 document.getElementById('pp-info-name').textContent = fullName;
@@ -2677,7 +2650,7 @@
                     document.getElementById('pp-info-spec').textContent = body.specialization || 'Belirtilmemiş';
                     document.getElementById('pp-info-license').textContent = body.license || 'Belirtilmemiş';
                 }
-                // Sidebar user-meta güncelle
+
                 const userMeta = document.getElementById('user-meta');
                 if (userMeta) userMeta.textContent = `${fullName} - ${isDietitian() ? 'Diyetisyen' : 'Yönetici'}`;
                 cancelPPEdit();
@@ -2720,7 +2693,7 @@
                 document.getElementById('pp-edit-spec').value = p?.specialization || '';
                 document.getElementById('pp-edit-license').value = p?.license || '';
             }
-            // Photo preview
+
             const photo = localStorage.getItem(_ppPhotoKey());
             const preview = document.getElementById('pp-edit-photo-preview');
             const placeholder = document.getElementById('pp-edit-photo-placeholder');
@@ -2796,8 +2769,8 @@
         }
     </script>
 
-    <!-- Expanded Chart Modal -->
-    <div class="chart-modal-backdrop" id="chart-modal-backdrop" onclick="if(event.target===this)closeExpandedChartModal()">
+
+<div class="chart-modal-backdrop" id="chart-modal-backdrop" onclick="if(event.target===this)closeExpandedChartModal()">
         <div class="chart-modal-box">
             <div class="chart-modal-head">
                 <h4 id="expanded-chart-title"></h4>
@@ -2807,7 +2780,7 @@
         </div>
     </div>
 
-    <!-- Danışan Takip Grafiği Modal -->
+
     <div class="chart-modal-backdrop" id="tracking-chart-modal" onclick="if(event.target===this)closeTrackingChart()">
         <div class="chart-modal-box" style="width:min(700px,100%);">
             <div class="chart-modal-head">
@@ -2818,7 +2791,17 @@
         </div>
     </div>
 
-    <!-- İlerleme Grafiği Modal -->
+    <div class="chart-modal-backdrop" id="compliance-chart-modal" onclick="if(event.target===this)closeComplianceChart()">
+        <div class="chart-modal-box" style="width:min(740px,100%);">
+            <div class="chart-modal-head">
+                <h4 id="compliance-chart-title">Aylık Uyum Grafiği</h4>
+                <button class="close" onclick="closeComplianceChart()">✕</button>
+            </div>
+            <canvas id="compliance-chart-canvas" style="max-height:320px;"></canvas>
+        </div>
+    </div>
+
+
     <div class="modal-backdrop" id="progress-chart-modal" onclick="if(event.target===this)closeProgressChart()" style="z-index:1100;">
         <div class="modal" style="width:min(700px,100%);max-height:calc(100vh - 48px);overflow:auto;">
             <div class="modal-head">
@@ -2837,10 +2820,10 @@
         </div>
     </div>
 
-    <!-- AI Asistan Butonu -->
+
     <button class="ai-btn dietitian-only" onclick="toggleAiPanel()" title="AI Asistan">✨</button>
 
-    <!-- AI Asistan Paneli -->
+
     <div class="ai-panel" id="ai-panel">
         <div class="ai-head">
             <span>✨</span>
@@ -2861,12 +2844,12 @@
         </div>
     </div>
 
-    <!-- Chat Butonu -->
+
     <button class="chat-btn dietitian-only" onclick="toggleChatPanel()" title="Mesajlar">
         💬<span class="chat-badge" id="chat-badge"></span>
     </button>
 
-    <!-- Chat Paneli -->
+
     <div class="chat-panel" id="chat-panel">
         <div class="chat-head" id="chat-head-main">
             <span>💬 Mesajlar</span>
@@ -2900,10 +2883,10 @@
         </div>
     </div>
 
-    <!-- Profil Butonu (Sabit Sağ Üst) -->
+
     <button class="profile-btn" onclick="openProfilePanel()" title="Profilim">P</button>
 
-    <!-- Profil Paneli -->
+
     <div id="pp-backdrop" class="pp-backdrop" onclick="if(event.target===this)closeProfilePanel()">
         <div class="pp-panel">
             <div class="pp-header">
@@ -2919,7 +2902,7 @@
             </div>
             <div class="pp-body">
                 <div id="pp-content-info" class="pp-content active">
-                    <!-- Görüntüleme modu -->
+
                     <div id="pp-view-mode">
                         <div class="pp-row"><span class="pp-row-label">Ad Soyad</span><span class="pp-row-val" id="pp-info-name">-</span></div>
                         <div class="pp-row"><span class="pp-row-label">Rol</span><span class="pp-row-val" id="pp-info-role">-</span></div>
@@ -2931,7 +2914,7 @@
                             <button class="btn-action" onclick="openPPEdit()">Düzenle</button>
                         </div>
                     </div>
-                    <!-- Düzenleme modu -->
+
                     <div id="pp-edit-form" class="pp-edit-form">
                         <div class="pp-msg" id="pp-edit-msg"></div>
                         <div class="pp-photo-edit">
@@ -2999,26 +2982,104 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script>
-        // ===== GAMIFICATION COMPLIANCE =====
-        function renderGamifCompliance() {
-            const grid = document.getElementById('gamif-compliance-grid');
-            if (!grid || !isDietitian()) return;
-            const plans = Array.isArray(state.mealPlans) ? state.mealPlans : [];
-            const active = plans.filter(p => p.status === 1 || p.status === '1');
-            if (!active.length) { grid.innerHTML = '<span class="muted">Aktif plan bulunmuyor.</span>'; return; }
-            grid.innerHTML = active.map(p => {
-                const pct = p.progressPercent || 0;
-                const color = pct >= 75 ? '#10b981' : pct >= 40 ? '#f59e0b' : '#ef4444';
-                return `<div class="gamif-card">
-                    <div class="g-name">${escapeHtml(p.patientName || 'Danışan')}</div>
-                    <div style="font-size:.72rem;color:#999;margin-bottom:6px;">${escapeHtml(p.title || '')}</div>
-                    <div class="g-bar-wrap"><div class="g-bar" style="width:${pct}%;background:${color};"></div></div>
-                    <div class="g-pct">${pct}% uyum (${p.completedTaskCount||0}/${p.totalTaskCount||0} görev)</div>
-                </div>`;
-            }).join('');
-        }
 
-        // ===== CHAT =====
+    let _complianceData = {};
+    async function refreshComplianceData() {
+        try {
+            const data = await api('/api/mealplans');
+            if (Array.isArray(data)) state.mealPlans = data;
+        } catch {}
+    }
+
+    function normalizeComplianceHistory(plan) {
+        const history = Array.isArray(plan?.complianceHistory) ? plan.complianceHistory : [];
+        if (history.length) return history;
+        if (plan?.progressPercent != null) {
+            return [{ date: new Date().toISOString(), percent: Number(plan.progressPercent) }];
+        }
+        return [];
+    }
+
+    async function renderPatientComplianceList() {
+        const el = document.getElementById('patient-compliance-list');
+        if (!el || !isDietitian()) return;
+        await refreshComplianceData();
+        const plans = Array.isArray(state.mealPlans) ? state.mealPlans : [];
+        const active = plans.filter(p => p.status === 1 || p.status === '1');
+        if (!active.length) { el.innerHTML = '<span class="muted">Aktif plan bulunmuyor.</span>'; return; }
+        // Her danışan için en güncel aktif planı al
+        const patientMap = {};
+        active.forEach(p => {
+            if (!patientMap[p.patientId] || new Date(p.startDate) > new Date(patientMap[p.patientId].startDate)) {
+                patientMap[p.patientId] = p;
+            }
+        });
+        _complianceData = {};
+        Object.values(patientMap).forEach(p => {
+            _complianceData[p.id] = { history: normalizeComplianceHistory(p), name: p.patientName || 'Danışan', title: p.title || '' };
+        });
+        el.innerHTML = Object.values(patientMap).map(p => `
+            <div class="compliance-patient-row">
+                <div>
+                    <div class="compliance-patient-name">${escapeHtml(p.patientName || 'Danışan')}</div>
+                    <div class="compliance-patient-plan">${escapeHtml(p.title || '')}</div>
+                </div>
+                <button class="btn-action" type="button" onclick="openPatientComplianceChart(${p.id})">Grafik Görüntüle</button>
+            </div>
+        `).join('');
+    }
+
+    let _complianceChart = null;
+    async function openPatientComplianceChart(planId) {
+        let info = _complianceData[planId];
+        if (!info) {
+            await renderPatientComplianceList();
+            info = _complianceData[planId];
+        }
+        if (!info) return;
+        const modal = document.getElementById('compliance-chart-modal');
+        const titleEl = document.getElementById('compliance-chart-title');
+        const canvas = document.getElementById('compliance-chart-canvas');
+        titleEl.textContent = `${info.name} — Aylık Uyum Grafiği`;
+        modal.classList.add('open');
+        if (_complianceChart) { _complianceChart.destroy(); _complianceChart = null; }
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = now.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const dayLabels = Array.from({ length: daysInMonth }, (_, i) => String(i + 1));
+        const historyMap = {};
+        (info.history || []).forEach(h => {
+            if (h.date) {
+                const d = new Date(h.date);
+                if (d.getFullYear() === year && d.getMonth() === month) historyMap[d.getDate()] = h.percent;
+            }
+        });
+        const values = dayLabels.map((_, i) => historyMap[i + 1] !== undefined ? historyMap[i + 1] : null);
+        const bgColors = values.map(v => v === null ? 'rgba(0,0,0,0)' : v >= 75 ? 'rgba(16,185,129,0.7)' : v >= 50 ? 'rgba(245,158,11,0.7)' : 'rgba(239,68,68,0.7)');
+        const bdColors = values.map(v => v === null ? 'rgba(0,0,0,0)' : v >= 75 ? '#10b981' : v >= 50 ? '#f59e0b' : '#ef4444');
+        _complianceChart = new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: { labels: dayLabels, datasets: [{ label: 'Uyum (%)', data: values, backgroundColor: bgColors, borderColor: bdColors, borderWidth: 1, borderRadius: 3 }] },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#f3f4f6' }, ticks: { font: { size: 10 } } },
+                    y: { beginAtZero: true, max: 100, ticks: { stepSize: 25, callback: v => v + '%' }, grid: { color: '#f3f4f6' } }
+                }
+            }
+        });
+    }
+
+    function closeComplianceChart() {
+        document.getElementById('compliance-chart-modal').classList.remove('open');
+        if (_complianceChart) { _complianceChart.destroy(); _complianceChart = null; }
+    }
+
+    // Geriye dönük uyumluluk için boş referans bırak
+    function renderGamifCompliance() { renderPatientComplianceList(); }
+
         let _chatConnection = null;
         let _chatContactId = null;
         let _chatPendingFile = null;
@@ -3028,7 +3089,7 @@
 
         function initSignalR() {
             if (typeof signalR === 'undefined') return;
-            if (_chatConnection) return; // zaten başlatıldı
+            if (_chatConnection) return;
             const token = localStorage.getItem('authToken');
             if (!token) return;
             _chatConnection = new signalR.HubConnectionBuilder()
@@ -3041,11 +3102,11 @@
                 if (String(msg.senderId) === String(_chatContactId) || String(msg.receiverId) === String(_chatContactId)) {
                     appendChatMsg(msg);
                 } else if (String(msg.senderId) !== String(myId)) {
-                    fetchUnreadCount(); // gerçek sayıyı çek
+                    fetchUnreadCount();
                     const senderId = String(msg.senderId);
                     _chatUnreadByContact[senderId] = (_chatUnreadByContact[senderId] || 0) + 1;
                     if (document.getElementById('chat-panel').classList.contains('open')) {
-                        populateChatContacts(); // badge'leri yenile
+                        populateChatContacts();
                     }
                 }
             });
@@ -3062,7 +3123,7 @@
 
             let html = '';
             state.patients.forEach(p => {
-                if (!p.patientUserId) return; // Bu danışanın sisteme giriş hesabı yok, mesajlaşılamaz
+                if (!p.patientUserId) return;
                 const displayName = (p.fullName || '').trim() || p.email || 'Danışan';
                 const initial = displayName[0].toUpperCase();
                 const unread = _chatUnreadByContact[String(p.patientUserId)] || 0;
@@ -3096,10 +3157,10 @@
         function toggleChatPanel() {
             const panel = document.getElementById('chat-panel');
             const isOpen = panel.classList.toggle('open');
-            if (isOpen) { 
+            if (isOpen) {
                 closeChatConversation();
-                populateChatContacts(); 
-                fetchUnreadCount(); 
+                populateChatContacts();
+                fetchUnreadCount();
             }
         }
 
@@ -3119,7 +3180,6 @@
             document.getElementById('chat-head-conversation').style.display = 'flex';
             document.getElementById('chat-conversation-view').style.display = 'flex';
             
-            // Clear unread badge for this contact
             if (_chatUnreadByContact[contactId]) {
                 delete _chatUnreadByContact[contactId];
                 populateChatContacts();
@@ -3200,7 +3260,6 @@
             } catch (e) { preview.textContent = 'Hata'; }
         }
 
-        // ===== İLERLEME GRAFİĞİ =====
         let _progressChart = null;
         const _progressMetrics = [
             { key: 'weight', label: 'Kilo (kg)', color: '#6f8e6b', yField: m => m.weight },
@@ -3235,7 +3294,6 @@
 
             _progressActiveKey = 'weight';
 
-            // Sekmeler
             const tabsEl = document.getElementById('progress-chart-tabs');
             _progressMetrics.forEach(m => {
                 const hasData = sorted.some(r => m.yField(r) != null && m.yField(r) !== 0);
@@ -3327,9 +3385,7 @@
             document.getElementById('progress-chart-modal').classList.remove('open');
             if (_progressChart) { _progressChart.destroy(); _progressChart = null; }
         }
-        // ===== /İLERLEME GRAFİĞİ =====
 
-        // ===== AI ASISTAN =====
         let _aiPatientId = null;
 
         function toggleAiPanel() {
@@ -3406,7 +3462,6 @@
             body.appendChild(div);
             body.scrollTop = body.scrollHeight;
         }
-        // ===== /AI ASISTAN =====
 
         async function fetchUnreadCount() {
             try {
@@ -3431,7 +3486,6 @@
         }
     </script>
     <script>
-        // ===== CHARTS =====
         let weekChartOffset = 0;
         let monthlyPatientsChart = null;
         let weeklyAppointmentsChart = null;
@@ -3548,7 +3602,7 @@
             const cntEl = document.getElementById('stat-top-dietitian-counts');
             if (nameEl) nameEl.textContent = (d.firstName || '') + ' ' + (d.lastName || '');
             if (specEl) specEl.textContent = d.specialization || 'Diyetisyen';
-            if (cntEl) cntEl.innerHTML = 'Randevu: <strong>' + aCount + '</strong> &nbsp; Hasta: <strong>' + pCount + '</strong>';
+            if (cntEl) cntEl.innerHTML = 'Randevu: <strong>' + aCount + '</strong> &nbsp; Danışan: <strong>' + pCount + '</strong>';
         }
     </script>
 </body>

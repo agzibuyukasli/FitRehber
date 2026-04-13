@@ -8,9 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DietitianClinic.Business.Services
 {
-    /// <summary>
-    /// Patient Business Service
-    /// </summary>
     public class PatientService
     {
         private readonly DietitianClinic.DataAccess.Repositories.IUnitOfWork _unitOfWork;
@@ -27,9 +24,6 @@ namespace DietitianClinic.Business.Services
             _logger = logger;
         }
 
-        /// <summary>
-        /// Tüm hastaları al
-        /// </summary>
         public async Task<IList<Patient>> GetAllPatientsAsync(int? userId = null, bool dietitianOnly = false)
         {
             try
@@ -58,9 +52,6 @@ namespace DietitianClinic.Business.Services
             }
         }
 
-        /// <summary>
-        /// ID'ye göre hasta al
-        /// </summary>
         public async Task<Patient> GetPatientByIdAsync(int patientId, int? userId = null, bool dietitianOnly = false)
         {
             try
@@ -90,14 +81,10 @@ namespace DietitianClinic.Business.Services
             }
         }
 
-        /// <summary>
-        /// Yeni hasta oluştur
-        /// </summary>
         public async Task<int> CreatePatientAsync(Patient patient, int? userId = null)
         {
             try
             {
-                // Email zaten var mı kontrol et
                 if (!string.IsNullOrWhiteSpace(patient.Email))
                 {
                     var existingPatient = await _unitOfWork.PatientRepository
@@ -124,9 +111,6 @@ namespace DietitianClinic.Business.Services
             }
         }
 
-        /// <summary>
-        /// Hastayı güncelle
-        /// </summary>
         public async Task<bool> UpdatePatientAsync(int patientId, Patient patientDetails, int? userId = null, bool dietitianOnly = false)
         {
             try
@@ -155,16 +139,12 @@ namespace DietitianClinic.Business.Services
             }
         }
 
-        /// <summary>
-        /// Hastayı sil
-        /// </summary>
         public async Task<bool> DeletePatientAsync(int patientId, int? userId = null, bool dietitianOnly = false)
         {
             try
             {
                 var patient = await GetPatientByIdAsync(patientId, userId, dietitianOnly);
 
-                // Arşiv tablosuna kaydet (global query filter'dan bağımsız tablo)
                 var archived = new DeletedPatient
                 {
                     OriginalPatientId = patient.Id,
@@ -186,10 +166,8 @@ namespace DietitianClinic.Business.Services
                 await _context.DeletedPatients.AddAsync(archived);
                 await _context.SaveChangesAsync();
 
-                // Patients tablosunu soft-delete et (FK bütünlüğü için)
                 await _unitOfWork.PatientRepository.DeleteAsync(patient);
 
-                // Karşılık gelen User kaydını deaktif et (login engellemek için)
                 if (!string.IsNullOrWhiteSpace(patient.Email))
                 {
                     var patientUser = await _context.Users
@@ -236,9 +214,6 @@ namespace DietitianClinic.Business.Services
             return measurement.Id;
         }
 
-        /// <summary>
-        /// Sayfalamalı hasta listesi
-        /// </summary>
         public async Task<(IList<Patient> patients, int totalCount)> GetPatientsPaginatedAsync(int pageNumber, int pageSize)
         {
             try
@@ -254,9 +229,6 @@ namespace DietitianClinic.Business.Services
             }
         }
 
-        /// <summary>
-        /// User ID'ye göre hasta getir
-        /// </summary>
         public async Task<Patient?> GetPatientByUserIdAsync(int userId)
         {
             try

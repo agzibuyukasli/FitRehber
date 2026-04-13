@@ -5,10 +5,6 @@ using DietitianClinic.Entity.Base;
 
 namespace DietitianClinic.DataAccess.Repositories
 {
-    /// <summary>
-    /// Generic Repository implementation
-    /// </summary>
-    /// <typeparam name="T">Entity tipi</typeparam>
     public class Repository<T> : IRepository<T> where T : BaseEntity, new()
     {
         protected readonly DietitianClinicDbContext _context;

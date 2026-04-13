@@ -2,9 +2,6 @@ using DietitianClinic.Entity.Models;
 
 namespace DietitianClinic.DataAccess.Repositories
 {
-    /// <summary>
-    /// Unit of Work Pattern - İlişkili repository'leri yönetmek için
-    /// </summary>
     public interface IUnitOfWork : IDisposable
     {
         IRepository<User> UserRepository { get; }

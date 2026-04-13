@@ -41,7 +41,6 @@ namespace DietitianClinic.API.Controllers
                 .FirstOrDefaultAsync(p => p.Email == email && !p.IsDeleted);
         }
 
-        // Danışan: bugünkü su ve adım bilgisini kaydet (upsert)
         [HttpPost]
         public async Task<IActionResult> Upsert([FromBody] DailyTrackingRequest req)
         {
@@ -61,7 +60,6 @@ namespace DietitianClinic.API.Controllers
             return Ok();
         }
 
-        // Danışan: kendi son 14 günlük takip verisini görür
         [HttpGet("my")]
         public async Task<IActionResult> GetMy()
         {
@@ -76,7 +74,6 @@ namespace DietitianClinic.API.Controllers
             return Ok(rows);
         }
 
-        // Diyetisyen: tek bir danışanın takip geçmişini görür
         [HttpGet("patients/{patientId:int}")]
         public async Task<IActionResult> GetForPatient(int patientId)
         {
@@ -94,7 +91,6 @@ namespace DietitianClinic.API.Controllers
             return Ok(rows);
         }
 
-        // Diyetisyen: tüm danışanlarının en son takip verisini görür
         [HttpGet("my-patients")]
         public async Task<IActionResult> GetMyPatients()
         {

@@ -1,8 +1,5 @@
 namespace DietitianClinic.API.Models.Responses
 {
-    /// <summary>
-    /// User response modeli
-    /// </summary>
     public class UserResponse
     {
         public int Id { get; set; }
@@ -17,9 +14,6 @@ namespace DietitianClinic.API.Models.Responses
         public DateTime CreatedDate { get; set; }
     }
 
-    /// <summary>
-    /// Login yanıtı
-    /// </summary>
     public class LoginResponse
     {
         public int UserId { get; set; }
@@ -31,9 +25,6 @@ namespace DietitianClinic.API.Models.Responses
         public string RefreshToken { get; set; }
     }
 
-    /// <summary>
-    /// Register yanıtı
-    /// </summary>
     public class RegisterResponse
     {
         public int UserId { get; set; }

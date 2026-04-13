@@ -36,13 +36,12 @@ namespace DietitianClinic.API.Controllers
         [HttpPost("consult")]
         public async Task<IActionResult> Consult([FromBody] AiConsultRequest req)
         {
-            var apiKey = _config["Anthropic:ApiKey"];
-            if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "YOUR_ANTHROPIC_API_KEY_HERE")
-                return BadRequest(new { error = "AI entegrasyonu için appsettings.json dosyasında Anthropic:ApiKey değerini ayarlayın." });
+            var apiKey = _config["OpenRouter:ApiKey"];
+            if (string.IsNullOrWhiteSpace(apiKey))
+                return BadRequest(new { error = "AI entegrasyonu için appsettings.json dosyasında OpenRouter:ApiKey değerini ayarlayın." });
 
             var me = CurrentUserId();
 
-            // Danışan verilerini çek
             var patient = await _context.Patients
                 .AsNoTracking()
                 .Include(p => p.Measurements)
@@ -64,27 +63,32 @@ Danışan verilerine dayalı spesifik, kişiselleştirilmiş öneriler ver. Gene
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Add("x-api-key", apiKey);
-                client.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+
+                var model = _config["OpenRouter:Model"] ?? "anthropic/claude-3-haiku";
+                var baseUrl = _config["OpenRouter:BaseUrl"] ?? "https://openrouter.ai/api/v1/chat/completions";
 
                 var body = new
                 {
-                    model = "claude-haiku-4-5-20251001",
+                    model,
                     max_tokens = 600,
-                    system = systemPrompt,
-                    messages = new[] { new { role = "user", content = userMessage } }
+                    messages = new[]
+                    {
+                        new { role = "system", content = systemPrompt },
+                        new { role = "user", content = userMessage }
+                    }
                 };
 
                 var json = JsonSerializer.Serialize(body);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("https://api.anthropic.com/v1/messages", content);
+                var response = await client.PostAsync(baseUrl, content);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
                     return StatusCode(502, new { error = "AI servisi yanıt vermedi. Lütfen API anahtarınızı kontrol edin.", detail = responseBody });
 
                 using var doc = JsonDocument.Parse(responseBody);
-                var text = doc.RootElement.GetProperty("content")[0].GetProperty("text").GetString();
+                var text = doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
                 return Ok(new { reply = text });
             }
             catch (Exception ex)
@@ -96,8 +100,8 @@ Danışan verilerine dayalı spesifik, kişiselleştirilmiş öneriler ver. Gene
         [HttpGet("quick-analysis/{patientId}")]
         public async Task<IActionResult> QuickAnalysis(int patientId)
         {
-            var apiKey = _config["Anthropic:ApiKey"];
-            if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "YOUR_ANTHROPIC_API_KEY_HERE")
+            var apiKey = _config["OpenRouter:ApiKey"];
+            if (string.IsNullOrWhiteSpace(apiKey))
                 return BadRequest(new { error = "AI_KEY_NOT_SET" });
 
             var patient = await _context.Patients
@@ -117,26 +121,31 @@ Danışan verilerine dayalı spesifik, kişiselleştirilmiş öneriler ver. Gene
             try
             {
                 var client = _httpClientFactory.CreateClient();
-                client.DefaultRequestHeaders.Add("x-api-key", apiKey);
-                client.DefaultRequestHeaders.Add("anthropic-version", "2023-06-01");
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+
+                var model = _config["OpenRouter:Model"] ?? "anthropic/claude-3-haiku";
+                var baseUrl = _config["OpenRouter:BaseUrl"] ?? "https://openrouter.ai/api/v1/chat/completions";
 
                 var body = new
                 {
-                    model = "claude-haiku-4-5-20251001",
+                    model,
                     max_tokens = 400,
-                    system = systemPrompt,
-                    messages = new[] { new { role = "user", content = userMessage } }
+                    messages = new[]
+                    {
+                        new { role = "system", content = systemPrompt },
+                        new { role = "user", content = userMessage }
+                    }
                 };
 
                 var json = JsonSerializer.Serialize(body);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
-                var response = await client.PostAsync("https://api.anthropic.com/v1/messages", content);
+                var response = await client.PostAsync(baseUrl, content);
                 var responseBody = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode) return StatusCode(502, new { error = "AI servisi yanıt vermedi." });
 
                 using var doc = JsonDocument.Parse(responseBody);
-                var text = doc.RootElement.GetProperty("content")[0].GetProperty("text").GetString();
+                var text = doc.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
                 return Ok(new { reply = text });
             }
             catch (Exception ex)

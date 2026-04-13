@@ -5,10 +5,6 @@ using DietitianClinic.Business.Exceptions;
 
 namespace DietitianClinic.API.Middleware
 {
-    /// <summary>
-    /// Global Exception Handler Middleware
-    /// Tüm exception'ları yakalayıp standart format'ta response döner
-    /// </summary>
     public class ExceptionHandlingMiddleware
     {
         private readonly RequestDelegate _next;

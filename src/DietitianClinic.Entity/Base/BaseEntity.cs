@@ -2,9 +2,6 @@ using System;
 
 namespace DietitianClinic.Entity.Base
 {
-    /// <summary>
-    /// Tüm entity'lerin kalıtım alacağı temel sınıf
-    /// </summary>
     public abstract class BaseEntity
     {
         public int Id { get; set; }

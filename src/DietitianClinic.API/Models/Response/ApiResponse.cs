@@ -1,9 +1,5 @@
 namespace DietitianClinic.API.Models.Response
 {
-    /// <summary>
-    /// Standart API Response Model
-    /// </summary>
-    /// <typeparam name="T">Response data tipi</typeparam>
     public class ApiResponse<T>
     {
         public bool Success { get; set; }
@@ -60,9 +56,6 @@ namespace DietitianClinic.API.Models.Response
         }
     }
 
-    /// <summary>
-    /// Non-generic API Response
-    /// </summary>
     public class ApiResponse
     {
         public bool Success { get; set; }
@@ -91,10 +84,6 @@ namespace DietitianClinic.API.Models.Response
         }
     }
 
-    /// <summary>
-    /// Paginated Response Model
-    /// </summary>
-    /// <typeparam name="T">Item tipi</typeparam>
     public class PaginatedResponse<T>
     {
         public List<T> Items { get; set; } = new List<T>();

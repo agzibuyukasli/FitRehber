@@ -5,9 +5,6 @@ using DietitianClinic.DataAccess.Configurations;
 
 namespace DietitianClinic.DataAccess.Context
 {
-    /// <summary>
-    /// Entity Framework Core DbContext sınıfı
-    /// </summary>
     public class DietitianClinicDbContext : DbContext
     {
         public DietitianClinicDbContext(DbContextOptions<DietitianClinicDbContext> options) : base(options)
@@ -31,7 +28,6 @@ namespace DietitianClinic.DataAccess.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            // Tüm konfigurasyonları apply et
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new PatientConfiguration());
             modelBuilder.ApplyConfiguration(new AppointmentConfiguration());
@@ -41,7 +37,6 @@ namespace DietitianClinic.DataAccess.Context
             modelBuilder.ApplyConfiguration(new FoodItemConfiguration());
             modelBuilder.ApplyConfiguration(new PatientMeasurementConfiguration());
 
-            // Soft Delete sorgusu - her zaman deleted olmayan kayıtları sor
             foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
                 if (typeof(Entity.Base.BaseEntity).IsAssignableFrom(entity.ClrType))
@@ -52,18 +47,12 @@ namespace DietitianClinic.DataAccess.Context
             }
         }
 
-        /// <summary>
-        /// SaveChanges override - timestamps otomatik set et
-        /// </summary>
         public override int SaveChanges()
         {
             SetAuditingFields();
             return base.SaveChanges();
         }
 
-        /// <summary>
-        /// SaveChangesAsync override - timestamps otomatik set et
-        /// </summary>
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             SetAuditingFields();
@@ -92,9 +81,6 @@ namespace DietitianClinic.DataAccess.Context
         }
     }
 
-    /// <summary>
-    /// Soft Delete için dinamik filter helper
-    /// </summary>
     internal static class DynamicFilterQueryableExtensions
     {
         internal static LambdaExpression GetDeletedFilter(Type targetType)

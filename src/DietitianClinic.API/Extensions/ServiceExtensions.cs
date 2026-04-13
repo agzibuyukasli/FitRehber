@@ -5,36 +5,23 @@ using DietitianClinic.API.Services;
 
 namespace DietitianClinic.API.Extensions
 {
-    /// <summary>
-    /// Dependency Injection extension'ları
-    /// </summary>
     public static class ServiceExtensions
     {
-        /// <summary>
-        /// Business layer services'i DI container'a ekle
-        /// </summary>
         public static IServiceCollection AddBusinessServices(this IServiceCollection services)
         {
-            // Unit of Work
             services.AddScoped<DietitianClinic.DataAccess.Repositories.IUnitOfWork, DietitianClinic.DataAccess.Repositories.UnitOfWork>();
 
-            // Services
             services.AddScoped<DietitianClinic.Business.Services.UserService>();
             services.AddScoped<DietitianClinic.Business.Services.PatientService>();
             services.AddScoped<DietitianClinic.Business.Interfaces.ITokenService, DietitianClinic.Business.Services.TokenService>();
             services.AddScoped<DietitianClinic.Business.Interfaces.IPasswordService, DietitianClinic.Business.Services.PasswordService>();
 
-            // Şifre sıfırlama: kod/token durumu uygulama boyunca paylaşılmalı → Singleton
             services.AddSingleton<PasswordResetService>();
-            // E-posta gönderici
             services.AddScoped<EmailService>();
 
             return services;
         }
 
-        /// <summary>
-        /// CORS ayarlarını configure et
-        /// </summary>
         public static IServiceCollection AddCorsPolicy(this IServiceCollection services)
         {
             services.AddCors(options =>
@@ -45,20 +32,12 @@ namespace DietitianClinic.API.Extensions
                         .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
-                    // Production'da bunu değiştir
-                    // builder
-                    //     .WithOrigins("https://yourapp.com")
-                    //     .AllowAnyMethod()
-                    //     .AllowAnyHeader();
                 });
             });
 
             return services;
         }
 
-        /// <summary>
-        /// JWT Authentication'ı configure et
-        /// </summary>
         public static IServiceCollection AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("Jwt");
@@ -100,9 +79,6 @@ namespace DietitianClinic.API.Extensions
             return services;
         }
 
-        /// <summary>
-        /// Swagger/OpenAPI ayarlarını configure et
-        /// </summary>
         public static IServiceCollection AddSwaggerConfiguration(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>
@@ -119,7 +95,6 @@ namespace DietitianClinic.API.Extensions
                     }
                 });
 
-                // JWT Bearer token desteği
                 var securityScheme = new Microsoft.OpenApi.Models.OpenApiSecurityScheme
                 {
                     Name = "JWT Authentication",
@@ -149,7 +124,6 @@ namespace DietitianClinic.API.Extensions
 
                 options.AddSecurityRequirement(securityRequirement);
 
-                // XML yorum desteği
                 var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 if (File.Exists(xmlPath))

@@ -2,9 +2,6 @@ using System;
 
 namespace DietitianClinic.Business.Exceptions
 {
-    /// <summary>
-    /// Genel exception sınıfı
-    /// </summary>
     public class BusinessException : Exception
     {
         public string? Code { get; set; }
@@ -21,17 +18,11 @@ namespace DietitianClinic.Business.Exceptions
         }
     }
 
-    /// <summary>
-    /// Kayıt bulunamadı exception'ı
-    /// </summary>
     public class NotFoundException : BusinessException
     {
         public NotFoundException(string message, string code = "NOT_FOUND") : base(message, code) { }
     }
 
-    /// <summary>
-    /// Doğrulama hatası exception'ı
-    /// </summary>
     public class ValidationException : BusinessException
     {
         public Dictionary<string, string[]> Errors { get; set; }
@@ -49,18 +40,12 @@ namespace DietitianClinic.Business.Exceptions
         }
     }
 
-    /// <summary>
-    /// Yetkisiz erişim exception'ı
-    /// </summary>
     public class UnauthorizedException : BusinessException
     {
         public UnauthorizedException(string message, string code = "UNAUTHORIZED")
             : base(message, code) { }
     }
 
-    /// <summary>
-    /// Erişim reddedildi exception'ı
-    /// </summary>
     public class ForbiddenException : BusinessException
     {
         public ForbiddenException(string message, string code = "FORBIDDEN")

@@ -51,7 +51,6 @@ namespace DietitianClinic.API.Controllers
                 })
                 .ToListAsync();
 
-            // Mark received as read
             var unread = await _context.Messages
                 .IgnoreQueryFilters()
                 .Where(m => !m.IsDeleted && m.ReceiverId == me && m.SenderId == otherUserId && !m.IsRead)

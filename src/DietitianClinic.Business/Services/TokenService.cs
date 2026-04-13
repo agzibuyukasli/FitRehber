@@ -7,9 +7,6 @@ using DietitianClinic.Business.Interfaces;
 
 namespace DietitianClinic.Business.Services
 {
-    /// <summary>
-    /// JWT Token Service Implementation
-    /// </summary>
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
@@ -19,9 +16,6 @@ namespace DietitianClinic.Business.Services
             _configuration = configuration;
         }
 
-        /// <summary>
-        /// JWT Access Token oluştur
-        /// </summary>
         public async Task<string> GenerateTokenAsync(int userId, string email, string role)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
@@ -49,17 +43,11 @@ namespace DietitianClinic.Business.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        /// <summary>
-        /// Refresh Token oluştur
-        /// </summary>
         public async Task<string> GenerateRefreshTokenAsync()
         {
             return Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
         }
 
-        /// <summary>
-        /// Token doğrula ve claims'leri al
-        /// </summary>
         public async Task<bool> ValidateTokenAsync(string token)
         {
             try
@@ -89,9 +77,6 @@ namespace DietitianClinic.Business.Services
             }
         }
 
-        /// <summary>
-        /// Token'dan claims'leri çıkar
-        /// </summary>
         public async Task<Dictionary<string, object>> GetTokenClaimsAsync(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

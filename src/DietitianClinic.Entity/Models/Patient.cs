@@ -4,9 +4,6 @@ using DietitianClinic.Entity.Base;
 
 namespace DietitianClinic.Entity.Models
 {
-    /// <summary>
-    /// Hasta entity'si
-    /// </summary>
     public class Patient : BaseEntity
     {
         public int? UserId { get; set; }
@@ -24,7 +21,6 @@ namespace DietitianClinic.Entity.Models
         public bool IsActive { get; set; } = true;
         public bool EmailNotificationsEnabled { get; set; } = true;
 
-        // İlişkiler
         public virtual User? User { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public virtual ICollection<PatientMeasurement> Measurements { get; set; } = new List<PatientMeasurement>();

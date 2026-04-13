@@ -10,9 +10,7 @@ using DietitianClinic.Entity.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ==================== Service Registration ====================
 
-// Database Configuration
 builder.Services.AddDbContext<DietitianClinicDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -24,10 +22,8 @@ builder.Services.AddDbContext<DietitianClinicDbContext>(options =>
     });
 });
 
-// Add Controllers
 builder.Services.AddControllers();
 
-// Rate Limiting: login endpoint'i için IP bazlı kısıtlama
 builder.Services.AddRateLimiter(options =>
 {
     options.AddPolicy("login", context =>
@@ -43,33 +39,24 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
-// Add JWT Authentication
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
-// Add Business Services
 builder.Services.AddBusinessServices();
 
-// Add CORS
 builder.Services.AddCorsPolicy();
 
-// Add Swagger
 builder.Services.AddSwaggerConfiguration();
 
-// Add SignalR
 builder.Services.AddSignalR();
 
-// Add HttpClient (AI entegrasyonu için)
 builder.Services.AddHttpClient();
 
-// Add Appointment Reminder Background Service
 builder.Services.AddHostedService<DietitianClinic.API.Services.AppointmentReminderService>();
 
-// Add Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
-// ==================== Build App ====================
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -78,7 +65,6 @@ using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<DietitianClinicDbContext>();
 
-        // Statik tablo güvencesi (Migration history bozulmuşsa diye)
         try {
             dbContext.Database.ExecuteSqlRaw(@"
                 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Messages]') AND type in (N'U'))
@@ -136,7 +122,6 @@ using (var scope = app.Services.CreateScope())
         var userService = scope.ServiceProvider.GetRequiredService<DietitianClinic.Business.Services.UserService>();
         var patientService = scope.ServiceProvider.GetRequiredService<DietitianClinic.Business.Services.PatientService>();
 
-        // Admin seed
         if (!dbContext.Users.Any(u => u.Role == DietitianClinic.Entity.Models.UserRole.Admin))
         {
             try
@@ -176,7 +161,6 @@ using (var scope = app.Services.CreateScope())
             }
             catch
             {
-                // Demo veri eklenemezse uygulama yine de acilsin.
             }
         }
     }
@@ -187,18 +171,13 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// ==================== Middleware Configuration ====================
 
-// Use Custom Exception Handling Middleware
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// Use CORS
 app.UseCors("AllowSpecificOrigin");
 
-// Static Files (wwwroot/index.html)
 app.UseStaticFiles();
 
-// Swagger UI
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -209,7 +188,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Authentication & Authorization
 app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -264,11 +242,8 @@ app.MapGet("/api/dashboard/summary", async (ClaimsPrincipal user, DietitianClini
     return Results.Ok(summary);
 }).RequireAuthorization();
 
-// Map SignalR Hub
 app.MapHub<ChatHub>("/hubs/chat");
 
-// Map Controllers
 app.MapControllers();
 
-// ==================== Run Application ====================
 app.Run();

@@ -3,10 +3,6 @@ using System.Net.Mail;
 
 namespace DietitianClinic.API.Services
 {
-    /// <summary>
-    /// SMTP üzerinden e-posta gönderen servis.
-    /// appsettings.json → "Smtp" bölümünden yapılandırılır.
-    /// </summary>
     public class EmailService
     {
         private readonly IConfiguration _config;
@@ -111,7 +107,6 @@ namespace DietitianClinic.API.Services
 <body style=""font-family:'Segoe UI',sans-serif;background:#f7f2e8;padding:32px;margin:0;"">
   <div style=""max-width:520px;margin:0 auto;background:#fff;border-radius:16px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,0.09);"">
 
-    <!-- Logo -->
     <div style=""display:flex;align-items:center;gap:10px;margin-bottom:6px;"">
       <div style=""width:40px;height:40px;border-radius:10px;background:linear-gradient(145deg,#fff,#efe6d8);border:1px solid #e2d8c8;display:flex;align-items:center;justify-content:center;"">
         <span style=""font-size:1.3rem;"">🌿</span>
@@ -120,13 +115,11 @@ namespace DietitianClinic.API.Services
     </div>
     <hr style=""border:none;border-top:1px solid #e2d8c8;margin:18px 0;"">
 
-    <!-- Selamlama -->
     <p style=""color:#2a3a32;font-size:1rem;margin:0 0 6px;"">Merhaba <strong>{patientFirstName}</strong>,</p>
     <p style=""color:#516257;font-size:0.95rem;line-height:1.65;margin:0 0 22px;"">
       Yarın bir randevunuz bulunmaktadır. Randevunuzu kaçırmamak için lütfen bu hatırlatmayı dikkate alın.
     </p>
 
-    <!-- Randevu Kartı -->
     <div style=""background:#f0f7ed;border:1px solid #c9d6c4;border-radius:12px;padding:20px 22px;margin-bottom:24px;"">
       <p style=""margin:0 0 14px;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#3e5f4b;"">Randevu Bilgileri</p>
 
@@ -150,7 +143,6 @@ namespace DietitianClinic.API.Services
       </table>
     </div>
 
-    <!-- Diyetisyen Bilgileri -->
     <div style=""background:#faf8f4;border:1px solid #e2d8c8;border-radius:12px;padding:20px 22px;margin-bottom:24px;"">
       <p style=""margin:0 0 14px;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#3e5f4b;"">Diyetisyen</p>
       <table style=""width:100%;border-collapse:collapse;"">
@@ -169,7 +161,6 @@ namespace DietitianClinic.API.Services
       </table>
     </div>
 
-    <!-- Danışan Bilgisi -->
     <div style=""background:#faf8f4;border:1px solid #e2d8c8;border-radius:12px;padding:20px 22px;margin-bottom:24px;"">
       <p style=""margin:0 0 14px;font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#3e5f4b;"">Danışan</p>
       <table style=""width:100%;border-collapse:collapse;"">

@@ -10,6 +10,6 @@ namespace DietitianClinic.Entity.Models
         public bool IsRead { get; set; } = false;
         public string? AttachmentUrl { get; set; }
         public string? AttachmentName { get; set; }
-        public string? AttachmentType { get; set; } // "image" | "pdf" | "file"
+        public string? AttachmentType { get; set; }
     }
 }

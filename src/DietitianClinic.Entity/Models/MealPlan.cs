@@ -4,13 +4,10 @@ using DietitianClinic.Entity.Base;
 
 namespace DietitianClinic.Entity.Models
 {
-    /// <summary>
-    /// Beslenme planı entity'si
-    /// </summary>
     public class MealPlan : BaseEntity
     {
         public int PatientId { get; set; }
-        public int UserId { get; set; } // Diyetisyen
+        public int UserId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
@@ -24,7 +21,6 @@ namespace DietitianClinic.Entity.Models
         public MealPlanStatus Status { get; set; } = MealPlanStatus.Active;
         public string Notes { get; set; }
 
-        // İlişkiler
         public virtual Patient Patient { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<MealPlanDay> MealPlanDays { get; set; } = new List<MealPlanDay>();
