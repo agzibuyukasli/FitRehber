@@ -100,7 +100,7 @@ services:
       -Dsonar.projectKey=FitRehber
       -Dsonar.sources=src
       -Dsonar.host.url=http://sonarqube:9000
-      -Dsonar.token=sqp_12c5f51065e743c5dbe4ec34851402ef5196870e
+      -Dsonar.token=${SONAR_TOKEN}
 
   # ─────────────────────────────────────────
   #  .NET 8 API
