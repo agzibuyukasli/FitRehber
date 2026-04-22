@@ -1,5 +1,6 @@
 *.log
 *.txt
+<<<<<<< HEAD
 
 # Ortam değişkenleri – asla commit'lenmemeli
 .env
@@ -11,3 +12,5 @@
 **/obj/
 **/.next/
 **/node_modules/
+=======
+>>>>>>> 73d9b53d09db94b9ecfb12741d2de501822c6b88
