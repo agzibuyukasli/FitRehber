@@ -40,7 +40,7 @@ public sealed class RedisCacheService : ICacheService
             if (value.IsNullOrEmpty)
                 return default;
 
-            return JsonSerializer.Deserialize<T>(value!, _jsonOptions);
+            return JsonSerializer.Deserialize<T>((string)degisken);
         }
         catch (Exception ex)
         {
