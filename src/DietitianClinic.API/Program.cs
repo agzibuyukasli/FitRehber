@@ -7,9 +7,54 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Linq;
 using DietitianClinic.Entity.Models;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
+
+// ── Serilog: builder oluşmadan önce bootstrap logger kur ──────────────────
+// Bu sayede startup hatalarını da yakalayabiliriz.
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// ── Serilog: tam konfigürasyonu yükle ──────────────────────────────────────
+builder.Host.UseSerilog((context, services, config) =>
+{
+    var elasticUrl = context.Configuration["Elasticsearch:Url"] ?? "http://localhost:9200";
+    var indexFormat = context.Configuration["Elasticsearch:IndexFormat"] ?? "fitrehber-logs-{0:yyyy.MM.dd}";
+    var appName = context.Configuration["ApiSettings:ApiName"] ?? "FitRehber";
+    var env = context.HostingEnvironment.EnvironmentName;
+
+    config
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .Enrich.WithProcessId()
+        .Enrich.WithThreadId()
+        .Enrich.WithProperty("Application", appName)
+        .Enrich.WithProperty("Environment", env)
+        // Konsola renkli, okunabilir format
+        .WriteTo.Console(
+            outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext}: {Message:lj}{NewLine}{Exception}")
+        // Elasticsearch'e JSON olarak gönder
+        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUrl))
+        {
+            AutoRegisterTemplate = true,
+            AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7,
+            IndexFormat = indexFormat,
+            NumberOfReplicas = 0,
+            NumberOfShards = 1,
+            FailureCallback = (logEvent, ex) =>
+                Console.Error.WriteLine($"[Serilog-ES] Log gönderilemedi: {ex?.Message}"),
+            EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog
+                              | EmitEventFailureHandling.RaiseCallback
+        })
+        .MinimumLevel.Override("Microsoft.EntityFrameworkCore", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning);
+});
 
 builder.Services.AddDbContext<DietitianClinicDbContext>(options =>
 {
@@ -53,9 +98,8 @@ builder.Services.AddHttpClient();
 
 builder.Services.AddHostedService<DietitianClinic.API.Services.AppointmentReminderService>();
 
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Logging.AddDebug();
+// Redis cache servisi
+builder.Services.AddRedisCache(builder.Configuration);
 
 var app = builder.Build();
 
@@ -171,6 +215,12 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+
+// HTTP istek loglarını Serilog ile kaydet
+app.UseSerilogRequestLogging(opts =>
+{
+    opts.MessageTemplate = "HTTP {RequestMethod} {RequestPath} → {StatusCode} ({Elapsed:0.0}ms)";
+});
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 

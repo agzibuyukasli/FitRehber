@@ -1,0 +1,19 @@
+## .NET build artifacts – Windows yolları içerir, Docker'a GİRMEMELİ
+**/bin/
+**/obj/
+
+## Git / IDE
+.git/
+.vs/
+.vscode/
+**/.DS_Store
+
+## Node.js
+src/DietitianClinic-UI/node_modules/
+src/DietitianClinic-UI/.next/
+
+## Log / geçici dosyalar
+*.log
+*.txt
+.env
+.env.*

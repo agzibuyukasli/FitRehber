@@ -1,0 +1,26 @@
+# 1. Aşama: Build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /app
+
+# .sln ve .csproj dosyalarını kopyala
+COPY *.sln ./
+COPY src/DietitianClinic.API/*.csproj ./src/DietitianClinic.API/
+
+# Restore
+RUN dotnet restore src/DietitianClinic.API/DietitianClinic.API.csproj
+
+# Tüm dosyaları kopyala
+COPY . .
+
+# Build al
+RUN dotnet build src/DietitianClinic.API/DietitianClinic.API.csproj -c Release -o /app/build
+
+# 2. Aşama: Publish
+FROM build AS publish
+RUN dotnet publish src/DietitianClinic.API/DietitianClinic.API.csproj -c Release -o /app/publish
+
+# 3. Aşama: Final Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "DietitianClinic.API.dll"]

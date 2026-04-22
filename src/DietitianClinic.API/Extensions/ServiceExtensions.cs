@@ -2,11 +2,44 @@ using Microsoft.Extensions.DependencyInjection;
 using DietitianClinic.Business.Interfaces;
 using DietitianClinic.DataAccess.Repositories;
 using DietitianClinic.API.Services;
+using StackExchange.Redis;
 
 namespace DietitianClinic.API.Extensions
 {
     public static class ServiceExtensions
     {
+        /// <summary>
+        /// Redis bağlantısını ve ICacheService'i DI container'a kaydeder.
+        /// Redis bağlantısı kurulamazsa uygulama başlamaya devam eder.
+        /// </summary>
+        public static IServiceCollection AddRedisCache(
+            this IServiceCollection services,
+            IConfiguration configuration)
+        {
+            var connectionString = configuration["Redis:ConnectionString"]
+                ?? "localhost:6379";
+
+            try
+            {
+                var configOptions = ConfigurationOptions.Parse(connectionString);
+                configOptions.AbortOnConnectFail = false; // Bağlantı yoksa uygulama çökmez
+                configOptions.ConnectTimeout = 3000;
+                configOptions.SyncTimeout = 3000;
+
+                services.AddSingleton<IConnectionMultiplexer>(
+                    ConnectionMultiplexer.Connect(configOptions));
+
+                services.AddSingleton<ICacheService, RedisCacheService>();
+            }
+            catch
+            {
+                // Redis yoksa NullCacheService ile devam et (her zaman miss döner)
+                services.AddSingleton<ICacheService, NullCacheService>();
+            }
+
+            return services;
+        }
+
         public static IServiceCollection AddBusinessServices(this IServiceCollection services)
         {
             services.AddScoped<DietitianClinic.DataAccess.Repositories.IUnitOfWork, DietitianClinic.DataAccess.Repositories.UnitOfWork>();
@@ -29,9 +62,15 @@ namespace DietitianClinic.API.Extensions
                 options.AddPolicy("AllowSpecificOrigin", builder =>
                 {
                     builder
-                        .AllowAnyOrigin()
+                        .WithOrigins(
+                            "http://localhost:3000",
+                            "http://127.0.0.1:3000",
+                            "https://localhost:3000",
+                            "https://127.0.0.1:3000"
+                        )
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
 

@@ -1,0 +1,39 @@
+# ═══════════════════════════════════════════════════════════
+#  FitRehber – SonarQube Proje Konfigürasyonu
+#  Bu dosya sonar-scanner CLI tarafından kullanılır.
+# ═══════════════════════════════════════════════════════════
+
+# Proje kimliği (SonarQube arayüzünde görünecek isim)
+sonar.projectKey=fitrehber
+sonar.projectName=FitRehber – Diyetisyen Klinik Otomasyonu
+sonar.projectVersion=1.0
+
+# SonarQube sunucu adresi (Docker'da çalışıyor)
+sonar.host.url=http://localhost:9000
+
+# Token buraya gelecek – Adım 4'te alacaksın
+# sonar.token=YOUR_TOKEN_HERE
+
+# ── Kaynak kodlar ──────────────────────────────────────────
+# .NET backend
+sonar.sources=src/DietitianClinic.API,src/DietitianClinic.Business,src/DietitianClinic.DataAccess,src/DietitianClinic.Entity
+
+# Frontend (Next.js / TypeScript)
+# sonar.sources=src/DietitianClinic-UI/app,src/DietitianClinic-UI/layout
+
+# Encoding
+sonar.sourceEncoding=UTF-8
+
+# ── Hariç tutulanlar ──────────────────────────────────────
+sonar.exclusions=\
+  **/obj/**,\
+  **/bin/**,\
+  **/node_modules/**,\
+  **/.next/**,\
+  **/Migrations/**,\
+  **/*.Designer.cs,\
+  **/wwwroot/**
+
+# ── Dil ayarları ──────────────────────────────────────────
+sonar.cs.file.suffixes=.cs
+sonar.typescript.file.suffixes=.ts,.tsx

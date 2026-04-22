@@ -1,0 +1,10 @@
+{
+    "login": {
+        "welcome": "Hoş Geldin!",
+        "signin": "Devam etmek için giriş yap",
+        "email": "Email Adresi",
+        "password": "Şifre",
+        "button": "Giriş Yap",
+        "remember": "Beni Hatırla"
+    }
+}

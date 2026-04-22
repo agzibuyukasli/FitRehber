@@ -4,6 +4,7 @@ using System.Linq;
 using DietitianClinic.API.Models.Requests;
 using DietitianClinic.API.Models.Response;
 using DietitianClinic.API.Models.Responses;
+using DietitianClinic.API.Services;
 using DietitianClinic.Business.Exceptions;
 using DietitianClinic.Business.Interfaces;
 using DietitianClinic.Business.Services;
@@ -25,20 +26,31 @@ namespace DietitianClinic.API.Controllers
         private readonly IPasswordService _passwordService;
         private readonly DietitianClinicDbContext _context;
         private readonly ILogger<PatientsController> _logger;
+        private readonly ICacheService _cache;
+
+        // Cache key sabitleri
+        private const string PatientListCachePrefix = "patients:list:";
+        private const string PatientsCachePrefix = "patients:";
 
         public PatientsController(
             PatientService patientService,
             UserService userService,
             IPasswordService passwordService,
             DietitianClinicDbContext context,
-            ILogger<PatientsController> logger)
+            ILogger<PatientsController> logger,
+            ICacheService cache)
         {
             _patientService = patientService;
             _userService = userService;
             _passwordService = passwordService;
             _context = context;
             _logger = logger;
+            _cache = cache;
         }
+
+        // Kullanıcıya özel cache anahtarı üretir
+        private string GetPatientListCacheKey(int? userId) =>
+            $"{PatientListCachePrefix}{userId?.ToString() ?? "admin"}";
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -47,6 +59,17 @@ namespace DietitianClinic.API.Controllers
             try
             {
                 var (currentUserId, isDietitian) = GetCurrentUserContext();
+
+                // ── Cache-Aside: önce Redis'e bak ──────────────────────────
+                var cacheKey = GetPatientListCacheKey(currentUserId);
+                var cached = await _cache.GetAsync<List<PatientListItemResponse>>(cacheKey);
+                if (cached is not null)
+                {
+                    _logger.LogDebug("Hasta listesi Redis cache'ten döndürüldü. Key: {Key}", cacheKey);
+                    return Ok(cached);
+                }
+                // ──────────────────────────────────────────────────────────
+
                 var patients = await _patientService.GetAllPatientsAsync(currentUserId, isDietitian);
                 var dietitianMap = await _context.Users
                     .AsNoTracking()
@@ -94,6 +117,11 @@ namespace DietitianClinic.API.Controllers
                         IsActive = p.IsActive
                     };
                 }).ToList();
+
+                // ── Cache'e yaz (5 dk TTL) ─────────────────────────────────
+                await _cache.SetAsync(cacheKey, response, TimeSpan.FromMinutes(5));
+                _logger.LogDebug("Hasta listesi Redis'e yazıldı. Key: {Key}", cacheKey);
+                // ──────────────────────────────────────────────────────────
 
                 return Ok(response);
             }
@@ -303,6 +331,9 @@ namespace DietitianClinic.API.Controllers
                     CreatedDate = patient.CreatedDate
                 };
 
+                // Yeni hasta eklendi → cache geçersiz
+                await _cache.RemoveByPrefixAsync(PatientsCachePrefix);
+
                 return CreatedAtAction(nameof(GetPatientById), new { id = patient.Id }, response);
             }
             catch (Exception ex)
@@ -433,6 +464,10 @@ namespace DietitianClinic.API.Controllers
                 }
 
                 await _context.SaveChangesAsync();
+
+                // Hasta güncellendi → cache geçersiz
+                await _cache.RemoveByPrefixAsync(PatientsCachePrefix);
+
                 return Ok(new ApiResponse { Success = true, Message = "Hasta guncellendi" });
             }
             catch (Exception ex)
@@ -451,6 +486,10 @@ namespace DietitianClinic.API.Controllers
             {
                 var (currentUserId, isDietitian) = GetCurrentUserContext();
                 await _patientService.DeletePatientAsync(id, currentUserId, isDietitian);
+
+                // Hasta silindi → cache geçersiz
+                await _cache.RemoveByPrefixAsync(PatientsCachePrefix);
+
                 return NoContent();
             }
             catch (NotFoundException ex)

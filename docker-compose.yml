@@ -1,0 +1,177 @@
+version: '3.9'
+
+# ═══════════════════════════════════════════════════════════
+#  FitRehber – Docker Compose
+#  Servisler: sqlserver | api | frontend | redis | elasticsearch | sonarqube
+# ═══════════════════════════════════════════════════════════
+
+services:
+
+  # ─────────────────────────────────────────
+  #  SQL Server 2022
+  # ─────────────────────────────────────────
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: fitrehber-sqlserver
+    environment:
+      SA_PASSWORD: "${SQL_SA_PASSWORD}"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - fitrehber-net
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"${SQL_SA_PASSWORD}\" -Q \"SELECT 1\" -C -N || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+  # ─────────────────────────────────────────
+  #  Redis (cache)
+  # ─────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: fitrehber-redis
+    command: redis-server --requirepass "${REDIS_PASSWORD}"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - fitrehber-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─────────────────────────────────────────
+  #  Elasticsearch (loglama)
+  # ─────────────────────────────────────────
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: fitrehber-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - fitrehber-net
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  # ─────────────────────────────────────────
+  #  SonarQube (kod analizi)
+  # ─────────────────────────────────────────
+  sonarqube:
+    image: sonarqube:community
+    container_name: fitrehber-sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+    networks:
+      - fitrehber-net
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+
+
+
+  sonar-scanner:
+    image: sonarsource/sonar-scanner-cli
+    container_name: fitrehber-scanner
+    volumes:
+      - .:/usr/src
+    networks:
+      - fitrehber-net
+    command: >
+      -Dsonar.projectKey=FitRehber
+      -Dsonar.sources=src
+      -Dsonar.host.url=http://sonarqube:9000
+      -Dsonar.token=sqp_12c5f51065e743c5dbe4ec34851402ef5196870e
+
+  # ─────────────────────────────────────────
+  #  .NET 8 API
+  # ─────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: src/DietitianClinic.API/Dockerfile
+    container_name: fitrehber-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__DefaultConnection: >-
+        Server=sqlserver,1433;
+        Database=DietitianClinicDB;
+        User Id=sa;
+        Password=${SQL_SA_PASSWORD};
+        Encrypt=False;
+        TrustServerCertificate=True;
+      Redis__ConnectionString: "redis:6379,password=${REDIS_PASSWORD}"
+      Jwt__SecretKey: "${JWT_SECRET_KEY}"
+      Jwt__Issuer: "DietitianClinicAPI"
+      Jwt__Audience: "DietitianClinicClient"
+      Smtp__Host: "${SMTP_HOST}"
+      Smtp__Port: "${SMTP_PORT}"
+      Smtp__Username: "${SMTP_USERNAME}"
+      Smtp__Password: "${SMTP_PASSWORD}"
+      Smtp__From: "${SMTP_FROM}"
+      OpenRouter__ApiKey: "${OPENROUTER_API_KEY}"
+      AllowedOrigins: "http://localhost:3000,${FRONTEND_URL}"
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - fitrehber-net
+    restart: unless-stopped
+
+  # ─────────────────────────────────────────
+  #  Next.js Frontend
+  # ─────────────────────────────────────────
+  frontend:
+    build:
+      context: src/DietitianClinic-UI
+      dockerfile: Dockerfile
+    container_name: fitrehber-frontend
+    environment:
+      NEXT_PUBLIC_API_URL: "${API_PUBLIC_URL:-http://localhost:8080}"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - fitrehber-net
+    restart: unless-stopped
+
+# ─────────────────────────────────────────
+#  Named Volumes
+# ─────────────────────────────────────────
+volumes:
+  sqlserver_data:
+  redis_data:
+  elasticsearch_data:
+  sonarqube_data:
+
+# ─────────────────────────────────────────
+#  Network
+# ─────────────────────────────────────────
+networks:
+  fitrehber-net:
+    driver: bridge

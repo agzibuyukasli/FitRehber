@@ -1,0 +1,10 @@
+{
+    "login": {
+        "welcome": "Welcome!",
+        "signin": "Sign in to continue",
+        "email": "Email Address",
+        "password": "Password",
+        "button": "Sign In",
+        "remember": "Remember Me"
+    }
+}

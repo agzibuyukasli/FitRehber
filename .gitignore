@@ -1,5 +1,13 @@
-.vs/
-bin/
-obj/
 *.log
 *.txt
+
+# Ortam değişkenleri – asla commit'lenmemeli
+.env
+.env.local
+.env.production
+
+# Docker build artifacts
+**/bin/
+**/obj/
+**/.next/
+**/node_modules/

@@ -16,5 +16,14 @@ namespace DietitianClinic.API.Hubs
                 await Groups.AddToGroupAsync(Context.ConnectionId, $"user_{userId}");
             await base.OnConnectedAsync();
         }
+
+        /// <summary>Karşı tarafa "yazıyor..." sinyali gönderir.</summary>
+        public async Task SendTyping(int receiverId)
+        {
+            var senderIdRaw = Context.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                ?? Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!string.IsNullOrEmpty(senderIdRaw))
+                await Clients.Group($"user_{receiverId}").SendAsync("UserTyping", senderIdRaw);
+        }
     }
 }
