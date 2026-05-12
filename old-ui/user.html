@@ -1181,7 +1181,7 @@
         function logout() {
             localStorage.removeItem('authToken');
             sessionStorage.removeItem('redirectAfterRoleCheck');
-            window.location.replace('/login.html');
+            //window.location.replace('/login.html');
         }
 
         // Data loading functions
@@ -2629,7 +2629,7 @@
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             if (!token) {
-                window.location.href = '/login.html';
+                //window.location.href = '/login.html';
                 return;
             }
 
@@ -2829,7 +2829,7 @@
         window.logout = function () {
             localStorage.removeItem('authToken');
             sessionStorage.removeItem('redirectAfterRoleCheck');
-            window.location.replace('/login.html');
+            //window.location.replace('/login.html');
         };
     </script>
 

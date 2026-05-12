@@ -1,0 +1,32 @@
+{
+  "name": "FitRehber - Diyetisyen Kliniği",
+  "short_name": "FitRehber",
+  "description": "Diyetisyen klinik otomasyon ve danışmanlık sistemi",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#22C55E",
+  "orientation": "portrait-primary",
+  "lang": "tr",
+  "categories": ["health", "medical", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

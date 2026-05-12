@@ -13,7 +13,9 @@ import { LayoutContext } from './context/layoutcontext';
 const AppConfig = (props: AppConfigProps) => {
     const [scales] = useState([12, 13, 14, 15, 16]);
     const { layoutConfig, setLayoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
-    const { setRipple, changeTheme } = useContext(PrimeReactContext);
+    const primeReactCtx = useContext(PrimeReactContext);
+    const setRipple = primeReactCtx?.setRipple;
+    const changeTheme = primeReactCtx?.changeTheme;
 
     const onConfigButtonClick = () => {
         setLayoutState((prevState: LayoutState) => ({ ...prevState, configSidebarVisible: true }));

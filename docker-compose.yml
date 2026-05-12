@@ -13,6 +13,7 @@ services:
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: fitrehber-sqlserver
+    mem_limit: 1g
     environment:
       SA_PASSWORD: "${SQL_SA_PASSWORD}"
       ACCEPT_EULA: "Y"
@@ -29,6 +30,7 @@ services:
       timeout: 10s
       retries: 10
       start_period: 30s
+
 
   # ─────────────────────────────────────────
   #  Redis (cache)
@@ -48,6 +50,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    mem_limit: 512m
 
   # ─────────────────────────────────────────
   #  Elasticsearch (loglama)
@@ -55,6 +58,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
     container_name: fitrehber-elasticsearch
+    mem_limit: 1g
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
@@ -71,6 +75,23 @@ services:
       timeout: 10s
       retries: 10
       start_period: 40s
+      
+
+    
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: fitrehber-kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - XPACK_SECURITY_ENABLED=false
+      - XPACK_FLEET_ENABLED=false
+      - XPACK_SECURITY_ENROLLMENT_ENABLED=false
+      - SERVER_HOST=0.0.0.0
+      - NODE_OPTIONS="--max-old-space-size=512"
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
 
   # ─────────────────────────────────────────
   #  SonarQube (kod analizi)
@@ -78,6 +99,7 @@ services:
   sonarqube:
     image: sonarqube:community
     container_name: fitrehber-sonarqube
+    mem_limit: 1g
     ports:
       - "9000:9000"
     volumes:
@@ -86,6 +108,7 @@ services:
       - fitrehber-net
     environment:
       - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    
 
 
 
@@ -175,3 +198,6 @@ volumes:
 networks:
   fitrehber-net:
     driver: bridge
+
+
+

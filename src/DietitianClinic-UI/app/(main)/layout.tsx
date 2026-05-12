@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import Layout from '../../layout/layout';
 import AuthGuard from '../../layout/AuthGuard';
 
@@ -7,9 +8,9 @@ interface AppLayoutProps {
 }
 
 export const metadata: Metadata = {
-    title: 'FitRehber',
-    description: 'Diyetisyen Klinik Yönetim Sistemi',
-    robots: { index: false, follow: false },
+    title: 'FitRehber - Diyetisyen Klinik Yönetim Sistemi',
+    description: 'FitRehber; randevu, diyet planı ve hasta takibini tek ekrandan yönetmenizi sağlayan diyetisyen klinik otomasyon sistemi.',
+    robots: { index: true, follow: true },
     viewport: { initialScale: 1, width: 'device-width' },
     icons: {
         icon: '/favicon.ico'
@@ -19,7 +20,9 @@ export const metadata: Metadata = {
 export default function AppLayout({ children }: AppLayoutProps) {
     return (
         <AuthGuard>
-            <Layout>{children}</Layout>
+            <Suspense fallback={null}>
+                <Layout>{children}</Layout>
+            </Suspense>
         </AuthGuard>
     );
 }
