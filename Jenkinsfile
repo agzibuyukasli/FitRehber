@@ -73,7 +73,8 @@ pipeline {
                     )
 
                     echo === .NET Build Release ===
-                    dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release -warnaserror:false
+                    rem /maxcpucount:1 ve UseSharedCompilation=false: Roslyn OutOfMemory hatasini onler.
+                    dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release -warnaserror:false /maxcpucount:1 -p:UseSharedCompilation=false
                     if %ERRORLEVEL% NEQ 0 (
                         echo HATA: dotnet build basarisiz!
                         exit /b %ERRORLEVEL%
@@ -134,7 +135,7 @@ pipeline {
                         )
 
                         echo === Build Application ===
-                        dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release
+                        dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release /maxcpucount:1 -p:UseSharedCompilation=false
 
                         if %ERRORLEVEL% NEQ 0 (
                             echo HATA: dotnet build basarisiz!
