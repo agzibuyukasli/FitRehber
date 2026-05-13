@@ -1,24 +1,22 @@
-// ═══════════════════════════════════════════════════════════════════════════
-//  FitRehber – Jenkins Declarative Pipeline  (Windows / CMD uyumlu)
-//  Tüm shell adımları bat (Windows Command Prompt) olarak yazılmıştır.
-//  Agent üzerinde kurulu olması gerekenler:
-//    .NET 8 SDK  |  Node.js 20.x  |  Docker + Compose v2
-//    Google Chrome (headless Selenium için)  |  curl (Win10+ yerleşik)
-// ═══════════════════════════════════════════════════════════════════════════
+// FitRehber - Jenkins Declarative Pipeline (Windows CMD uyumlu)
+// Tum shell adimlari bat (Windows Command Prompt) olarak yazilmistir.
+// Agent uzerinde kurulu olmasi gerekenler:
+//   .NET 8 SDK | Node.js 20.x | Docker + Compose v2
+//   Google Chrome (headless Selenium icin) | curl (Win10+ yerlesik)
 
 pipeline {
 
-    // ── Agent ──────────────────────────────────────────────────────────────
+    // Agent
     agent any
 
-    // ── Araç Tanımları ─────────────────────────────────────────────────────
-    // Jenkins > Manage Jenkins > Tools altında aynı isimle tanımlanmalı.
+    // Arac Tanimlari
+    // Jenkins > Manage Jenkins > Tools altinda ayni isimle tanimlanmali.
     tools {
-        jdk    'JDK-17'     // SonarScanner için Java 17 zorunlu
-        nodejs 'NodeJS-20'  // Next.js build için Node.js 20.x
+        jdk    'JDK-17'     // SonarScanner icin Java 17 zorunlu
+        nodejs 'NodeJS-20'  // Next.js build icin Node.js 20.x
     }
 
-    // ── Pipeline Seçenekleri ────────────────────────────────────────────────
+    // Pipeline Secenekleri
     options {
         timeout(time: 40, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '10'))
@@ -26,7 +24,7 @@ pipeline {
         timestamps()
     }
 
-    // ── Ortam Değişkenleri ──────────────────────────────────────────────────
+    // Ortam Degiskenleri
     environment {
         DOTNET_NOLOGO                     = 'true'
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 'true'
@@ -36,7 +34,7 @@ pipeline {
         SONAR_ORG         = 'agzibuyukasli'
         SONAR_HOST_URL    = 'https://sonarcloud.io'
 
-        // Selenium test ortamı
+        // Selenium test ortami
         TEST_HEADLESS           = 'true'
         TEST_BASE_URL           = 'http://localhost:3000'
         TEST_API_URL            = 'http://localhost:8080'
@@ -47,16 +45,13 @@ pipeline {
         TEST_TEARDOWN           = 'true'
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    //  AŞAMALAR
-    // ═══════════════════════════════════════════════════════════════════════
     stages {
 
-        // ── 1. CHECKOUT ────────────────────────────────────────────────────
+        // 1. CHECKOUT
         stage('Checkout') {
             steps {
                 // Public repo: checkout scm yeterli.
-                // Private repo için aşağıdaki satırları yorumdan çıkarın:
+                // Private repo icin asagidaki satirlari yorumdan cikarin:
                 //   git branch: env.BRANCH_NAME ?: 'main',
                 //       credentialsId: 'GIT_CREDENTIALS',
                 //       url: 'https://github.com/agzibuyukasli/FitRehber.git'
@@ -65,7 +60,7 @@ pipeline {
             }
         }
 
-        // ── 2. RESTORE & BUILD (.NET) ──────────────────────────────────────
+        // 2. RESTORE & BUILD (.NET)
         stage('Restore & Build (.NET)') {
             steps {
                 bat '''
@@ -77,11 +72,8 @@ pipeline {
                         exit /b %ERRORLEVEL%
                     )
 
-                    echo === .NET Build (Release) ===
-                    dotnet build DietitianClinicAutomation.sln ^
-                        --no-restore ^
-                        --configuration Release ^
-                        -warnaserror:false
+                    echo === .NET Build Release ===
+                    dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release -warnaserror:false
                     if %ERRORLEVEL% NEQ 0 (
                         echo HATA: dotnet build basarisiz!
                         exit /b %ERRORLEVEL%
@@ -90,7 +82,8 @@ pipeline {
             }
         }
 
-        // ── 3. BUILD FRONTEND (Next.js) ─────────────────────────────────────
+        // 3. BUILD FRONTEND (Next.js)
+        // dir() icinde / (egik cizgi) kullanilir; Jenkins Windows'ta da kabul eder.
         stage('Build Frontend (Next.js)') {
             steps {
                 dir('src/DietitianClinic-UI') {
@@ -114,21 +107,23 @@ pipeline {
             }
         }
 
-        // ── 4. STATIC ANALYSIS (SonarCloud) ────────────────────────────────
+        // 4. STATIC ANALYSIS (SonarCloud)
         stage('Static Analysis (SonarCloud)') {
             steps {
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN_VAL')]) {
                     bat '''
                         @echo off
 
-                        rem -- dotnet-sonarscanner global tool kur (zaten kuruluysa guncelle) --
+                        rem dotnet-sonarscanner global tool kur (zaten kuruluysa guncelle)
                         dotnet tool install --global dotnet-sonarscanner >nul 2>&1
                         if %ERRORLEVEL% NEQ 0 (
                             dotnet tool update --global dotnet-sonarscanner >nul 2>&1
                         )
 
-                        rem -- dotnet global tools dizinini PATH'e ekle --
-                        set PATH=%PATH%;%USERPROFILE%\.dotnet\tools
+                        rem dotnet global tools dizinini PATH e ekle.
+                        rem NOT: %USERPROFILE%\.dotnet\tools yolunda
+                        rem      \\ Groovy escape -> tek \ olarak bata iletilir.
+                        set PATH=%PATH%;%USERPROFILE%\\.dotnet\\tools
 
                         echo === SonarScanner Begin ===
                         dotnet sonarscanner begin ^
@@ -143,12 +138,10 @@ pipeline {
                             exit /b %ERRORLEVEL%
                         )
 
-                        echo === Build (SonarScanner icin) ===
-                        dotnet build DietitianClinicAutomation.sln ^
-                            --no-restore ^
-                            --configuration Release
+                        echo === Build SonarScanner icin ===
+                        dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release
                         if %ERRORLEVEL% NEQ 0 (
-                            echo HATA: dotnet build (SonarScanner) basarisiz!
+                            echo HATA: dotnet build SonarScanner basarisiz!
                             exit /b %ERRORLEVEL%
                         )
 
@@ -163,11 +156,11 @@ pipeline {
             }
         }
 
-        // ── 5. START INFRASTRUCTURE (Docker Compose) ───────────────────────
+        // 5. START INFRASTRUCTURE (Docker Compose)
         stage('Start Infrastructure') {
             steps {
                 // DOCKER_ENV_FILE: Jenkins "Secret File" credential.
-                // .env.example dosyasını doldurup Jenkins'e "Secret File" olarak ekleyin.
+                // .env.example dosyasini doldurup Jenkins'e "Secret File" olarak ekleyin.
                 withCredentials([file(credentialsId: 'DOCKER_ENV_FILE', variable: 'DOCKER_ENV')]) {
                     bat 'copy /Y "%DOCKER_ENV%" .env'
                 }
@@ -182,19 +175,19 @@ pipeline {
                     )
                 '''
 
-                // Backend API hazır olana kadar bekle (maks. 3 dakika = 60 x 3sn)
+                // Backend API hazir olana kadar bekle (maks. 3 dakika = 60 x 3sn)
                 bat '''
                     @echo off
                     setlocal enabledelayedexpansion
 
-                    echo Backend API bekleniyor: %TEST_API_URL%/api/health/database
+                    echo Backend API bekleniyor...
                     set ATTEMPTS=60
 
                     :API_WAIT
                     if !ATTEMPTS! EQU 0 goto API_TIMEOUT
                     curl -sf %TEST_API_URL%/api/health/database >nul 2>&1
                     if %ERRORLEVEL% EQU 0 goto API_READY
-                    echo   Bekleniyor... (kalan deneme: !ATTEMPTS!)
+                    echo   Bekleniyor... kalan deneme: !ATTEMPTS!
                     timeout /t 3 /nobreak >nul
                     set /a ATTEMPTS-=1
                     goto API_WAIT
@@ -209,19 +202,19 @@ pipeline {
                     endlocal
                 '''
 
-                // Frontend hazır olana kadar bekle (maks. 2 dakika = 40 x 3sn)
+                // Frontend hazir olana kadar bekle (maks. 2 dakika = 40 x 3sn)
                 bat '''
                     @echo off
                     setlocal enabledelayedexpansion
 
-                    echo Frontend bekleniyor: %TEST_BASE_URL%
+                    echo Frontend bekleniyor...
                     set ATTEMPTS=40
 
                     :FE_WAIT
                     if !ATTEMPTS! EQU 0 goto FE_TIMEOUT
                     curl -sf %TEST_BASE_URL% >nul 2>&1
                     if %ERRORLEVEL% EQU 0 goto FE_READY
-                    echo   Bekleniyor... (kalan deneme: !ATTEMPTS!)
+                    echo   Bekleniyor... kalan deneme: !ATTEMPTS!
                     timeout /t 3 /nobreak >nul
                     set /a ATTEMPTS-=1
                     goto FE_WAIT
@@ -239,40 +232,41 @@ pipeline {
             }
         }
 
-        // ── 6. SELENIUM UI TESTS ────────────────────────────────────────────
+        // 6. SELENIUM UI TESTS
+        // NOT: dotnet CLI Windows'ta da / (egik cizgi) kabul eder.
+        //      Bu sekilde Groovy'nin \ escape yorumlamasindan tamamen kacinilir.
         stage('Selenium UI Tests') {
             steps {
                 bat '''
                     @echo off
                     if not exist TestResults mkdir TestResults
 
-                    dotnet test src\DietitianClinic.Tests.UI\DietitianClinic.Tests.UI.csproj ^
+                    dotnet test src/DietitianClinic.Tests.UI/DietitianClinic.Tests.UI.csproj ^
                         --no-build ^
                         --configuration Release ^
                         --logger "trx;LogFileName=selenium-results.trx" ^
                         --logger "console;verbosity=normal" ^
-                        --results-dir "%WORKSPACE%\TestResults"
+                        --results-dir "%WORKSPACE%/TestResults"
                     exit /b %ERRORLEVEL%
                 '''
             }
             post {
                 always {
+                    // junit testResults forward slash ile de calisir (Jenkins glob)
                     junit allowEmptyResults: true,
-                          testResults: 'TestResults\\*.trx'
+                          testResults: 'TestResults/*.trx'
                 }
             }
         }
 
     } // end stages
 
-    // ═══════════════════════════════════════════════════════════════════════
-    //  POST – Her koşulda çalışan temizlik ve bildirimler
-    // ═══════════════════════════════════════════════════════════════════════
+    // POST: Her kosulda calisan temizlik ve bildirimler
     post {
 
         always {
             script {
-                // Docker servislerini durdur — hata olsa bile devam et
+                // Docker servislerini durdur - hata olsa bile devam et
                 try {
                     bat 'docker compose down --volumes --remove-orphans'
                 } catch (err) {
@@ -287,7 +281,7 @@ pipeline {
                 }
             }
 
-            // Workspace'i temizle
+            // Workspace temizle
             cleanWs()
         }
 
@@ -300,7 +294,7 @@ pipeline {
         }
 
         unstable {
-            echo "Pipeline kararssiz (bazi testler basarisiz veya analiz uyarilari mevcut)."
+            echo "Pipeline kararssiz: bazi testler basarisiz veya analiz uyarilari mevcut."
         }
 
     }
