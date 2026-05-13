@@ -36,14 +36,53 @@ pipeline {
                 }
             }
         }
+
+        stage('Static Analysis (SonarCloud)') {
+            steps {
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN_VAL')]) {
+                    bat '''
+                        @echo off
+
+                        echo === dotnet-sonarscanner kurulum/guncelleme ===
+                        dotnet tool install --global dotnet-sonarscanner >nul 2>&1 || dotnet tool update --global dotnet-sonarscanner >nul 2>&1
+
+                        echo === PATH guncelleme ===
+                        set PATH=%PATH%;%USERPROFILE%\\.dotnet\\tools
+
+                        echo === SonarScanner Begin ===
+                        dotnet sonarscanner begin ^
+                            /k:"agzibuyukasli_FitRehber" ^
+                            /o:"agzibuyukasli" ^
+                            /d:sonar.host.url="https://sonarcloud.io" ^
+                            /d:sonar.token="%SONAR_TOKEN_VAL%" ^
+                            /d:sonar.exclusions="**/obj/**,**/bin/**,**/node_modules/**,.sonarqube/**" ^
+                            /d:sonar.sourceEncoding="UTF-8"
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo HATA: SonarScanner begin basarisiz!
+                            exit /b %ERRORLEVEL%
+                        )
+
+                        echo === Build (SonarCloud icin) ===
+                        dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release /maxcpucount:1 -p:UseSharedCompilation=false
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo HATA: dotnet build basarisiz!
+                            exit /b %ERRORLEVEL%
+                        )
+
+                        echo === SonarScanner End ===
+                        dotnet sonarscanner end /d:sonar.token="%SONAR_TOKEN_VAL%"
+                    '''
+                }
+            }
+        }
     }
-    
+
     post {
         always {
             cleanWs()
         }
         success {
-            echo 'Backend ve Frontend başarıyla derlendi! 🚀'
+            echo 'Backend, Frontend ve SonarCloud analizi basariyla tamamlandi!'
         }
     }
 }
