@@ -97,7 +97,9 @@ namespace DietitianClinic.API.Extensions
                     ValidIssuer = jwtSettings["Issuer"],
                     ValidAudience = jwtSettings["Audience"],
                     IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                        System.Text.Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]))
+                        System.Text.Encoding.UTF8.GetBytes(
+                            configuration["JwtSettings:SecretKey"]
+                            ?? throw new InvalidOperationException("JwtSettings:SecretKey yapılandırması eksik.")))
                 };
 
                 options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents

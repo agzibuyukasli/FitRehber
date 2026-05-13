@@ -29,7 +29,9 @@ namespace DietitianClinic.Business.Services
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                _configuration["JwtSettings:SecretKey"]
+                ?? throw new InvalidOperationException("JwtSettings:SecretKey yapılandırması eksik.")));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
@@ -53,7 +55,9 @@ namespace DietitianClinic.Business.Services
             try
             {
                 var jwtSettings = _configuration.GetSection("Jwt");
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
+                    _configuration["JwtSettings:SecretKey"]
+                    ?? throw new InvalidOperationException("JwtSettings:SecretKey yapılandırması eksik.")));
 
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var validationParameters = new TokenValidationParameters
