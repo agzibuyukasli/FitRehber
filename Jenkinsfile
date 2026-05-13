@@ -1,57 +1,50 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  FitRehber – Jenkins Declarative Pipeline
-//  Aşamalar:
-//    1. Checkout
-//    2. Restore & Build (.NET)
-//    3. Build Frontend (Next.js)
-//    4. Static Analysis (SonarCloud)
-//    5. Start Infrastructure (Docker Compose)
-//    6. Selenium UI Tests
-//  Temizlik her koşulda post {} bloğu ile yapılır.
+//  FitRehber – Jenkins Declarative Pipeline  (Windows / CMD uyumlu)
+//  Tüm shell adımları bat (Windows Command Prompt) olarak yazılmıştır.
+//  Agent üzerinde kurulu olması gerekenler:
+//    .NET 8 SDK  |  Node.js 20.x  |  Docker + Compose v2
+//    Google Chrome (headless Selenium için)  |  curl (Win10+ yerleşik)
 // ═══════════════════════════════════════════════════════════════════════════
 
 pipeline {
 
     // ── Agent ──────────────────────────────────────────────────────────────
-    // Herhangi bir Jenkins agent. Agent üzerinde şunlar kurulu olmalı:
-    //   .NET 8 SDK, Docker + Compose v2, Google Chrome (headless), curl
     agent any
 
     // ── Araç Tanımları ─────────────────────────────────────────────────────
     // Jenkins > Manage Jenkins > Tools altında aynı isimle tanımlanmalı.
     tools {
-        jdk    'JDK-17'      // SonarScanner için Java 17 zorunlu
-        nodejs 'NodeJS-20'   // Next.js build için Node.js 20.x
+        jdk    'JDK-17'     // SonarScanner için Java 17 zorunlu
+        nodejs 'NodeJS-20'  // Next.js build için Node.js 20.x
     }
 
     // ── Pipeline Seçenekleri ────────────────────────────────────────────────
     options {
-        timeout(time: 40, unit: 'MINUTES')              // Toplam max süre
-        buildDiscarder(logRotator(numToKeepStr: '10'))  // Son 10 build sakla
-        disableConcurrentBuilds()                       // Aynı anda tek build
-        timestamps()                                    // Log satırlarına zaman damgası
+        timeout(time: 40, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+        disableConcurrentBuilds()
+        timestamps()
     }
 
     // ── Ortam Değişkenleri ──────────────────────────────────────────────────
     environment {
-        // .NET CLI sessiz mod
-        DOTNET_NOLOGO                    = 'true'
+        DOTNET_NOLOGO                     = 'true'
         DOTNET_SKIP_FIRST_TIME_EXPERIENCE = 'true'
 
-        // SonarCloud (proje ve org bilgileri)
+        // SonarCloud
         SONAR_PROJECT_KEY = 'agzibuyukasli_FitRehber'
         SONAR_ORG         = 'agzibuyukasli'
         SONAR_HOST_URL    = 'https://sonarcloud.io'
 
-        // Test ortamı
-        TEST_HEADLESS           = 'true'                       // Headless Chrome
-        TEST_BASE_URL           = 'http://localhost:3000'      // Frontend URL
-        TEST_API_URL            = 'http://localhost:8080'      // Backend API URL
+        // Selenium test ortamı
+        TEST_HEADLESS           = 'true'
+        TEST_BASE_URL           = 'http://localhost:3000'
+        TEST_API_URL            = 'http://localhost:8080'
         TEST_ADMIN_EMAIL        = 'admin@fitrehber.com'
         TEST_ADMIN_PASSWORD     = 'Admin123!'
         TEST_DIETITIAN_EMAIL    = 'diyetisyen@fitrehber.com'
         TEST_DIETITIAN_PASSWORD = 'Dietitian@123'
-        TEST_TEARDOWN           = 'true'  // Test bitince docker compose down
+        TEST_TEARDOWN           = 'true'
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -62,15 +55,12 @@ pipeline {
         // ── 1. CHECKOUT ────────────────────────────────────────────────────
         stage('Checkout') {
             steps {
-                // scm: Multibranch Pipeline'da otomatik repo + branch bilgisi alır.
-                // Credentials gerektiren (private) repolar için aşağıdaki satırı
-                // yorumdan çıkarın ve GIT_CREDENTIALS credential ID'sini tanımlayın:
-                //
+                // Public repo: checkout scm yeterli.
+                // Private repo için aşağıdaki satırları yorumdan çıkarın:
                 //   git branch: env.BRANCH_NAME ?: 'main',
                 //       credentialsId: 'GIT_CREDENTIALS',
                 //       url: 'https://github.com/agzibuyukasli/FitRehber.git'
                 checkout scm
-
                 echo "Branch: ${env.BRANCH_NAME ?: 'main'} | Build: #${env.BUILD_NUMBER}"
             }
         }
@@ -78,15 +68,24 @@ pipeline {
         // ── 2. RESTORE & BUILD (.NET) ──────────────────────────────────────
         stage('Restore & Build (.NET)') {
             steps {
-                sh '''
-                    echo "── .NET Restore ──"
+                bat '''
+                    @echo off
+                    echo === .NET Restore ===
                     dotnet restore DietitianClinicAutomation.sln
+                    if %ERRORLEVEL% NEQ 0 (
+                        echo HATA: dotnet restore basarisiz!
+                        exit /b %ERRORLEVEL%
+                    )
 
-                    echo "── .NET Build (Release) ──"
-                    dotnet build DietitianClinicAutomation.sln \
-                        --no-restore \
-                        --configuration Release \
+                    echo === .NET Build (Release) ===
+                    dotnet build DietitianClinicAutomation.sln ^
+                        --no-restore ^
+                        --configuration Release ^
                         -warnaserror:false
+                    if %ERRORLEVEL% NEQ 0 (
+                        echo HATA: dotnet build basarisiz!
+                        exit /b %ERRORLEVEL%
+                    )
                 '''
             }
         }
@@ -95,12 +94,21 @@ pipeline {
         stage('Build Frontend (Next.js)') {
             steps {
                 dir('src/DietitianClinic-UI') {
-                    sh '''
-                        echo "── npm ci ──"
+                    bat '''
+                        @echo off
+                        echo === npm ci ===
                         npm ci --prefer-offline
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo HATA: npm ci basarisiz!
+                            exit /b %ERRORLEVEL%
+                        )
 
-                        echo "── next build ──"
+                        echo === next build ===
                         npm run build
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo HATA: next build basarisiz!
+                            exit /b %ERRORLEVEL%
+                        )
                     '''
                 }
             }
@@ -110,29 +118,46 @@ pipeline {
         stage('Static Analysis (SonarCloud)') {
             steps {
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN_VAL')]) {
-                    sh '''
-                        # dotnet-sonarscanner global tool kurulumu / güncellemesi
-                        dotnet tool install --global dotnet-sonarscanner 2>/dev/null \
-                            || dotnet tool update --global dotnet-sonarscanner 2>/dev/null \
-                            || true
-                        export PATH="$PATH:$HOME/.dotnet/tools"
+                    bat '''
+                        @echo off
 
-                        echo "── SonarScanner Begin ──"
-                        dotnet sonarscanner begin \
-                            /k:"${SONAR_PROJECT_KEY}" \
-                            /o:"${SONAR_ORG}" \
-                            /d:sonar.host.url="${SONAR_HOST_URL}" \
-                            /d:sonar.token="${SONAR_TOKEN_VAL}" \
-                            /d:sonar.exclusions="**/obj/**,**/bin/**,**/node_modules/**,.sonarqube/**" \
+                        rem -- dotnet-sonarscanner global tool kur (zaten kuruluysa guncelle) --
+                        dotnet tool install --global dotnet-sonarscanner >nul 2>&1
+                        if %ERRORLEVEL% NEQ 0 (
+                            dotnet tool update --global dotnet-sonarscanner >nul 2>&1
+                        )
+
+                        rem -- dotnet global tools dizinini PATH'e ekle --
+                        set PATH=%PATH%;%USERPROFILE%\.dotnet\tools
+
+                        echo === SonarScanner Begin ===
+                        dotnet sonarscanner begin ^
+                            /k:"%SONAR_PROJECT_KEY%" ^
+                            /o:"%SONAR_ORG%" ^
+                            /d:sonar.host.url="%SONAR_HOST_URL%" ^
+                            /d:sonar.token="%SONAR_TOKEN_VAL%" ^
+                            /d:sonar.exclusions="**/obj/**,**/bin/**,**/node_modules/**,.sonarqube/**" ^
                             /d:sonar.sourceEncoding="UTF-8"
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo HATA: SonarScanner begin basarisiz!
+                            exit /b %ERRORLEVEL%
+                        )
 
-                        echo "── Build (SonarScanner için) ──"
-                        dotnet build DietitianClinicAutomation.sln \
-                            --no-restore \
+                        echo === Build (SonarScanner icin) ===
+                        dotnet build DietitianClinicAutomation.sln ^
+                            --no-restore ^
                             --configuration Release
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo HATA: dotnet build (SonarScanner) basarisiz!
+                            exit /b %ERRORLEVEL%
+                        )
 
-                        echo "── SonarScanner End ──"
-                        dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN_VAL}"
+                        echo === SonarScanner End ===
+                        dotnet sonarscanner end /d:sonar.token="%SONAR_TOKEN_VAL%"
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo HATA: SonarScanner end basarisiz!
+                            exit /b %ERRORLEVEL%
+                        )
                     '''
                 }
             }
@@ -141,53 +166,75 @@ pipeline {
         // ── 5. START INFRASTRUCTURE (Docker Compose) ───────────────────────
         stage('Start Infrastructure') {
             steps {
-                // DOCKER_ENV_FILE credential'ı: .env dosyasının içeriğini tutan
-                // Jenkins "Secret File" credential. Bu adımda geçici olarak kopyalanır.
+                // DOCKER_ENV_FILE: Jenkins "Secret File" credential.
+                // .env.example dosyasını doldurup Jenkins'e "Secret File" olarak ekleyin.
                 withCredentials([file(credentialsId: 'DOCKER_ENV_FILE', variable: 'DOCKER_ENV')]) {
-                    sh 'cp "$DOCKER_ENV" .env'
+                    bat 'copy /Y "%DOCKER_ENV%" .env'
                 }
 
-                sh '''
-                    echo "── docker compose up ──"
+                bat '''
+                    @echo off
+                    echo === docker compose up ===
                     docker compose up -d
+                    if %ERRORLEVEL% NEQ 0 (
+                        echo HATA: docker compose up basarisiz!
+                        exit /b %ERRORLEVEL%
+                    )
+                '''
 
-                    # ── Backend API hazır olana kadar bekle (max 3 dk) ──────
-                    echo "Backend API bekleniyor: ${TEST_API_URL}/api/health/database"
-                    READY=0
-                    for i in $(seq 1 60); do
-                        if curl -sf "${TEST_API_URL}/api/health/database" > /dev/null 2>&1; then
-                            echo "Backend API hazır. (deneme: $i)"
-                            READY=1
-                            break
-                        fi
-                        echo "  Bekleniyor... ($i/60)"
-                        sleep 3
-                    done
-                    if [ "$READY" -eq 0 ]; then
-                        echo "HATA: Backend API 3 dakika içinde başlamadı!" >&2
-                        docker compose logs api
-                        exit 1
-                    fi
+                // Backend API hazır olana kadar bekle (maks. 3 dakika = 60 x 3sn)
+                bat '''
+                    @echo off
+                    setlocal enabledelayedexpansion
 
-                    # ── Frontend hazır olana kadar bekle (max 2 dk) ──────────
-                    echo "Frontend bekleniyor: ${TEST_BASE_URL}"
-                    READY=0
-                    for i in $(seq 1 40); do
-                        if curl -sf "${TEST_BASE_URL}" > /dev/null 2>&1; then
-                            echo "Frontend hazır. (deneme: $i)"
-                            READY=1
-                            break
-                        fi
-                        echo "  Bekleniyor... ($i/40)"
-                        sleep 3
-                    done
-                    if [ "$READY" -eq 0 ]; then
-                        echo "HATA: Frontend 2 dakika içinde başlamadı!" >&2
-                        docker compose logs frontend
-                        exit 1
-                    fi
+                    echo Backend API bekleniyor: %TEST_API_URL%/api/health/database
+                    set ATTEMPTS=60
 
-                    echo "Tüm servisler hazır."
+                    :API_WAIT
+                    if !ATTEMPTS! EQU 0 goto API_TIMEOUT
+                    curl -sf %TEST_API_URL%/api/health/database >nul 2>&1
+                    if %ERRORLEVEL% EQU 0 goto API_READY
+                    echo   Bekleniyor... (kalan deneme: !ATTEMPTS!)
+                    timeout /t 3 /nobreak >nul
+                    set /a ATTEMPTS-=1
+                    goto API_WAIT
+
+                    :API_TIMEOUT
+                    echo HATA: Backend API 3 dakika icinde baslamadi!
+                    docker compose logs api
+                    exit /b 1
+
+                    :API_READY
+                    echo Backend API hazir.
+                    endlocal
+                '''
+
+                // Frontend hazır olana kadar bekle (maks. 2 dakika = 40 x 3sn)
+                bat '''
+                    @echo off
+                    setlocal enabledelayedexpansion
+
+                    echo Frontend bekleniyor: %TEST_BASE_URL%
+                    set ATTEMPTS=40
+
+                    :FE_WAIT
+                    if !ATTEMPTS! EQU 0 goto FE_TIMEOUT
+                    curl -sf %TEST_BASE_URL% >nul 2>&1
+                    if %ERRORLEVEL% EQU 0 goto FE_READY
+                    echo   Bekleniyor... (kalan deneme: !ATTEMPTS!)
+                    timeout /t 3 /nobreak >nul
+                    set /a ATTEMPTS-=1
+                    goto FE_WAIT
+
+                    :FE_TIMEOUT
+                    echo HATA: Frontend 2 dakika icinde baslamadi!
+                    docker compose logs frontend
+                    exit /b 1
+
+                    :FE_READY
+                    echo Frontend hazir.
+                    echo Tum servisler hazir.
+                    endlocal
                 '''
             }
         }
@@ -195,23 +242,23 @@ pipeline {
         // ── 6. SELENIUM UI TESTS ────────────────────────────────────────────
         stage('Selenium UI Tests') {
             steps {
-                sh '''
-                    mkdir -p TestResults
+                bat '''
+                    @echo off
+                    if not exist TestResults mkdir TestResults
 
-                    dotnet test src/DietitianClinic.Tests.UI/DietitianClinic.Tests.UI.csproj \
-                        --no-build \
-                        --configuration Release \
-                        --logger "trx;LogFileName=selenium-results.trx" \
-                        --logger "console;verbosity=normal" \
-                        --results-dir "${WORKSPACE}/TestResults"
+                    dotnet test src\DietitianClinic.Tests.UI\DietitianClinic.Tests.UI.csproj ^
+                        --no-build ^
+                        --configuration Release ^
+                        --logger "trx;LogFileName=selenium-results.trx" ^
+                        --logger "console;verbosity=normal" ^
+                        --results-dir "%WORKSPACE%\TestResults"
+                    exit /b %ERRORLEVEL%
                 '''
             }
             post {
                 always {
-                    // TRX (MSTest/NUnit) sonuçlarını Jenkins'e yayımla.
-                    // "JUnit" plugin TRX formatını destekler.
                     junit allowEmptyResults: true,
-                          testResults: 'TestResults/*.trx'
+                          testResults: 'TestResults\\*.trx'
                 }
             }
         }
@@ -225,18 +272,18 @@ pipeline {
 
         always {
             script {
-                // Docker servislerini durdur (hata olsa bile devam et)
+                // Docker servislerini durdur — hata olsa bile devam et
                 try {
-                    sh 'docker compose down --volumes --remove-orphans'
+                    bat 'docker compose down --volumes --remove-orphans'
                 } catch (err) {
-                    echo "docker compose down sırasında hata (yoksayılıyor): ${err}"
+                    echo "docker compose down hatasi (yoksayiliyor): ${err}"
                 }
 
-                // .env dosyasını sil (gizli bilgileri temizle)
+                // .env dosyasini sil (gizli verileri temizle)
                 try {
-                    sh 'rm -f .env'
+                    bat 'if exist .env del /F /Q .env'
                 } catch (err) {
-                    echo ".env silinirken hata (yoksayılıyor): ${err}"
+                    echo ".env silinemedi (yoksayiliyor): ${err}"
                 }
             }
 
@@ -245,15 +292,15 @@ pipeline {
         }
 
         success {
-            echo "✅ Pipeline başarıyla tamamlandı. Branch: ${env.BRANCH_NAME ?: 'main'} | Build: #${env.BUILD_NUMBER}"
+            echo "Pipeline basariyla tamamlandi. Branch: ${env.BRANCH_NAME ?: 'main'} | Build: #${env.BUILD_NUMBER}"
         }
 
         failure {
-            echo "❌ Pipeline başarısız. Branch: ${env.BRANCH_NAME ?: 'main'} | Build: #${env.BUILD_NUMBER}"
+            echo "Pipeline basarisiz. Branch: ${env.BRANCH_NAME ?: 'main'} | Build: #${env.BUILD_NUMBER}"
         }
 
         unstable {
-            echo "⚠️ Pipeline kararsız (bazı testler başarısız veya analiz uyarıları mevcut)."
+            echo "Pipeline kararssiz (bazi testler basarisiz veya analiz uyarilari mevcut)."
         }
 
     }
