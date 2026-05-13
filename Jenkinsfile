@@ -149,6 +149,8 @@ pipeline {
             }
         }
 
+
+
         // 5. START INFRASTRUCTURE (Docker Compose)
         stage('Start Infrastructure') {
             steps {
@@ -252,12 +254,15 @@ pipeline {
             }
         }
 
+        END GECICI DEVRE DISI */
+
     } // end stages
 
     // POST: Her kosulda calisan temizlik ve bildirimler
     post {
 
         always {
+            /* GECICI DEVRE DISI: Docker kullanilamadigi icin asagidaki blok pasif.
             script {
                 // Docker servislerini durdur - hata olsa bile devam et
                 try {
@@ -273,6 +278,7 @@ pipeline {
                     echo ".env silinemedi (yoksayiliyor): ${err}"
                 }
             }
+            END GECICI DEVRE DISI */
 
             // Workspace temizle
             cleanWs()
