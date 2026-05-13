@@ -113,16 +113,10 @@ pipeline {
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN_VAL')]) {
                     bat '''
                         @echo off
+                        echo === Tool Setup ===
+                        dotnet tool install --global dotnet-sonarscanner >nul 2>&1 || dotnet tool update --global dotnet-sonarscanner >nul 2>&1
 
-                        rem dotnet-sonarscanner global tool kur (zaten kuruluysa guncelle)
-                        dotnet tool install --global dotnet-sonarscanner >nul 2>&1
-                        if %ERRORLEVEL% NEQ 0 (
-                            dotnet tool update --global dotnet-sonarscanner >nul 2>&1
-                        )
-
-                        rem dotnet global tools dizinini PATH e ekle.
-                        rem NOT: %USERPROFILE%/.dotnet/tools yolunda
-                        rem      \\ Groovy escape -> tek \ olarak bata iletilir.
+                        echo === Path Configuration ===
                         set PATH=%PATH%;%USERPROFILE%\\.dotnet\\tools
 
                         echo === SonarScanner Begin ===
@@ -133,24 +127,22 @@ pipeline {
                             /d:sonar.token="%SONAR_TOKEN_VAL%" ^
                             /d:sonar.exclusions="**/obj/**,**/bin/**,**/node_modules/**,.sonarqube/**" ^
                             /d:sonar.sourceEncoding="UTF-8"
+
                         if %ERRORLEVEL% NEQ 0 (
                             echo HATA: SonarScanner begin basarisiz!
                             exit /b %ERRORLEVEL%
                         )
 
-                        echo === Build SonarScanner icin ===
+                        echo === Build Application ===
                         dotnet build DietitianClinicAutomation.sln --no-restore --configuration Release
+
                         if %ERRORLEVEL% NEQ 0 (
-                            echo HATA: dotnet build SonarScanner basarisiz!
+                            echo HATA: dotnet build basarisiz!
                             exit /b %ERRORLEVEL%
                         )
 
                         echo === SonarScanner End ===
                         dotnet sonarscanner end /d:sonar.token="%SONAR_TOKEN_VAL%"
-                        if %ERRORLEVEL% NEQ 0 (
-                            echo HATA: SonarScanner end basarisiz!
-                            exit /b %ERRORLEVEL%
-                        )
                     '''
                 }
             }
