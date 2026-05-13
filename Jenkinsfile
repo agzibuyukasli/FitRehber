@@ -121,7 +121,7 @@ pipeline {
                         )
 
                         rem dotnet global tools dizinini PATH e ekle.
-                        rem NOT: %USERPROFILE%\.dotnet\tools yolunda
+                        rem NOT: %USERPROFILE%/.dotnet/tools yolunda
                         rem      \\ Groovy escape -> tek \ olarak bata iletilir.
                         set PATH=%PATH%;%USERPROFILE%\\.dotnet\\tools
 
