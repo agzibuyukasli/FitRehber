@@ -76,7 +76,7 @@ namespace DietitianClinic.Business.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Hasta getirme başarısız (ID: {patientId})");
+                _logger.LogError(ex, "Hasta getirme başarısız (ID: {PatientId})", patientId);
                 throw;
             }
         }
@@ -101,7 +101,7 @@ namespace DietitianClinic.Business.Services
                     patient.UserId = userId;
                 }
                 var result = await _unitOfWork.PatientRepository.AddAsync(patient);
-                _logger.LogInformation($"Hasta oluşturuldu: {patient.FirstName} {patient.LastName}");
+                _logger.LogInformation("Hasta oluşturuldu (ID: {PatientId})", patient.Id);
                 return patient.Id;
             }
             catch (Exception ex)
@@ -129,12 +129,12 @@ namespace DietitianClinic.Business.Services
                 patient.UserId = patientDetails.UserId;
 
                 await _unitOfWork.PatientRepository.UpdateAsync(patient);
-                _logger.LogInformation($"Hasta güncellendi: {patient.FirstName} {patient.LastName}");
+                _logger.LogInformation("Hasta güncellendi (ID: {PatientId})", patient.Id);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Hasta güncelleme başarısız (ID: {patientId})");
+                _logger.LogError(ex, "Hasta güncelleme başarısız (ID: {PatientId})", patientId);
                 throw;
             }
         }
@@ -182,12 +182,12 @@ namespace DietitianClinic.Business.Services
                     }
                 }
 
-                _logger.LogInformation($"Hasta silindi ve arşivlendi (ID: {patientId})");
+                _logger.LogInformation("Hasta silindi ve arşivlendi (ID: {PatientId})", patientId);
                 return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Hasta silme başarısız (ID: {patientId})");
+                _logger.LogError(ex, "Hasta silme başarısız (ID: {PatientId})", patientId);
                 throw;
             }
         }
@@ -243,7 +243,7 @@ namespace DietitianClinic.Business.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"User ID'ye göre hasta getirme başarısız (UserID: {userId})");
+                _logger.LogError(ex, "User ID'ye göre hasta getirme başarısız (UserID: {UserId})", userId);
                 throw;
             }
         }
@@ -263,7 +263,7 @@ namespace DietitianClinic.Business.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Email'e gore hasta getirme basarisiz (Email: {email})");
+                _logger.LogError(ex, "Email'e gore hasta getirme basarisiz");
                 throw;
             }
         }
