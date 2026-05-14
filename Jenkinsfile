@@ -42,6 +42,27 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    bat '''
+                        @echo off
+                        echo === Testler calistiriliyor (Coverage koleksiyonu aktif) ===
+                        dotnet test DietitianClinicAutomation.sln ^
+                            --no-build ^
+                            --configuration Release ^
+                            --collect:"XPlat Code Coverage" ^
+                            --results-directory "%WORKSPACE%\\TestResults" ^
+                            --logger "trx;LogFileName=test-results.trx"
+                        if %ERRORLEVEL% NEQ 0 (
+                            echo UYARI: Bazi testler basarisiz oldu, devam ediliyor.
+                            exit /b %ERRORLEVEL%
+                        )
+                    '''
+                }
+            }
+        }
+
         stage('Static Analysis (SonarCloud)') {
             steps {
                 withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN_VAL')]) {
@@ -61,7 +82,9 @@ pipeline {
                             /d:sonar.host.url="https://sonarcloud.io" ^
                             /d:sonar.token="%SONAR_TOKEN_VAL%" ^
                             /d:sonar.exclusions="**/obj/**,**/bin/**,**/node_modules/**,.sonarqube/**" ^
-                            /d:sonar.sourceEncoding="UTF-8"
+                            /d:sonar.sourceEncoding="UTF-8" ^
+                            /d:sonar.cs.opencover.reportsPaths="%WORKSPACE%\\TestResults\\**\\coverage.opencover.xml" ^
+                            /d:sonar.cs.cobertura.reportsPaths="%WORKSPACE%\\TestResults\\**\\coverage.cobertura.xml"
                         if %ERRORLEVEL% NEQ 0 (
                             echo HATA: SonarScanner begin basarisiz!
                             exit /b %ERRORLEVEL%
