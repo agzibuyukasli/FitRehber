@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -47,7 +48,7 @@ namespace DietitianClinic.Business.Services
 
         public async Task<string> GenerateRefreshTokenAsync()
         {
-            return Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
+            return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         }
 
         public async Task<bool> ValidateTokenAsync(string token)

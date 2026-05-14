@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Security.Cryptography;
 
 namespace DietitianClinic.API.Services
 {
@@ -13,7 +14,7 @@ namespace DietitianClinic.API.Services
         public string GenerateCode(string email)
         {
             Cleanup();
-            var code = new Random().Next(100000, 999999).ToString();
+            var code = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
             _codes[Normalize(email)] = (code, DateTime.UtcNow.Add(CodeExpiry));
             return code;
         }

@@ -5,7 +5,7 @@ FROM node:18-alpine AS deps
 WORKDIR /app
 
 # Yalnızca package dosyalarını kopyala → layer cache optimizasyonu
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json ./
 RUN npm ci
 
 # ─────────────────────────────────────────
