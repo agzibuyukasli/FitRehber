@@ -142,12 +142,10 @@ const Crud = () => {
     };
 
     const createId = () => {
-        let id = '';
-        let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 5; i++) {
-            id += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return id;
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const bytes = new Uint8Array(5);
+        window.crypto.getRandomValues(bytes);
+        return Array.from(bytes, (b) => chars[b % chars.length]).join('');
     };
 
     const exportCSV = () => {
