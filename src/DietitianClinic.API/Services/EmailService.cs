@@ -63,7 +63,7 @@ namespace DietitianClinic.API.Services
 
             using var client = new SmtpClient(host, port)
             {
-                EnableSsl   = enableSsl,
+                EnableSsl   = true,
                 Credentials = string.IsNullOrEmpty(username)
                     ? null
                     : new NetworkCredential(username, password)
