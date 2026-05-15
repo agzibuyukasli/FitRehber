@@ -30,6 +30,6 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet sonarscanner begin /k:"agzibuyukasli_FitRehber" /o:"agzibuyukasli" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+          dotnet sonarscanner begin /k:"agzibuyukasli_FitRehber" /o:"agzibuyukasli" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$env:SONAR_TOKEN"
           dotnet build
           dotnet sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
