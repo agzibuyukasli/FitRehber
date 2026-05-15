@@ -34,6 +34,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: src/DietitianClinic-UI/package-lock.json
 
+      # ── Frontend: bağımlılıklar + coverage raporu ──────────────────────
       - name: Install Frontend Dependencies
         working-directory: src/DietitianClinic-UI
         run: npm ci
@@ -42,13 +43,14 @@ jobs:
         working-directory: src/DietitianClinic-UI
         run: npm run test:coverage -- --coverageReporters=lcov --coverageDirectory=coverage
 
+      # ── SonarScanner kurulumu ───────────────────────────────────────────
       - name: Install SonarScanner
         run: dotnet tool install --global dotnet-sonarscanner
 
-      - name: Run .NET Tests with Coverage
-        run: dotnet test src/DietitianClinic.Tests.Unit/DietitianClinic.Tests.Unit.csproj --collect:"XPlat Code Coverage" --results-directory coverage
-
-      - name: Build and Analyze
+      # ── SonarCloud: begin → build → C# test (coverage) → end ───────────
+      # ÖNEMLI: dotnet test, begin/end arasında çalışmalı;
+      # aksi halde SonarCloud coverage raporunu göremez.
+      - name: SonarCloud Analysis
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
@@ -57,9 +59,14 @@ jobs:
             /o:"agzibuyukasli" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.token="$env:SONAR_TOKEN" `
-            /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" `
             /d:sonar.javascript.lcov.reportPaths="src/DietitianClinic-UI/coverage/lcov.info" `
-            /d:sonar.exclusions="**/obj/**,**/bin/**,**/node_modules/**,**/.next/**,**/Migrations/**,**/*.Designer.cs,**/wwwroot/**,**/jest.config.js,**/jest.setup.js,**/__tests__/**" `
-            /d:sonar.coverage.exclusions="**/jest.config.js,**/jest.setup.js,**/__tests__/**,**/next.config.js,**/*.test.ts,**/*.test.tsx,**/*.test.js"
-          dotnet build
+            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+
+          dotnet build --no-incremental
+
+          dotnet test src/DietitianClinic.Tests.Unit/DietitianClinic.Tests.Unit.csproj `
+            /p:CollectCoverage=true `
+            /p:CoverletOutputFormat=opencover `
+            /p:CoverletOutput="TestResults/coverage"
+
           dotnet sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
