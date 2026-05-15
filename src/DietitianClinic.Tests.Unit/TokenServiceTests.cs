@@ -82,4 +82,40 @@ public class TokenServiceTests
 
         Assert.Contains(claims, c => c.Value?.ToString() == "42");
     }
+
+    [Fact]
+    public async Task GenerateToken_ThrowsInvalidOperation_WhenSecretKeyNotConfigured()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Issuer"]   = "TestIssuer",
+                ["Jwt:Audience"] = "TestAudience",
+                ["Jwt:AccessTokenExpiryMinutes"] = "60"
+                // JwtSettings:SecretKey kasıtlı olarak eksik
+            })
+            .Build();
+
+        var sut = new TokenService(config);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => sut.GenerateTokenAsync(1, "a@b.com", "Admin"));
+    }
+
+    [Fact]
+    public async Task ValidateToken_ReturnsFalse_WhenSecretKeyNotConfigured()
+    {
+        var config = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Jwt:Issuer"]   = "TestIssuer",
+                ["Jwt:Audience"] = "TestAudience"
+                // JwtSettings:SecretKey kasıtlı olarak eksik → InvalidOperationException catch'e düşer → false döner
+            })
+            .Build();
+
+        var sut = new TokenService(config);
+
+        Assert.False(await sut.ValidateTokenAsync("any.dummy.token"));
+    }
 }

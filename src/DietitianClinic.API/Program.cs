@@ -259,3 +259,6 @@ finally
 {
     Log.CloseAndFlush();
 }
+
+// Integration testlerin Program sınıfına erişebilmesi için
+public partial class Program { }
