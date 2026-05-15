@@ -61,15 +61,7 @@ namespace DietitianClinic.API.Services
                 IsBodyHtml  = true
             };
 
-            using var client = new SmtpClient(host, port)
-            {
-                EnableSsl   = true,
-                Credentials = string.IsNullOrEmpty(username)
-                    ? null
-                    : new NetworkCredential(username, password)
-            };
-
-            await client.SendMailAsync(message);
+            await DispatchMailAsync(message, host, port, username, password, enableSsl: true);
             _logger.LogInformation("Şifre sıfırlama kodu gönderildi: {Email}", toEmail);
         }
 
@@ -195,6 +187,17 @@ namespace DietitianClinic.API.Services
                 IsBodyHtml = true
             };
 
+            await DispatchMailAsync(message, host, port, username, password, enableSsl);
+            _logger.LogInformation("Randevu hatırlatma maili gönderildi: {Email}, Tarih: {Date}", toEmail, appointmentDate);
+        }
+
+        /// <summary>SMTP üzerinden mail gönderir; testlerde override edilebilir.</summary>
+        protected virtual async Task DispatchMailAsync(
+            MailMessage message,
+            string host, int port,
+            string username, string password,
+            bool enableSsl)
+        {
             using var client = new SmtpClient(host, port)
             {
                 EnableSsl   = enableSsl,
@@ -202,9 +205,7 @@ namespace DietitianClinic.API.Services
                     ? null
                     : new NetworkCredential(username, password)
             };
-
             await client.SendMailAsync(message);
-            _logger.LogInformation("Randevu hatırlatma maili gönderildi: {Email}, Tarih: {Date}", toEmail, appointmentDate);
         }
     }
 }
