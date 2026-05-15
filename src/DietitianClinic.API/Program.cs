@@ -3,8 +3,6 @@ using DietitianClinic.DataAccess.Context;
 using DietitianClinic.API.Extensions;
 using DietitianClinic.API.Middleware;
 using DietitianClinic.API.Hubs;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Linq;
 using DietitianClinic.Entity.Models;
 using Serilog;
@@ -212,40 +210,6 @@ try
     app.UseAuthorization();
 
     // ── Endpoint'ler ────────────────────────────────────────────────────
-    app.MapGet("/api/dashboard/summary", async (ClaimsPrincipal user, DietitianClinicDbContext dbContext) => {
-        var currentUserIdRaw = user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var isDietitian = user.IsInRole(UserRole.Dietitian.ToString()) || user.IsInRole("1");
-        var currentUserId = int.TryParse(currentUserIdRaw, out var parsedUserId) ? parsedUserId : (int?)null;
-        
-        var today = DateTime.Today;
-        var tomorrow = today.AddDays(1);
-        var now = DateTime.Now;
-
-        IQueryable<Patient> patientsQuery = dbContext.Patients.Where(p => !p.IsDeleted);
-        IQueryable<Appointment> appointmentsQuery = dbContext.Appointments.Include(a => a.Patient).Where(a => !a.IsDeleted);
-        IQueryable<MealPlan> mealPlansQuery = dbContext.MealPlans.Where(m => !m.IsDeleted);
-
-        if (isDietitian && currentUserId.HasValue)
-        {
-            patientsQuery = patientsQuery.Where(p => p.UserId == currentUserId.Value);
-            appointmentsQuery = appointmentsQuery.Where(a => a.UserId == currentUserId.Value);
-            mealPlansQuery = mealPlansQuery.Where(m => m.UserId == currentUserId.Value);
-        }
-
-        var summary = new
-        {
-            totalDietitians = isDietitian ? 0 : await dbContext.Users.CountAsync(u => !u.IsDeleted && u.Role == UserRole.Dietitian),
-            totalPatients = await patientsQuery.CountAsync(),
-            totalAppointments = await appointmentsQuery.CountAsync(),
-            todayAppointments = await appointmentsQuery.CountAsync(a => a.AppointmentDate >= today && a.AppointmentDate < tomorrow),
-            upcomingAppointments = await appointmentsQuery.CountAsync(a => a.AppointmentDate >= now),
-            pastAppointments = await appointmentsQuery.CountAsync(a => a.AppointmentDate < now),
-            activeMealPlans = await mealPlansQuery.CountAsync(m => m.Status == MealPlanStatus.Active),
-            todaySchedule = await appointmentsQuery.Where(a => a.AppointmentDate >= today && a.AppointmentDate < tomorrow).OrderBy(a => a.AppointmentDate).Select(a => new { a.Id, patientName = a.Patient.FirstName + " " + a.Patient.LastName, a.AppointmentDate, a.DurationInMinutes, status = (int)a.Status }).ToListAsync()
-        };
-        return Results.Ok(summary);
-    }).RequireAuthorization();
-
     app.MapHub<ChatHub>("/hubs/chat");
     app.MapControllers();
 
