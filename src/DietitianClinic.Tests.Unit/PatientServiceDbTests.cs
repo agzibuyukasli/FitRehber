@@ -39,9 +39,30 @@ public class PatientServiceDbTests : IDisposable
     [Fact]
     public async Task GetPatientById_ThrowsNotFoundException_WhenPatientDoesNotExist()
     {
-        // NotFoundException try içinde fırlatılır → catch LogError'ı tetikler (yeni satır kapsamı)
+        // NotFoundException try içinde fırlatılır → catch (line 79-80) LogError + throw tetiklenir
         var sut = CreateSut();
         await Assert.ThrowsAsync<NotFoundException>(() => sut.GetPatientByIdAsync(999));
+    }
+
+    [Fact]
+    public async Task GetPatientById_FiltersByUserId_WhenDietitianOnly()
+    {
+        // dietitianOnly=true && userId.HasValue → line 67-68 dalı kapsamı
+        var patient = new Patient
+        {
+            Id = 10, FirstName = "Diyet", LastName = "Hasta",
+            Email = "d@test.com", Phone = "05559999999",
+            Address = "Adres", City = "İzmir",
+            MedicalHistory = "", Allergies = "", Notes = "",
+            IsDeleted = false, UserId = 5
+        };
+        _context.Patients.Add(patient);
+        await _context.SaveChangesAsync();
+
+        var sut    = CreateSut();
+        var result = await sut.GetPatientByIdAsync(10, userId: 5, dietitianOnly: true);
+
+        Assert.Equal(10, result.Id);
     }
 
     // ── UpdatePatientAsync ────────────────────────────────────────────────

@@ -16,6 +16,11 @@ const customConfig = {
         'next.config.js',
         'app/ServiceWorkerRegistrar.tsx',
         'public/sw.js',
+        'utils/createId.ts',
+    ],
+    coveragePathIgnorePatterns: [
+        'jest.config.js',
+        'jest.setup.js',
     ],
 };
 
