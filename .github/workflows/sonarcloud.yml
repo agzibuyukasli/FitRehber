@@ -14,22 +14,52 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/DietitianClinic-UI/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: src/DietitianClinic-UI
+        run: npm ci
+
+      - name: Run Frontend Tests with Coverage
+        working-directory: src/DietitianClinic-UI
+        run: npm run test:coverage -- --coverageReporters=lcov --coverageDirectory=coverage
+
       - name: Install SonarScanner
         run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Run .NET Tests with Coverage
+        run: dotnet test src/DietitianClinic.Tests.Unit/DietitianClinic.Tests.Unit.csproj --collect:"XPlat Code Coverage" --results-directory coverage
+
       - name: Build and Analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          dotnet sonarscanner begin /k:"agzibuyukasli_FitRehber" /o:"agzibuyukasli" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.token="$env:SONAR_TOKEN"
+          dotnet sonarscanner begin `
+            /k:"agzibuyukasli_FitRehber" `
+            /o:"agzibuyukasli" `
+            /d:sonar.host.url="https://sonarcloud.io" `
+            /d:sonar.token="$env:SONAR_TOKEN" `
+            /d:sonar.cs.opencover.reportsPaths="coverage/**/coverage.opencover.xml" `
+            /d:sonar.javascript.lcov.reportPaths="src/DietitianClinic-UI/coverage/lcov.info" `
+            /d:sonar.exclusions="**/obj/**,**/bin/**,**/node_modules/**,**/.next/**,**/Migrations/**,**/*.Designer.cs,**/wwwroot/**,**/jest.config.js,**/jest.setup.js,**/__tests__/**" `
+            /d:sonar.coverage.exclusions="**/jest.config.js,**/jest.setup.js,**/__tests__/**,**/next.config.js,**/*.test.ts,**/*.test.tsx,**/*.test.js"
           dotnet build
           dotnet sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"

@@ -16,6 +16,7 @@ import { classNames } from 'primereact/utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { ProductService } from '../../../../demo/service/ProductService';
 import { Demo } from '@/types';
+import { createId } from '../../../../utils/createId';
 
 /* @todo Used 'as any' for types here. Will fix in next version due to onSelectionChange event type issue. */
 const Crud = () => {
@@ -139,13 +140,6 @@ const Crud = () => {
         }
 
         return index;
-    };
-
-    const createId = () => {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        const bytes = new Uint8Array(5);
-        window.crypto.getRandomValues(bytes);
-        return Array.from(bytes, (b) => chars[b % chars.length]).join('');
     };
 
     const exportCSV = () => {
