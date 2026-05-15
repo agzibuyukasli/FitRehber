@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Yalnızca package dosyalarını kopyala → layer cache optimizasyonu
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # ─────────────────────────────────────────
 #  Stage 2 – build
